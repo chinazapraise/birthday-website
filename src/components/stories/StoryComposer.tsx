@@ -33,7 +33,7 @@ export default function StoryComposer({
     }
     onSubmit({
       senderName: visibility === "public" ? name.trim() : "Private",
-      meetingContext: meeting.trim() || "—",
+      meetingContext: meeting.trim() || "-",
       title: title.trim(),
       body: body.trim(),
       year: year ? Number(year) : undefined,
@@ -174,7 +174,7 @@ export default function StoryComposer({
                         : "border-white/15 text-cream/50",
                     )}
                   >
-                    Public — everyone sees it
+                    Public · everyone sees it
                   </button>
                   <button
                     type="button"

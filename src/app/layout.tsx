@@ -24,18 +24,18 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "27 — The Story So Far",
+  title: "27: The Story So Far",
   description:
-    "2016 — 2026. Eleven years. A lot happened before we got here. Tomide's story, year by year — and you're part of what happens next.",
+    "2016-2026. Eleven years. A lot happened before we got here. Tomide's story, year by year, and you're part of what happens next.",
   openGraph: {
-    title: "27 — The Story So Far",
-    description: "2016 — 2026. A lot happened before we got here.",
+    title: "27: The Story So Far",
+    description: "2016-2026. A lot happened before we got here.",
     type: "website",
     siteName: "TOMIDE / 27",
   },
   twitter: {
     card: "summary_large_image",
-    title: "27 — The Story So Far",
+    title: "27: The Story So Far",
     description: "Eleven years. A lot happened before we got here.",
   },
 };

@@ -85,53 +85,84 @@ export interface CommunityStory {
   createdAt: string;
 }
 
+/*
+ * WISHLIST MODEL — gift kinds drive every card.
+ *
+ * single     exclusive — only one active claim. No contributions.
+ *            e.g. headphones, spa day, dinner date, letter, perfume, hamper.
+ * multi      several people can each get this (a "slot"). Quantity optional.
+ *            e.g. flowers, artwork & frames, wardrobe, kitchen, custom gift.
+ * expensive  exclusive claim + contributions from many people.
+ *            Claim closes the contribution pot.
+ *            e.g. MacBook, monitor, Apple Watch, vacation.
+ * trip       identical to expensive but copy reads "sponsor".
+ * cash       fixed cash gift. No reserve/claim/contribution as such —
+ *            each person just gifts the amount. Never closes.
+ */
+
+export type GiftKind = "single" | "multi" | "expensive" | "trip" | "cash";
+
 export interface WishlistItem {
   id: string;
   name: string;
   description: string;
   funnyNote?: string;
-  imageUrl?: string;
-  price: number;
-  currency: string;
-  purchaseUrl?: string;
-  targetAmount: number;
-  amountConfirmed: number;
-  quantity: number;
-  quantityReserved: number;
-  allowClaim: boolean;
-  allowContribution: boolean;
-  status:
-    | "available"
-    | "reserved"
-    | "partially funded"
-    | "funded"
-    | "purchased"
-    | "received"
-    | "hidden";
+  kind: GiftKind;
+  /** fixed amount for cash gifts, in NGN */
+  cashAmount?: number;
+  /** per-claim quantity cap for multi gifts (e.g. wall frames = 3) */
+  maxQuantity?: number;
   sortOrder: number;
+  status: "active" | "hidden";
   createdAt: string;
 }
 
+/**
+ * Reserve = "I'm interested." Never blocks. Anyone can reserve.
+ * anonymous = keep identity private. Name stays visible to Tomide in admin.
+ */
+export interface GiftReserve {
+  id: string;
+  wishlistItemId: string;
+  name: string;
+  contact?: string;
+  quantity: number;
+  anonymous: boolean;
+  createdAt: string;
+}
+
+/**
+ * Claim = "I'm getting this." Blocks single/expensive/trip gifts.
+ * anonymous = keep identity private. Name stays visible to Tomide in admin.
+ */
 export interface GiftClaim {
   id: string;
   wishlistItemId: string;
-  claimantName: string;
+  name: string;
   contact?: string;
   note?: string;
-  anonymousToPublic: boolean;
-  status: "active" | "released" | "fulfilled";
+  quantity: number;
+  gifted: boolean;
+  anonymous: boolean;
   createdAt: string;
 }
 
+/**
+ * Contribution = money toward an expensive/trip gift, or a cash gift.
+ * kind "contribution" → "X people contributed".
+ * kind "gift"        → cash gifts, "X people gifted this".
+ * anonymous = keep identity private. Email stays visible to Tomide in admin.
+ */
 export interface Contribution {
   id: string;
   wishlistItemId: string;
-  contributorName: string;
+  email: string;
   amount: number;
   currency: string;
+  kind: "contribution" | "gift";
+  anonymous: boolean;
   paymentReference?: string;
   paymentStatus: "initiated" | "pending" | "successful" | "failed";
-  anonymous: boolean;
   createdAt: string;
 }
 

@@ -26,7 +26,18 @@ export default function HomeExperience({ settings, years, memories }: Props) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const clickCount = useRef(0);
 
-  const onReady = useCallback(() => setReady(true), []);
+  const onReady = useCallback(() => {
+    setReady(true);
+    // First-visit celebration: once per browser, right after the loader
+    // finishes and the homepage reveals, fire an amplified grand confetti.
+    try {
+      if (localStorage.getItem("bday.firstVisit") === "1") return;
+      localStorage.setItem("bday.firstVisit", "1");
+      window.setTimeout(() => fireConfetti("grand"), 600);
+    } catch {
+      /* storage unavailable — skip celebration */
+    }
+  }, []);
 
   // Easter egg: click "27" 7 times → mini confetti burst
   const handle27Click = () => {

@@ -73,7 +73,7 @@ export default function PresentDayTransition() {
           viewport={{ once: true, margin: "-60px" }}
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.16 } } }}
         >
-          <Card href="/wishes" icon={<Envelope size={26} weight="fill" />} accent="#f43f9e" title="Leave me a wish" sub="A few words, a prayer, a joke — whatever you want me to carry into 27." cta="Write a wish" />
+          <Card href="/wishes" icon={<Envelope size={26} weight="fill" />} accent="#f43f9e" title="Leave me a wish" sub="A few words, a prayer, a joke, whatever you want me to carry into 27." cta="Write a wish" />
           <Card href="/stories" icon={<BookOpenText size={26} weight="fill" />} accent="#22d3ee" title="Tell a Tomide story" sub="Everybody knows a different version of me. Tell me yours." cta="Add your chapter" />
           <Card href="/wishlist" icon={<Gift size={26} weight="fill" />} accent="#f5c97b" title="Get me something" sub="27 things I’d love. No pressure. But since you asked…" cta="See the wishlist" />
         </motion.div>

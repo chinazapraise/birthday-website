@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export type ConfettiStyle = "burst" | "rain";
+export type ConfettiStyle = "burst" | "rain" | "grand";
 
 interface Particle {
   id: number;
@@ -37,6 +37,38 @@ export default function ConfettiLayer() {
       setIsRain(motion === "rain");
       const vw = window.innerWidth;
       const vh = window.innerHeight;
+      if (motion === "grand") {
+        const origins: Array<[number, number]> = [
+          [vw * 0.2, vh * 0.35],
+          [vw * 0.5, vh * 0.3],
+          [vw * 0.8, vh * 0.35],
+          [vw * 0.35, vh * 0.6],
+          [vw * 0.65, vh * 0.6],
+          [vw * 0.5, vh * 0.5],
+          [vw * 0.12, vh * 0.55],
+          [vw * 0.88, vh * 0.55],
+        ];
+        setParts(
+          Array.from({ length: 240 }, (_, id) => {
+            const [ox, oy] = origins[Math.floor(Math.random() * origins.length)];
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 6 + Math.random() * 10;
+            const r = Math.random();
+            return {
+              id,
+              x: ox,
+              y: oy,
+              size: 6 + Math.random() * 10,
+              color: COLORS[Math.floor(Math.random() * COLORS.length)],
+              rotation: Math.random() * 360,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed - 3,
+              shape: r > 0.45 ? "circle" : "rect",
+            };
+          }),
+        );
+        return;
+      }
       const count = motion === "rain" ? 90 : 44;
       setParts(
         Array.from({ length: count }, (_, id) => {

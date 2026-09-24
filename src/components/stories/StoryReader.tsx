@@ -61,7 +61,7 @@ export default function StoryReader({
           </h2>
 
           <p className="mt-1 font-hand text-xl text-cream/50">
-            — {story.senderName}
+            · {story.senderName}
           </p>
 
           <div className="mt-6 max-h-[46vh] overflow-y-auto pr-2 leading-relaxed text-cream/80 [scrollbar-width:thin]">

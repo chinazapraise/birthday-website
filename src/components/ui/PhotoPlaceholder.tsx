@@ -6,6 +6,8 @@ import { useMemo } from "react";
 /**
  * Neutral, replaceable image slot. Never depends on placeholder content
  * for layout — fixed aspect from the media entry.
+ * When `url` is provided (uploaded photo), the image replaces the
+ * placeholder visual inside the exact same box.
  */
 export default function PhotoPlaceholder({
   label,
@@ -14,6 +16,8 @@ export default function PhotoPlaceholder({
   style,
   tint = "#3b2f5f",
   onClick,
+  url,
+  alt,
 }: {
   label: string;
   aspect?: string;
@@ -21,6 +25,8 @@ export default function PhotoPlaceholder({
   style?: React.CSSProperties;
   tint?: string;
   onClick?: () => void;
+  url?: string;
+  alt?: string;
 }) {
   const [w, h] = useMemo(() => {
     const [a, b] = aspect.split(":").map(Number);
@@ -45,19 +51,30 @@ export default function PhotoPlaceholder({
         ...style,
       }}
     >
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          background:
-            "radial-gradient(80% 60% at 50% 20%, rgba(139,92,246,0.35) 0%, transparent 70%)",
-        }}
-      />
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center">
-        <ImageIcon size={20} className="text-cream/40" />
-        <span className="max-w-[90%] font-mono text-[0.6rem] leading-relaxed text-cream/35 uppercase tracking-wide md:text-[0.65rem]">
-          {label}
-        </span>
-      </div>
+      {url ? (
+        <img
+          src={url}
+          alt={alt ?? label}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <>
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              background:
+                "radial-gradient(80% 60% at 50% 20%, rgba(139,92,246,0.35) 0%, transparent 70%)",
+            }}
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center">
+            <ImageIcon size={20} className="text-cream/40" />
+            <span className="max-w-[90%] font-mono text-[0.6rem] leading-relaxed text-cream/35 uppercase tracking-wide md:text-[0.65rem]">
+              {label}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

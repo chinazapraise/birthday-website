@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { store } from "@/lib/store";
 import type { Store } from "@/lib/store";
+import type { GiftClaim } from "@/lib/types";
 
 /*
  * useStore: react state hooked to the store.
@@ -86,6 +87,30 @@ export function useClaims() {
       emit();
       return created;
     },
+    updateClaim: (id: string, patch: Partial<GiftClaim>) => {
+      const next = store.updateClaim(id, patch);
+      emit();
+      return next;
+    },
+  };
+}
+
+export function useReserves() {
+  const [, force] = useState(0);
+  useEffect(() => {
+    const l = () => force((n) => n + 1);
+    listeners.add(l);
+    return () => {
+      listeners.delete(l);
+    };
+  }, []);
+  return {
+    reserves: store.getReserves(),
+    addReserve: (r: Parameters<Store["addReserve"]>[0]) => {
+      const created = store.addReserve(r);
+      emit();
+      return created;
+    },
   };
 }
 
@@ -124,6 +149,30 @@ export function useSettings() {
     settings: store.getSettings(),
     updateSettings: (p: Parameters<Store["updateSettings"]>[0]) => {
       const next = store.updateSettings(p);
+      emit();
+      return next;
+    },
+  };
+}
+
+export function useTimelineMedia() {
+  const [, force] = useState(0);
+  useEffect(() => {
+    const l = () => force((n) => n + 1);
+    listeners.add(l);
+    return () => {
+      listeners.delete(l);
+    };
+  }, []);
+  return {
+    mediaUrls: store.getTimelineMedia(),
+    setMedia: (id: string, url: string) => {
+      const next = store.setTimelineMedia(id, url);
+      emit();
+      return next;
+    },
+    removeMedia: (id: string) => {
+      const next = store.removeTimelineMedia(id);
       emit();
       return next;
     },

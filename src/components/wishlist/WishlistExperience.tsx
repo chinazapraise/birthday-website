@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useSettings, useWishlist, useClaims, useContributions } from "@/lib/hooks";
+import {
+  useSettings,
+  useWishlist,
+  useClaims,
+  useReserves,
+  useContributions,
+} from "@/lib/hooks";
 import GiftCard from "@/components/wishlist/GiftCard";
 import GiftClaimModal from "@/components/wishlist/GiftClaimModal";
 import ContributionModal from "@/components/wishlist/ContributionModal";
@@ -13,45 +19,81 @@ import ConfettiLayer from "@/components/effects/ConfettiLayer";
 import { EASE } from "@/lib/motion";
 import type { WishlistItem } from "@/lib/types";
 
+type ModalKind = "claim" | "contribute" | null;
+
 /**
- * The wishlist: gift grid with claim + contribution modals.
- * Claiming reserves the gift (no double booking). Contributions stay
- * paymentStatus pending — no fake payment flow.
+ * The wishlist — 27 for 27, plus one open slot.
+ *
+ * Every card derives its state live:
+ *   Reserve = intent, never blocks.
+ *   Claim   = commitment, blocks single/expensive/trip gifts.
+ *   Contribute = money toward expensive trips & gifts, or cash gifts.
  */
 export default function WishlistExperience() {
   const { settings } = useSettings();
   const { items } = useWishlist();
-  const { addClaim } = useClaims();
-  const { addContribution } = useContributions();
+  const { claims, addClaim } = useClaims();
+  const { reserves, addReserve } = useReserves();
+  const { contributions, addContribution } = useContributions();
 
-  const [claimItem, setClaimItem] = useState<WishlistItem | null>(null);
-  const [contribItem, setContribItem] = useState<WishlistItem | null>(null);
+  const [modalItem, setModalItem] = useState<WishlistItem | null>(null);
+  const [modalKind, setModalKind] = useState<ModalKind>(null);
 
   const visible = items
     .filter((i) => i.status !== "hidden")
     .sort((a, b) => a.sortOrder - b.sortOrder);
 
+  const openClaim = (item: WishlistItem) => {
+    setModalItem(item);
+    setModalKind("claim");
+  };
+  const openContribute = (item: WishlistItem) => {
+    setModalItem(item);
+    setModalKind("contribute");
+  };
+  const closeModal = () => {
+    setModalItem(null);
+    setModalKind(null);
+  };
+
   const handleClaim = (data: {
-    claimantName: string;
+    name: string;
     contact?: string;
     note?: string;
-    anonymousToPublic: boolean;
+    quantity: number;
+    anonymous: boolean;
   }): boolean => {
-    if (!claimItem) return false;
-    const available = claimItem.quantity - claimItem.quantityReserved;
-    if (available < 1) return false;
-    addClaim({ wishlistItemId: claimItem.id, ...data });
+    if (!modalItem) return false;
+    const current = claims.filter((c) => c.wishlistItemId === modalItem.id);
+    const exclusive =
+      modalItem.kind === "single" ||
+      modalItem.kind === "expensive" ||
+      modalItem.kind === "trip";
+    if (exclusive && current.length > 0) return false;
+    const created = addClaim({ wishlistItemId: modalItem.id, ...data });
+    return created !== null;
+  };
+
+  const handleReserve = (data: {
+    name: string;
+    contact?: string;
+    quantity: number;
+    anonymous: boolean;
+  }): boolean => {
+    if (!modalItem) return false;
+    addReserve({ wishlistItemId: modalItem.id, ...data });
     return true;
   };
 
   const handleContribute = (data: {
-    contributorName: string;
+    email: string;
     amount: number;
     currency: string;
+    kind: "contribution" | "gift";
     anonymous: boolean;
   }) => {
-    if (!contribItem) return;
-    addContribution({ wishlistItemId: contribItem.id, ...data });
+    if (!modalItem) return;
+    addContribution({ wishlistItemId: modalItem.id, ...data });
   };
 
   return (
@@ -79,6 +121,15 @@ export default function WishlistExperience() {
           >
             {settings.wishlistCopy}
           </motion.h1>
+          <motion.p
+            className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-cream/50"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
+          >
+            Reserve it if you&apos;re considering it. Claim it if you&apos;re
+            getting it. Contribute if you want to chip in.
+          </motion.p>
         </header>
 
         {visible.length === 0 ? (
@@ -93,8 +144,11 @@ export default function WishlistExperience() {
                   key={item.id}
                   item={item}
                   index={i}
-                  onClaim={() => setClaimItem(item)}
-                  onContribute={() => setContribItem(item)}
+                  claims={claims}
+                  reserves={reserves}
+                  onGet={() => openClaim(item)}
+                  onContribute={() => openContribute(item)}
+                  contributions={contributions}
                 />
               ))}
             </div>
@@ -105,18 +159,29 @@ export default function WishlistExperience() {
         )}
       </main>
 
-      {claimItem && (
+      {modalItem && modalKind === "claim" && (
         <GiftClaimModal
-          item={claimItem}
+          item={modalItem}
+          canClaim={(() => {
+            const exclusive =
+              modalItem.kind === "single" ||
+              modalItem.kind === "expensive" ||
+              modalItem.kind === "trip";
+            return (
+              !exclusive ||
+              !claims.some((x) => x.wishlistItemId === modalItem.id)
+            );
+          })()}
           onClaim={handleClaim}
-          onClose={() => setClaimItem(null)}
+          onReserve={handleReserve}
+          onClose={closeModal}
         />
       )}
-      {contribItem && (
+      {modalItem && modalKind === "contribute" && (
         <ContributionModal
-          item={contribItem}
+          item={modalItem}
           onContribute={handleContribute}
-          onClose={() => setContribItem(null)}
+          onClose={closeModal}
         />
       )}
     </>

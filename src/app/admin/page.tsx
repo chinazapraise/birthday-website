@@ -3,8 +3,8 @@ import ManageExperience from "@/components/manage/ManageExperience";
 import AdminGate from "@/components/manage/AdminGate";
 
 export const metadata: Metadata = {
-  title: "Admin — 27",
-  description: "Owner area for 27 — The Story So Far.",
+  title: "Admin · 27",
+  description: "Owner area for 27: The Story So Far.",
   robots: "noindex",
 };
 

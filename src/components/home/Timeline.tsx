@@ -1,10 +1,12 @@
 "use client";
 
 import { motion, useScroll, useSpring } from "framer-motion";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import type { TimelineYear, MicroMemory } from "@/lib/types";
 import TimelineChapter from "@/components/home/TimelineChapter";
 import MicroMemoryCard from "@/components/home/MicroMemoryCard";
+import { mergeTimelineMedia } from "@/lib/timelineMedia";
+import { useTimelineMedia } from "@/lib/hooks";
 
 /**
  * SECTION 2 — STORY TIMELINE 2016–2026.
@@ -27,6 +29,12 @@ export default function Timeline({
     stiffness: 80,
     damping: 25,
   });
+
+  const { mediaUrls } = useTimelineMedia();
+  const mergedYears = useMemo(
+    () => mergeTimelineMedia(years, mediaUrls),
+    [years, mediaUrls],
+  );
 
   const memoByYear = new Map<number, MicroMemory[]>();
   memories.forEach((m) => {
@@ -76,7 +84,7 @@ export default function Timeline({
           />
         </div>
 
-        {years.map((entry, i) => (
+        {mergedYears.map((entry, i) => (
           <div key={entry.id} className="relative">
             <TimelineChapter entry={entry} index={i} />
             {/* micro-memories after most years */}

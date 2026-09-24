@@ -3,7 +3,7 @@ import { timelineSeed } from "@/lib/content/timeline";
 import GalleryExperience from "@/components/gallery/GalleryExperience";
 
 export const metadata: Metadata = {
-  title: "Gallery — 27",
+  title: "Gallery · 27",
   description: "Every photo from the story so far, in one place.",
 };
 

@@ -45,7 +45,7 @@ export default function WishComposer({
       return;
     }
     if (message.trim().length < 3) {
-      setError("A few more words, please — don't leave it blank.");
+      setError("A few more words, please. Don't leave it blank.");
       return;
     }
 

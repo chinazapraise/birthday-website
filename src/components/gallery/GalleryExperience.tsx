@@ -5,7 +5,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { TimelineYear } from "@/lib/types";
 import PhotoPlaceholder from "@/components/ui/PhotoPlaceholder";
 import MemoryLightbox from "@/components/shared/MemoryLightbox";
+import FloatingNav from "@/components/nav/FloatingNav";
 import { EASE } from "@/lib/motion";
+import { mergeTimelineMedia } from "@/lib/timelineMedia";
+import { useTimelineMedia } from "@/lib/hooks";
 
 interface GalleryItem {
   id: string;
@@ -18,15 +21,21 @@ export default function GalleryExperience({
 }: {
   years: TimelineYear[];
 }) {
-  const items = useMemo<GalleryItem[]>(
-    () =>
-      years.flatMap((y) =>
-        y.media.map((m) => ({ id: m.id, year: y.year, media: m })),
-      ),
-    [years],
+  const { mediaUrls } = useTimelineMedia();
+  const mergedYears = useMemo(
+    () => mergeTimelineMedia(years, mediaUrls),
+    [years, mediaUrls],
   );
 
-  const allYears = useMemo(() => years.map((y) => y.year), [years]);
+  const items = useMemo<GalleryItem[]>(
+    () =>
+      mergedYears.flatMap((y) =>
+        y.media.map((m) => ({ id: m.id, year: y.year, media: m })),
+      ),
+    [mergedYears],
+  );
+
+  const allYears = useMemo(() => mergedYears.map((y) => y.year), [mergedYears]);
   const [activeYear, setActiveYear] = useState<number | "all">("all");
 
   const filtered = useMemo(
@@ -41,6 +50,7 @@ export default function GalleryExperience({
 
   return (
     <main className="relative min-h-[100dvh] px-6 pb-28 pt-28">
+      <FloatingNav />
       <div className="mx-auto max-w-6xl">
         <motion.p
           className="font-hand text-2xl text-cream/50 md:text-3xl"
@@ -98,6 +108,8 @@ export default function GalleryExperience({
                     aspect={it.media.aspect}
                     onClick={() => setOpenIndex(openAt)}
                     className="cursor-pointer transition-transform hover:scale-[1.02]"
+                    url={it.media.url}
+                    alt={it.media.alt}
                   />
                   <div className="mt-2 flex items-baseline justify-between gap-2 px-1">
                     <span className="font-mono text-xs uppercase tracking-[0.2em] text-cream/45">
@@ -114,7 +126,7 @@ export default function GalleryExperience({
         </motion.div>
 
         <p className="mt-12 text-center font-mono text-xs uppercase tracking-[0.25em] text-cream/35">
-          {items.length} images · 2016 — 2026
+          {items.length} images · 2016-2026
         </p>
       </div>
 
@@ -122,7 +134,7 @@ export default function GalleryExperience({
         <MemoryLightbox
           media={items.map((it) => it.media)}
           index={openIndex}
-          label={`Gallery — ${items[openIndex]?.year ?? ""}`}
+          label={`Gallery: ${items[openIndex]?.year ?? ""}`}
           onClose={() => setOpenIndex(null)}
           onIndexChange={setOpenIndex}
         />

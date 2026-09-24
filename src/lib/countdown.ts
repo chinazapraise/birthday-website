@@ -22,13 +22,20 @@ export function getCountdown(birthdayISO: string, timezone: string): CountdownPa
 
   // Normalise both to UTC millis so comparisons are timezone-safe.
   const nowMs = now.getTime();
-  const bdayMs = bday.getTime();
+  let bdayMs = bday.getTime();
+  const DAY_MS = 24 * 60 * 60 * 1000;
 
-  if (nowMs >= bdayMs && nowMs < bdayMs + 24 * 60 * 60 * 1000) {
-    return { days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0, state: "today" };
+  // Rolling countdown — never get stuck in a permanent "after" state.
+  // Once the birthday day has fully passed, roll forward to the next
+  // year's birthday and keep counting down.
+  while (nowMs >= bdayMs + DAY_MS) {
+    bday = new Date(bday);
+    bday.setFullYear(bday.getFullYear() + 1);
+    bdayMs = bday.getTime();
   }
-  if (nowMs >= bdayMs) {
-    return { days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0, state: "after" };
+
+  if (nowMs >= bdayMs && nowMs < bdayMs + DAY_MS) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0, state: "today" };
   }
 
   let diff = Math.floor((bdayMs - nowMs) / 1000);

@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { MapPin } from "@phosphor-icons/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { MapPin, X } from "@phosphor-icons/react";
 import type { TimelineYear } from "@/lib/types";
 import MemoryLightbox from "@/components/shared/MemoryLightbox";
 import PhotoPlaceholder from "@/components/ui/PhotoPlaceholder";
@@ -34,10 +34,27 @@ export default function TimelineChapter({
 }) {
   const ref = useRef<HTMLElement>(null);
   const [open, setOpen] = useState<number>(-1);
+  const [storyOpen, setStoryOpen] = useState(false);
   const accent = getYearTint(entry.year);
 
   // Alternate: even index → text left / media right; odd → text right / media left.
   const textFirst = index % 2 === 0;
+
+  const storyPreview = truncateStory(entry.story, 220);
+  const hasMore = storyPreview !== entry.story;
+
+  useEffect(() => {
+    if (!storyOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setStoryOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [storyOpen]);
 
   return (
     <section
@@ -73,14 +90,32 @@ export default function TimelineChapter({
           </motion.h3>
 
           <motion.p
-            className="mt-5 leading-relaxed text-cream/75 md:text-lg"
+            className="mt-5 leading-relaxed whitespace-pre-line text-cream/75 md:text-lg"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.7, delay: 0.18, ease: EASE }}
           >
-            {entry.story}
+            {storyPreview}
           </motion.p>
+
+          {hasMore && (
+            <motion.button
+              onClick={() => setStoryOpen(true)}
+              className="mt-3 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition"
+              style={{
+                borderColor: `${accent}66`,
+                color: accent,
+              }}
+              whileHover={{ x: 4 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              Read more
+            </motion.button>
+          )}
 
           {entry.location && (
             <div className="mt-4 flex items-center gap-2 text-sm text-cream/45">
@@ -126,16 +161,98 @@ export default function TimelineChapter({
         </div>
       </div>
 
+      <AnimatePresence>
+        {storyOpen && (
+          <StoryModal
+            entry={entry}
+            accent={accent}
+            onClose={() => setStoryOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {open >= 0 && (
         <MemoryLightbox
           media={entry.media}
           index={open}
-          label={`${entry.year} — ${entry.title}`}
+          label={`${entry.year} · ${entry.title}`}
           onClose={() => setOpen(-1)}
           onIndexChange={setOpen}
         />
       )}
     </section>
+  );
+}
+
+function truncateStory(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const lastSpace = cut.lastIndexOf(" ");
+  const end = lastSpace > max * 0.6 ? lastSpace : max;
+  return `${text.slice(0, end).replace(/\s+$/u, "")}…`;
+}
+
+function StoryModal({
+  entry,
+  accent,
+  onClose,
+}: {
+  entry: TimelineYear;
+  accent: string;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      className="fixed inset-0 z-[150] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-xl md:p-10"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <button
+        className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-cream transition hover:border-white/50"
+        onClick={onClose}
+        aria-label="Close story"
+      >
+        <X size={20} />
+      </button>
+
+      <motion.div
+        initial={{ scale: 0.96, opacity: 0, y: 12 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.97, opacity: 0 }}
+        transition={{ duration: 0.35, ease: EASE }}
+        className="max-h-full w-full max-w-2xl overflow-y-auto rounded-3xl border border-white/10 bg-[#171327] p-8 md:p-12"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span
+          className="font-display text-6xl font-black leading-none md:text-7xl"
+          style={{ color: accent }}
+        >
+          {entry.year}
+        </span>
+        <h3 className="mt-2 font-display text-2xl font-bold text-cream md:text-3xl">
+          {entry.title}
+        </h3>
+        <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-cream/80 md:text-lg">
+          {entry.story}
+        </p>
+        {entry.quote && (
+          <p
+            className="mt-8 border-l-2 pl-4 italic text-cream/60"
+            style={{ borderColor: accent }}
+          >
+            “{entry.quote}”
+          </p>
+        )}
+        {entry.location && (
+          <div className="mt-6 flex items-center gap-2 text-sm text-cream/45">
+            <MapPin size={14} />
+            {entry.location}
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -162,6 +279,8 @@ function ChapterMedia({
               label={entry.media[0]?.placeholderLabel ?? "PHOTO PLACEHOLDER"}
               aspect="4:5"
               onClick={() => onOpen(0)}
+              url={entry.media[0]?.url}
+              alt={entry.media[0]?.alt}
             />
           </motion.div>
           {entry.media[1] && (
@@ -176,6 +295,8 @@ function ChapterMedia({
                 label={entry.media[1].placeholderLabel}
                 aspect="16:9"
                 onClick={() => onOpen(1)}
+                url={entry.media[1].url}
+                alt={entry.media[1].alt}
               />
               <p className="mt-2 font-hand text-lg text-cream/50">
                 {entry.media[1]?.funnyCaption}
@@ -206,6 +327,8 @@ function ChapterMedia({
                   label={m.placeholderLabel}
                   aspect="4:5"
                   className="rounded-[4px]"
+                  url={m.url}
+                  alt={m.alt}
                 />
                 <p className="mt-2 px-1 font-hand text-sm text-[#2a2237]">
                   {m.funnyCaption ?? m.caption}
@@ -233,6 +356,8 @@ function ChapterMedia({
                   label={m.placeholderLabel}
                   aspect="16:9"
                   onClick={() => onOpen(i)}
+                  url={m.url}
+                  alt={m.alt}
                 />
                 <p className="mt-1 truncate font-mono text-[0.6rem] uppercase tracking-wider text-cream/40">
                   {entry.year} · {i + 1}
@@ -257,6 +382,8 @@ function ChapterMedia({
             aspect="16:9"
             tint={accent}
             className="w-full"
+            url={entry.media[0]?.url}
+            alt={entry.media[0]?.alt}
           />
         </motion.div>
       );
@@ -283,12 +410,21 @@ function ChapterMedia({
                 whileHover={{ rotate: 0 }}
                 onClick={() => onOpen(i)}
               >
-                <div className="aspect-[4/5] w-full rounded-md border border-white/10 bg-[#171327]">
-                  <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
-                    <span className="font-mono text-[0.6rem] uppercase tracking-widest text-cream/35">
-                      {m.placeholderLabel}
-                    </span>
-                  </div>
+                <div className="aspect-[4/5] w-full overflow-hidden rounded-md border border-white/10 bg-[#171327]">
+                  {m.url ? (
+                    <img
+                      src={m.url}
+                      alt={m.alt}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
+                      <span className="font-mono text-[0.6rem] uppercase tracking-widest text-cream/35">
+                        {m.placeholderLabel}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 {i === 0 && (
                   <div className="absolute -left-3 top-4 rounded bg-magenta px-2 py-0.5 font-mono text-[0.55rem] font-bold uppercase tracking-wider text-ink">
@@ -327,6 +463,8 @@ function ChapterMedia({
                     label={m.placeholderLabel}
                     aspect={i === 2 ? "16:7" : "4:3"}
                     className="rounded-lg"
+                    url={m.url}
+                    alt={m.alt}
                   />
                 </motion.div>
               ))}
@@ -364,6 +502,8 @@ function ChapterMedia({
                   label={m.placeholderLabel}
                   aspect="1/1"
                   className="h-full w-full rounded-lg"
+                  url={m.url}
+                  alt={m.alt}
                 />
               </motion.div>
             );
@@ -388,6 +528,8 @@ function ChapterMedia({
                 label={m.placeholderLabel}
                 aspect="4:5"
                 className="w-full"
+                url={m.url}
+                alt={m.alt}
               />
               <span
                 className="absolute left-2 top-2 rounded-full px-2.5 py-1 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-ink"
@@ -414,7 +556,7 @@ function ChapterMedia({
             <PlayGlyph />
           </div>
           <p className="p-3 text-center font-mono text-xs uppercase tracking-widest text-cream/40">
-            [VIDEO PLACEHOLDER — short memory clip]
+            [VIDEO PLACEHOLDER · short memory clip]
           </p>
         </motion.div>
       );

@@ -8,7 +8,9 @@ import { fireConfetti } from "@/components/effects/ConfettiLayer";
 
 /**
  * Large countdown with rolling/flip numbers. States:
- * before → "27 begins in…"; today → "IT'S MY BIRTHDAY 🎂"; after → "27 is underway."
+ * before → "27 begins in…"; today → "IT'S MY BIRTHDAY 🎂".
+ * Rolls forward to the next year's birthday once the day passes —
+ * never settles into a permanent "after" state.
  */
 export default function Countdown({
   birthdayISO,

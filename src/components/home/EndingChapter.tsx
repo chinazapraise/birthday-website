@@ -102,7 +102,7 @@ export default function EndingChapter({ settings }: { settings: SiteSettings }) 
           </nav>
 
           <div className="flex items-center gap-4 text-xs text-cream/35">
-            <span>2016 — 2026 · Eleven years</span>
+            <span>2016-2026 · Eleven years</span>
             {settings.social?.instagram && (
               <a
                 href={settings.social.instagram}

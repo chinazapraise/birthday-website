@@ -108,6 +108,14 @@ export default function MemoryLightbox({
                   [VIDEO PLACEHOLDER]
                 </span>
               </div>
+            ) : item.url ? (
+              <PhotoPlaceholder
+                label={item.placeholderLabel}
+                aspect={item.type === "artifact" ? "4:5" : "16:9"}
+                className="rounded-none border-0"
+                url={item.url}
+                alt={item.alt}
+              />
             ) : (
               <PhotoPlaceholder
                 label={item.placeholderLabel}
@@ -131,7 +139,7 @@ export default function MemoryLightbox({
             </p>
             {media.length > 1 && (
               <p className="mt-2 text-xs text-cream/40">
-                {index + 1} / {media.length} — swipe or use arrow keys
+                {index + 1} / {media.length} · swipe or use arrow keys
               </p>
             )}
           </div>

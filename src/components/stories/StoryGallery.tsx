@@ -48,7 +48,7 @@ export default function StoryGallery() {
                 {s.title}
               </h3>
               <p className="mt-1 font-hand text-lg text-cream/50">
-                — {s.senderName}
+                · {s.senderName}
               </p>
               <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-cream/60">
                 {s.body}
