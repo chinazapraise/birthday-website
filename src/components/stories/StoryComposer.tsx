@@ -1,11 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { EASE } from "@/lib/motion";
 import type { StorySubmission } from "@/lib/types";
 import { fireConfetti } from "@/components/effects/ConfettiLayer";
 import { cn } from "@/lib/utils";
+import { Image as ImageIcon, X } from "@phosphor-icons/react";
 
 export default function StoryComposer({
   onSubmit,
@@ -18,11 +19,28 @@ export default function StoryComposer({
   const [body, setBody] = useState("");
   const [year, setYear] = useState("");
   const [deny, setDeny] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
   const [visibility, setVisibility] = useState<"public" | "only-tomide">(
     "public",
   );
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const addPhotos = (files: FileList | null) => {
+    if (!files) return;
+    const targets = Array.from(files)
+      .filter((f) => f.type.startsWith("image/"))
+      .slice(0, 3 - photos.length);
+    targets.forEach((f) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const url = String(reader.result);
+        setPhotos((prev) => (prev.length < 3 ? [...prev, url] : prev));
+      };
+      reader.readAsDataURL(f);
+    });
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +56,7 @@ export default function StoryComposer({
       body: body.trim(),
       year: year ? Number(year) : undefined,
       funnyPromptAnswer: deny.trim() || undefined,
-      photos: [],
+      photos,
       anonymous_publicly: visibility === "only-tomide",
     } as StorySubmission);
     setDone(true);
@@ -49,6 +67,7 @@ export default function StoryComposer({
     setBody("");
     setYear("");
     setDeny("");
+    setPhotos([]);
   };
 
   const field =
@@ -157,6 +176,68 @@ export default function StoryComposer({
                   placeholder="Best kept as a whisper"
                   className={field}
                 />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
+                  A photo to go with it (optional)
+                </label>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    addPhotos(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+                {photos.length === 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="flex w-full flex-col items-center gap-2 rounded-xl border border-dashed border-white/20 bg-black/15 px-4 py-6 text-center text-sm text-cream/50 transition hover:border-acid/50 hover:text-cream"
+                  >
+                    <ImageIcon size={22} weight="duotone" className="text-acid/70" />
+                    Drop a picture of the moment (up to 3)
+                  </button>
+                ) : (
+                  <div className="flex flex-wrap gap-3">
+                    {photos.map((p, i) => (
+                      <div
+                        key={i}
+                        className="group relative overflow-hidden rounded-xl border border-white/15"
+                      >
+                        <img
+                          src={p}
+                          alt={`Story photo ${i + 1}`}
+                          className="h-24 w-24 object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPhotos((prev) => prev.filter((_, j) => j !== i))
+                          }
+                          aria-label="Remove photo"
+                          className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/80 text-cream transition hover:bg-magenta"
+                        >
+                          <X size={12} weight="bold" />
+                        </button>
+                      </div>
+                    ))}
+                    {photos.length < 3 && (
+                      <button
+                        type="button"
+                        onClick={() => fileRef.current?.click()}
+                        className="flex h-24 w-24 items-center justify-center rounded-xl border border-dashed border-white/20 text-cream/40 transition hover:border-acid/50 hover:text-cream"
+                        aria-label="Add another photo"
+                      >
+                        <ImageIcon size={20} weight="duotone" />
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="md:col-span-2">

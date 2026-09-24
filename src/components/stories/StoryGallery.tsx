@@ -2,18 +2,20 @@
 
 import { useStories } from "@/lib/hooks";
 import { useState } from "react";
-import { motion } from "framer-motion";
 import type { CommunityStory } from "@/lib/types";
 import StoryReader from "@/components/stories/StoryReader";
-import { EASE } from "@/lib/motion";
-import { formatDate } from "@/lib/utils";
+import MagazineStory from "@/components/stories/MagazineStory";
 
 /**
- * Editorial gallery — Polaroid / book-page motif, opens an immersive reader.
+ * The storybook — every published story becomes a numbered magazine page.
+ * Story 01 is the feature spread; the rest follow as full pages.
  */
 export default function StoryGallery() {
   const { stories } = useStories();
-  const [open, setOpen] = useState<CommunityStory | null>(null);
+  const [open, setOpen] = useState<{
+    story: CommunityStory;
+    number: string;
+  } | null>(null);
 
   if (stories.length === 0) {
     return (
@@ -23,45 +25,50 @@ export default function StoryGallery() {
     );
   }
 
+  const [feature, ...rest] = stories;
+
   return (
     <>
       <section className="mx-auto max-w-5xl px-6 py-12">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {stories.map((s, i) => (
-            <motion.article
+        <div className="mb-8 flex items-center gap-4">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <p className="font-hand text-xl text-cream/50">
+            {stories.length} {stories.length === 1 ? "chapter" : "chapters"} and counting
+          </p>
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        </div>
+
+        <article>
+          <MagazineStory
+            story={feature}
+            number="01"
+            index={0}
+            onOpen={() => setOpen({ story: feature, number: "01" })}
+          />
+        </article>
+
+        <div className="mt-10 grid gap-7 md:grid-cols-2">
+          {rest.map((s, i) => (
+            <MagazineStory
               key={s.id}
-              className="group relative cursor-pointer rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-acid/40"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.6, delay: (i % 3) * 0.08, ease: EASE }}
-              onClick={() => setOpen(s)}
-              style={{ rotate: [-1.5, 1, -0.5, 1.5][i % 4] + "deg" }}
-              whileHover={{ rotate: 0, y: -4 }}
-            >
-              {s.year && (
-                <span className="mb-3 inline-block rounded-full bg-acid/15 px-3 py-1 font-mono text-xs font-bold text-acid">
-                  {s.year}
-                </span>
-              )}
-              <h3 className="font-display text-xl font-bold leading-tight text-cream">
-                {s.title}
-              </h3>
-              <p className="mt-1 font-hand text-lg text-cream/50">
-                · {s.senderName}
-              </p>
-              <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-cream/60">
-                {s.body}
-              </p>
-              <p className="mt-4 text-xs text-cream/35">
-                {s.meetingContext} · {formatDate(s.createdAt)}
-              </p>
-            </motion.article>
+              story={s}
+              number={String(i + 2).padStart(2, "0")}
+              index={i + 1}
+              onOpen={() =>
+                setOpen({ story: s, number: String(i + 2).padStart(2, "0") })
+              }
+            />
           ))}
         </div>
       </section>
 
-      {open && <StoryReader story={open} onClose={() => setOpen(null)} />}
+      {open && (
+        <StoryReader
+          story={open.story}
+          number={open.number}
+          onClose={() => setOpen(null)}
+        />
+      )}
     </>
   );
 }
