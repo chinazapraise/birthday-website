@@ -34,7 +34,12 @@ export default function WishlistExperience() {
   const { items } = useWishlist();
   const { claims, addClaim } = useClaims();
   const { reserves, addReserve } = useReserves();
-  const { contributions, addContribution } = useContributions();
+  const {
+    contributions,
+    addContribution,
+    markSuccessful,
+    markAttempted,
+  } = useContributions();
 
   const [modalItem, setModalItem] = useState<WishlistItem | null>(null);
   const [modalKind, setModalKind] = useState<ModalKind>(null);
@@ -61,7 +66,8 @@ export default function WishlistExperience() {
 
   const handleClaim = (data: {
     name: string;
-    contact?: string;
+    email?: string;
+    phone?: string;
     note?: string;
     quantity: number;
     anonymous: boolean;
@@ -79,7 +85,8 @@ export default function WishlistExperience() {
 
   const handleReserve = (data: {
     name: string;
-    contact?: string;
+    email?: string;
+    phone?: string;
     quantity: number;
     anonymous: boolean;
   }): boolean => {
@@ -89,14 +96,16 @@ export default function WishlistExperience() {
   };
 
   const handleContribute = (data: {
+    name: string;
     email: string;
+    phone?: string;
     amount: number;
     currency: string;
     kind: "contribution" | "gift";
     anonymous: boolean;
   }) => {
-    if (!modalItem) return;
-    addContribution({ wishlistItemId: modalItem.id, ...data });
+    if (!modalItem) return null;
+    return addContribution({ wishlistItemId: modalItem.id, ...data });
   };
 
   return (
@@ -131,7 +140,7 @@ export default function WishlistExperience() {
             transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
           >
             Reserve it if you&apos;re considering it. Claim it if you&apos;re
-            getting it. Contribute if you want to chip in.
+            getting it now. Contribute if you want to support.
           </motion.p>
         </header>
 
@@ -200,6 +209,8 @@ export default function WishlistExperience() {
         <ContributionModal
           item={modalItem}
           onContribute={handleContribute}
+          onMarkAttempted={markAttempted}
+          onMarkSuccessful={markSuccessful}
           onClose={closeModal}
         />
       )}

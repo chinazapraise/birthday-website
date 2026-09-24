@@ -25,7 +25,12 @@ export function giftStats(
 ): GiftStats {
   const c = claims.filter((x) => x.wishlistItemId === item.id);
   const r = reserves.filter((x) => x.wishlistItemId === item.id);
-  const contrib = contributions.filter((x) => x.wishlistItemId === item.id);
+  // Only count confirmed (paid) contributions publicly — records are
+  // written when payment starts, so unpaid intents must not raise the count.
+  const contrib = contributions.filter(
+    (x) =>
+      x.wishlistItemId === item.id && x.paymentStatus === "successful",
+  );
 
   return {
     reserved: r.length,
@@ -65,6 +70,18 @@ function people(n: number): string {
   return plural(n, "person");
 }
 
+function reservedPhrase(n: number): string {
+  return n > 0 ? `${people(n)} reserved this` : "";
+}
+
+function contributedPhrase(n: number): string {
+  return n > 0 ? `${people(n)} contributed` : "";
+}
+
+function giftedPhrase(n: number): string {
+  return n > 0 ? `${n} ${n === 1 ? "person has" : "people have"} gifted this` : "";
+}
+
 export function giftStatusView(
   item: WishlistItem,
   stats: GiftStats,
@@ -72,17 +89,11 @@ export function giftStatusView(
   const kind: GiftKind = item.kind;
 
   if (kind === "cash") {
-    const n = stats.gifted;
-    const proof =
-      n > 0
-        ? n === 1
-          ? "1 person has gifted this"
-          : `${n} people have gifted this`
-        : "";
+    const proof = giftedPhrase(stats.gifted);
     return {
-      primary: "Available",
-      secondary: proof,
-      tone: n > 0 ? "gifted" : "available",
+      primary: proof || "Available",
+      secondary: "",
+      tone: stats.gifted > 0 ? "gifted" : "available",
       claimable: false,
       contributable: true,
       p1: proof,
@@ -91,23 +102,17 @@ export function giftStatusView(
   }
 
   if (kind === "multi") {
-    const reservedTxt =
-      stats.reserved > 0 ? people(stats.reserved) + " reserved" : "";
-    const proof =
-      stats.claims > 0
-        ? stats.claims === 1
-          ? "1 person has gifted this"
-          : `${stats.claims} people have gifted this`
-        : "";
+    const gifted = giftedPhrase(stats.claims);
+    const reserved = reservedPhrase(stats.reserved);
     return {
-      primary: "Available",
-      secondary: proof || reservedTxt,
+      primary: gifted || reserved || "Available",
+      secondary: gifted && reserved ? reserved : "",
       tone:
         stats.claims > 0 ? "gifted" : stats.reserved > 0 ? "reserved" : "available",
       claimable: true,
       contributable: false,
-      p1: proof,
-      p2: reservedTxt,
+      p1: gifted,
+      p2: reserved,
     };
   }
 
@@ -124,33 +129,22 @@ export function giftStatusView(
             ? "Someone gifted this"
             : "Someone claimed this",
       secondary:
-        kind !== "single" && stats.contributed > 0
-          ? people(stats.contributed) + " contributed"
-          : "",
+        stats.contributed > 0
+          ? contributedPhrase(stats.contributed)
+          : reservedPhrase(stats.reserved),
       tone: gifted ? "gifted" : "claimed",
       claimable: false,
-      contributable: kind !== "single" && !gifted,
+      contributable: false,
       p1: gifted ? "gifted" : "claimed",
-      p2:
-        kind !== "single" && stats.contributed > 0
-          ? people(stats.contributed) + " contributed"
-          : "",
+      p2: contributedPhrase(stats.contributed),
     };
   }
 
-  const p1 =
-    stats.reserved > 0
-      ? people(stats.reserved) + " reserved"
-      : stats.contributed > 0
-        ? people(stats.contributed) + " contributed"
-        : "Available";
-  const p2 =
-    stats.reserved > 0 && stats.contributed > 0
-      ? people(stats.contributed) + " contributed"
-      : "";
+  const reserved = reservedPhrase(stats.reserved);
+  const contributed = contributedPhrase(stats.contributed);
   return {
-    primary: stats.reserved > 0 || stats.contributed > 0 ? p1 : "Available",
-    secondary: p2,
+    primary: reserved || contributed || "Available",
+    secondary: reserved && contributed ? contributed : "",
     tone:
       stats.reserved > 0
         ? "reserved"
@@ -159,7 +153,7 @@ export function giftStatusView(
           : "available",
     claimable: true,
     contributable: kind === "expensive" || kind === "trip",
-    p1,
-    p2,
+    p1: reserved,
+    p2: contributed,
   };
 }

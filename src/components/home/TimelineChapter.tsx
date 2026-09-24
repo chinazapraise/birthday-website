@@ -63,10 +63,10 @@ export default function TimelineChapter({
       className="relative py-24 md:py-32"
       aria-labelledby={`year-${entry.year}`}
     >
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 md:grid-cols-2 md:gap-14 md:px-8">
+      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] items-center gap-10 px-5 md:grid-cols-2 md:gap-14 md:px-8">
         {/* Text column */}
         <div
-          className={textFirst ? "md:order-1 md:pr-10" : "md:order-2 md:pl-10"}
+          className={textFirst ? "min-w-0 md:order-1 md:pr-10" : "min-w-0 md:order-2 md:pl-10"}
         >
           <motion.span
             id={`year-${entry.year}`}
@@ -271,68 +271,7 @@ function ChapterMedia({
 }) {
   switch (entry.layoutVariant) {
     case "editorial":
-      return (
-        <div className="space-y-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, ease: EASE }}
-          >
-            <PhotoPlaceholder
-              label={entry.media[0]?.placeholderLabel ?? "PHOTO PLACEHOLDER"}
-              aspect="4:5"
-              onClick={() => onOpen(0)}
-              url={entry.media[0]?.url}
-              alt={entry.media[0]?.alt}
-            />
-          </motion.div>
-          {entry.media[1] && (
-            <motion.div
-              className="md:w-3/4 md:-ml-8"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
-            >
-              <PhotoPlaceholder
-                label={entry.media[1].placeholderLabel}
-                aspect="16:9"
-                onClick={() => onOpen(1)}
-                url={entry.media[1].url}
-                alt={entry.media[1].alt}
-              />
-              <p className="mt-2 font-hand text-lg text-cream/50">
-                {entry.media[1]?.funnyCaption}
-              </p>
-            </motion.div>
-          )}
-
-          {entry.media.slice(2).length > 0 && (
-            <div className="flex flex-wrap gap-4">
-              {entry.media.slice(2).map((m, i) => (
-                <motion.div
-                  key={m.id}
-                  className="md:w-1/2"
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.7, delay: 0.2 + 0.12 * i, ease: EASE }}
-                  whileHover={{ y: -4 }}
-                >
-                  <PhotoPlaceholder
-                    label={m.placeholderLabel}
-                    aspect={m.aspect ?? "4:5"}
-                    onClick={() => onOpen(2 + i)}
-                    url={m.url}
-                    alt={m.alt}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      );
+      return <EditorialMedia entry={entry} accent={accent} onOpen={onOpen} />;
 
     case "polaroid":
       return (
@@ -658,6 +597,124 @@ function PlayGlyph() {
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z" />
       </svg>
+    </div>
+  );
+}
+
+/**
+ * Editorial collage — the "story that reads like a spread" layout.
+ * A large hero at half-width with an overhanging caption tab, a wide
+ * memory strip behind it, then a filmstrip of smaller shots that fans
+ * out beneath. Layered offsets, staggered reveals, real composition.
+ */
+function EditorialMedia({
+  entry,
+  accent,
+  onOpen,
+}: {
+  entry: TimelineYear;
+  accent: string;
+  onOpen: (i: number) => void;
+}) {
+  const [hero, memory, ...rest] = entry.media;
+
+  const reveal = (i: number, delay: number) => ({
+    initial: { opacity: 0, y: 26, scale: 0.98 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    viewport: { once: true, margin: "-60px" },
+    transition: { duration: 0.7, delay, ease: EASE },
+  });
+
+  // Hero + memory form one choreographed pair.
+  return (
+    <div className="relative">
+      {/* A pillar of context: the hero with a caption tab */}
+      <div className="relative flex items-end justify-end gap-4 md:gap-5">
+        <motion.div
+          className="relative w-[62%] -rotate-2 md:w-[60%]"
+          {...reveal(0, 0)}
+          whileHover={{ rotate: 0, scale: 1.01 }}
+        >
+          <PhotoPlaceholder
+            label={hero?.placeholderLabel ?? "PHOTO PLACEHOLDER"}
+            aspect={hero?.aspect ?? "4:5"}
+            className="shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
+            onClick={() => onOpen(0)}
+            url={hero?.url}
+            alt={hero?.alt}
+          />
+          {hero?.funnyCaption && (
+            <div
+              className="absolute -bottom-3 left-3 rotate-1 px-3 py-1 font-hand text-sm text-ink shadow-lg"
+              style={{ background: accent }}
+            >
+              {hero.funnyCaption}
+            </div>
+          )}
+        </motion.div>
+
+        <motion.div
+          className="w-[50%] rotate-1 self-start md:w-[48%]"
+          {...reveal(1, 0.15)}
+          whileHover={{ rotate: 0 }}
+        >
+          <PhotoPlaceholder
+            label={memory?.placeholderLabel ?? "PHOTO PLACEHOLDER"}
+            aspect={memory?.aspect ?? "4:5"}
+            className="opacity-85 border-white/25"
+            onClick={() => onOpen(1)}
+            url={memory?.url}
+            alt={memory?.alt}
+          />
+          <p className="mt-2 truncate font-hand text-lg text-cream/45">
+            {memory?.funnyCaption}
+          </p>
+        </motion.div>
+      </div>
+
+      {/* The filmstrip: smaller memories cascade below */}
+      {entry.media.length > 2 && (
+        <div className="mt-6">
+          <div className="flex flex-wrap justify-end gap-3 md:gap-4">
+            {rest.map((m, i) => {
+              const tilt = i % 2 === 0 ? `rotate-${i % 2 ? 1 : -1}` : `rotate-1`;
+              return (
+                <motion.div
+                  key={m.id}
+                  className={`relative w-[30%] min-w-[5.5rem] ${tilt} md:w-[24%]`}
+                  {...reveal(2 + i, 0.25 + i * 0.12)}
+                  whileHover={{ rotate: 0, y: -5 }}
+                >
+                  <div
+                    className="absolute -left-1.5 -top-1.5 h-4 w-4 rotate-12 rounded-[1px] opacity-80"
+                    style={{ background: accent }}
+                    aria-hidden
+                  />
+                  <PhotoPlaceholder
+                    label={m.placeholderLabel}
+                    aspect="4:5"
+                    className="border-white/10"
+                    onClick={() => onOpen(2 + i)}
+                    url={m.url}
+                    alt={m.alt}
+                  />
+                  <span className="mt-1.5 block truncate font-mono text-[0.55rem] uppercase tracking-[0.2em] text-cream/30">
+                    {entry.year} · {String(i + 1).padStart(2, "0")}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* A faint issue tag to tie the spread together */}
+      <div
+        className="pointer-events-none absolute -top-2 right-0 select-none font-mono text-[0.55rem] uppercase tracking-[0.3em]"
+        style={{ color: `${accent}80` }}
+      >
+        issue · {entry.year}
+      </div>
     </div>
   );
 }

@@ -34,6 +34,67 @@ html {
   background: #07060b;
 }
 
+/* ============================================================
+   MOBILE BASE — touch-first hardening. Desktop is untouched:
+   every rule below is scoped to coarse-pointer / small screens.
+   ============================================================ */
+
+/* Prevent accidental text selection & long-press callouts on UI */
+@media (pointer: coarse) {
+  body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  a,
+  button,
+  [role="button"] {
+    -webkit-touch-callout: none;
+  }
+
+  /* 16px inputs prevent iOS auto-zoom on focus */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Never let a long token blow the layout on narrow screens */
+@supports (overflow-wrap: anywhere) {
+  @media (max-width: 640px) {
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    li,
+    a,
+    span,
+    div {
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
+/* Consume the safe area on fixed overlays/sheets/nav so controls
+   never sit under the home indicator / viewport cutout. */
+@supports (padding: max(0px)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+/* Reduced tap-radii feedback on touch only */
+@media (pointer: coarse) {
+  .btn-snap {
+    touch-action: manipulation;
+  }
+}
+
 html.lenis,
 html.lenis body {
   height: auto;

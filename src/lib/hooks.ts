@@ -11,12 +11,24 @@ import type { GiftClaim } from "@/lib/types";
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
+let hydrated = false;
+
+/** Pull cloud rows into the local cache once on first mount. */
+function hydrateOnce() {
+  if (hydrated) return;
+  hydrated = true;
+  void store.hydrateFromCloud().then(() => {
+    emit();
+  });
+}
+
 export function emit() {
   listeners.forEach((l) => l());
 }
 
 if (typeof window !== "undefined") {
   window.addEventListener("storage", () => emit());
+  if (typeof localStorage !== "undefined") hydrateOnce();
 }
 
 function useStore(): Store {
@@ -117,11 +129,20 @@ export function useReserves() {
 export function useContributions() {
   const addContribution = useCallback(
     (c: Parameters<Store["addContribution"]>[0]) => {
-      store.addContribution(c);
+      const created = store.addContribution(c);
       emit();
+      return created;
     },
     [],
   );
+  const markSuccessful = useCallback((id: string, reference: string) => {
+    store.markPaymentSuccessful(id, reference);
+    emit();
+  }, []);
+  const markAttempted = useCallback((id: string) => {
+    store.markPaymentAttempted(id);
+    emit();
+  }, []);
   const [, force] = useState(0);
   useEffect(() => {
     const l = () => force((n) => n + 1);
@@ -133,6 +154,8 @@ export function useContributions() {
   return {
     contributions: store.getContributions(),
     addContribution,
+    markSuccessful,
+    markAttempted,
   };
 }
 

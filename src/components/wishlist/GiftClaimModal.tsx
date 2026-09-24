@@ -27,14 +27,16 @@ export default function GiftClaimModal({
   canClaim: boolean;
   onClaim: (data: {
     name: string;
-    contact?: string;
+    email?: string;
+    phone?: string;
     note?: string;
     quantity: number;
     anonymous: boolean;
   }) => boolean;
   onReserve: (data: {
     name: string;
-    contact?: string;
+    email?: string;
+    phone?: string;
     quantity: number;
     anonymous: boolean;
   }) => boolean;
@@ -42,7 +44,8 @@ export default function GiftClaimModal({
 }) {
   const [mode, setMode] = useState<Mode>(canClaim ? "claim" : "reserve");
   const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [anonymous, setAnonymous] = useState(false);
@@ -69,7 +72,8 @@ export default function GiftClaimModal({
     if (mode === "claim") {
       const ok = onClaim({
         name: name.trim(),
-        contact: contact.trim() || undefined,
+        email: email.trim() || undefined,
+        phone: phone.trim() || undefined,
         note: note.trim() || undefined,
         quantity: q,
         anonymous,
@@ -87,7 +91,8 @@ export default function GiftClaimModal({
     } else {
       onReserve({
         name: name.trim(),
-        contact: contact.trim() || undefined,
+        email: email.trim() || undefined,
+        phone: phone.trim() || undefined,
         quantity: q,
         anonymous,
       });
@@ -99,23 +104,33 @@ export default function GiftClaimModal({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[150] flex items-center justify-center bg-ink/90 p-4 backdrop-blur-md"
+        className="fixed inset-0 z-[150] flex items-end justify-center bg-ink/90 backdrop-blur-md sm:p-4 md:items-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Claim or reserve ${item.name}`}
       >
         <motion.div
-          className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl border border-white/15 bg-[#100d1c] p-6 md:p-8"
-          initial={{ scale: 0.95, y: 20 }}
-          animate={{ scale: 1, y: 0 }}
-          exit={{ scale: 0.96, opacity: 0 }}
-          transition={{ duration: 0.35, ease: EASE }}
+          className="relative max-h-[92dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-3xl border-t border-white/15 bg-[#100d1c] p-6 pb-10 sm:rounded-t-3xl md:rounded-3xl md:border md:p-8"
+          style={{
+            paddingBottom: "max(2.5rem, env(safe-area-inset-bottom, 0px))",
+          }}
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "100%", opacity: 0 }}
+          transition={{ duration: 0.38, ease: EASE }}
           onClick={(e) => e.stopPropagation()}
         >
+          <span
+            className="absolute left-1/2 top-3 h-1 w-10 -translate-x-1/2 rounded-full bg-white/20 md:hidden"
+            aria-hidden="true"
+          />
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-cream/70 transition hover:border-white/40"
+            className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-cream/70 transition hover:border-white/40"
             aria-label="Close"
           >
             <X size={16} />
@@ -223,18 +238,35 @@ export default function GiftClaimModal({
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    autoComplete="name"
                     placeholder="Name"
                     className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-magenta focus:outline-none"
                   />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
-                    Email / phone (optional)
+                    Email <span className="text-cream/35">(recommended)</span>
                   </label>
                   <input
-                    value={contact}
-                    onChange={(e) => setContact(e.target.value)}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
                     placeholder="So I can say thank you properly"
+                    className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-magenta focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
+                    Phone <span className="text-cream/35">(recommended)</span>
+                  </label>
+                  <input
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder="WhatsApp number, in case…"
                     className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-magenta focus:outline-none"
                   />
                 </div>
@@ -261,9 +293,7 @@ export default function GiftClaimModal({
                     className="h-4 w-4 accent-magenta"
                   />
                   <span className="text-xs leading-snug text-cream/55">
-                    {mode === "claim"
-                      ? "Stay anonymous. Tomide won't know you gave this."
-                      : "Stay anonymous. Tomide won't know you reserved this."}
+                    Stay anonymous. The gift still shows on the board — your name just won&apos;t.
                   </span>
                 </label>
 

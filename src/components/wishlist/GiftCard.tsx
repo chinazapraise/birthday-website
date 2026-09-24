@@ -134,12 +134,12 @@ export default function GiftCard({
           </p>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
           {item.kind !== "cash" && (
             <button
               onClick={onGet}
               disabled={!view.claimable}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-white/20 px-4 py-3 text-xs font-bold uppercase tracking-wider text-cream transition hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-white/20 px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-cream transition hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-40 sm:py-3"
             >
               <HandHeart size={15} weight="bold" />
               {view.claimable ? actionLabel(item) : view.primary}
@@ -148,7 +148,7 @@ export default function GiftCard({
           {hasContribute && (
             <button
               onClick={onContribute}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r px-4 py-3 text-xs font-bold uppercase tracking-wider transition-transform hover:scale-[1.02] ${
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r px-4 py-3.5 text-xs font-bold uppercase tracking-wider transition-transform hover:scale-[1.02] sm:py-3 ${
                 isCash
                   ? "from-gold to-sunset text-ink"
                   : "from-violet/90 to-magenta/90 text-cream"

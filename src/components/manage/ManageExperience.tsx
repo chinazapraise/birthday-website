@@ -254,6 +254,9 @@ export default function ManageExperience() {
               const itemClaims = claims.filter(
                 (c) => c.wishlistItemId === item.id,
               );
+              const itemReserves = reserves.filter(
+                (r) => r.wishlistItemId === item.id,
+              );
               const itemContribs = contributions.filter(
                 (c) => c.wishlistItemId === item.id,
               );
@@ -285,8 +288,10 @@ export default function ManageExperience() {
                         >
 <span className="text-magenta">
                           {c.anonymous
-                            ? "Anonymous"
-                            : `${c.name}${c.contact ? ` (${c.contact})` : ""}`}
+                            ? "Someone"
+                            : `${c.name}${c.email ? ` (${c.email})` : ""}${
+                                c.phone ? ` · ${c.phone}` : ""
+                              }`}
                         </span>
                         {c.anonymous && (
                           <span className="rounded-full border border-magenta/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-magenta">
@@ -314,11 +319,39 @@ export default function ManageExperience() {
                           {itemContribs
                             .map((c) =>
                               `₦${c.amount.toLocaleString()}${
-                                c.anonymous ? " · anonymous (identity hidden)" : ""
+                                c.anonymous
+                                  ? " · someone (identity hidden)"
+                                  : ` · ${c.name}${
+                                      c.email ? ` <${c.email}>` : ""
+                                    }${
+                                      c.phone ? ` · ${c.phone}` : ""
+                                    }`
+                              }${
+                                c.paymentStatus === "successful"
+                                  ? " · paid"
+                                  : " · pending"
                               }`,
                             )
-                            .join(", ")}{" "}
-                          · pending
+                            .join(", ")}
+                        </p>
+                      )}
+                      {itemReserves.length > 0 && (
+                        <p className="mt-2 text-xs text-cream/40">
+                          {itemReserves.length} reserve
+                          {itemReserves.length === 1 ? "" : "s"} ·{" "}
+                          {itemReserves
+                            .map((r) =>
+                              `qty ${r.quantity}${
+                                r.anonymous
+                                  ? " · someone (identity hidden)"
+                                  : ` · ${r.name}${
+                                      r.email ? ` <${r.email}>` : ""
+                                    }${
+                                      r.phone ? ` · ${r.phone}` : ""
+                                    }`
+                              }`,
+                            )
+                            .join(", ")}
                         </p>
                       )}
                     </div>

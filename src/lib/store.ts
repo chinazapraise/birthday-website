@@ -6,6 +6,17 @@ import {
   wishlistSeed,
   siteSettingsSeed,
 } from "@/lib/content/site";
+import {
+  pullClaims,
+  pullReserves,
+  pullContributions,
+  pushClaim,
+  pushClaimUpdate,
+  pushReserve,
+  pushContribution,
+  pushContributionPaid,
+  isExclusiveItem,
+} from "@/lib/cloudSync";
 import type {
   Wish,
   CommunityStory,
@@ -195,6 +206,7 @@ export const store = {
     const claims = read<GiftClaim[]>(K.claims, []);
     claims.push(full);
     write(K.claims, claims);
+    void pushClaim(full, isExclusiveItem(item));
     return full;
   },
 
@@ -216,6 +228,7 @@ export const store = {
     };
     reserves.push(full);
     write(K.reserves, reserves);
+    void pushReserve(full);
     return full;
   },
 
@@ -224,6 +237,7 @@ export const store = {
       c.id === id ? { ...c, ...patch } : c,
     );
     write(K.claims, claims);
+    void pushClaimUpdate(id, patch);
     return claims;
   },
 
@@ -239,15 +253,18 @@ export const store = {
       Contribution,
       "id" | "createdAt" | "paymentStatus"
     >,
-  ): void {
+  ): Contribution {
     const all = read<Contribution[]>(K.contributions, []);
-    all.push({
+    const full: Contribution = {
       ...contribution,
       id: uid(),
       paymentStatus: "initiated",
       createdAt: new Date().toISOString(),
-    });
+    };
+    all.push(full);
     write(K.contributions, all);
+    void pushContribution(full);
+    return full;
   },
 
   markPaymentAttempted(id: string): void {
@@ -259,8 +276,38 @@ export const store = {
     write(K.contributions, all);
   },
 
+  markPaymentSuccessful(id: string, reference: string): void {
+    const all = read<Contribution[]>(K.contributions, []).map((c) =>
+      c.id === id
+        ? {
+            ...c,
+            paymentStatus: "successful" as const,
+            paymentReference: reference,
+          }
+        : c,
+    );
+    write(K.contributions, all);
+    void pushContributionPaid(id, reference);
+  },
+
   getSettings(): SiteSettings {
     return loadSettings();
+  },
+
+  /**
+   * Pull the cloud rows into the local cache once at startup so wishlist
+   * numbers reflect every device. Best-effort — on any failure the local
+   * cache stays as-is and the app keeps working.
+   */
+  async hydrateFromCloud(): Promise<void> {
+    const [cloudClaims, cloudReserves, cloudContribs] = await Promise.all([
+      pullClaims(),
+      pullReserves(),
+      pullContributions(),
+    ]);
+    if (cloudClaims.length) write(K.claims, cloudClaims);
+    if (cloudReserves.length) write(K.reserves, cloudReserves);
+    if (cloudContribs.length) write(K.contributions, cloudContribs);
   },
 
   updateSettings(patch: Partial<SiteSettings>): SiteSettings {

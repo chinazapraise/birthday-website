@@ -119,13 +119,17 @@ export interface WishlistItem {
 
 /**
  * Reserve = "I'm interested." Never blocks. Anyone can reserve.
- * anonymous = keep identity private. Hidden from Tomide too.
+ * anonymous = keep identity private: the record still shows on the
+ * admin board, just with the identity masked. Fields:
+ *   name  — required on the form (but we never reveal it publicly).
+ *   email/phone — optional ("recommended").
  */
 export interface GiftReserve {
   id: string;
   wishlistItemId: string;
   name: string;
-  contact?: string;
+  email?: string;
+  phone?: string;
   quantity: number;
   anonymous: boolean;
   createdAt: string;
@@ -133,13 +137,17 @@ export interface GiftReserve {
 
 /**
  * Claim = "I'm getting this." Blocks single/expensive/trip gifts.
- * anonymous = keep identity private. Hidden from Tomide too.
+ * anonymous = keep identity private: the record still shows on the
+ * admin board, just with the identity masked. Fields:
+ *   name  — required on the form.
+ *   email/phone — optional ("recommended").
  */
 export interface GiftClaim {
   id: string;
   wishlistItemId: string;
   name: string;
-  contact?: string;
+  email?: string;
+  phone?: string;
   note?: string;
   quantity: number;
   gifted: boolean;
@@ -151,12 +159,16 @@ export interface GiftClaim {
  * Contribution = money toward an expensive/trip gift, or a cash gift.
  * kind "contribution" → "X people contributed".
  * kind "gift"        → cash gifts, "X people gifted this".
- * anonymous = keep identity private. Hidden from Tomide too.
+ * anonymous = keep identity private: the record still shows on the
+ * admin board, just with the identity masked. Email is required on the
+ * form (Paystack needs it for the receipt) but is never revealed publicly.
  */
 export interface Contribution {
   id: string;
   wishlistItemId: string;
+  name: string;
   email: string;
+  phone?: string;
   amount: number;
   currency: string;
   kind: "contribution" | "gift";
