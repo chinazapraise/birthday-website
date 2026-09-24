@@ -109,7 +109,7 @@ export default function StoryComposer({
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="The one where you…"
+                  placeholder="What would you call this chapter?"
                   className={field}
                 />
               </div>
@@ -128,32 +128,32 @@ export default function StoryComposer({
 
               <div>
                 <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
-                  Where / how did we meet?
+                  How do you know me?
                 </label>
                 <input
                   value={meeting}
                   onChange={(e) => setMeeting(e.target.value)}
-                  placeholder="School, church, work, a random bus…"
+                  placeholder="Where did we meet, and how did we end up knowing each other?"
                   className={field}
                 />
               </div>
 
               <div className="md:col-span-2">
                 <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
-                  Tell the story <span className="text-acid">*</span>
+                  Tell me what happened <span className="text-acid">*</span>
                 </label>
                 <textarea
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                   rows={6}
-                  placeholder="The full chapter. Don’t leave out the parts I’ll deny."
+                  placeholder="Take me back to the moment. What happened? What do you remember? What made it funny, meaningful, strange, or worth remembering? Tell the story the way you remember it."
                   className={cn(field, "resize-none")}
                 />
               </div>
 
               <div>
                 <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
-                  Year it happened (optional)
+                  When did this happen? (optional)
                 </label>
                 <input
                   value={year}
@@ -161,19 +161,19 @@ export default function StoryComposer({
                   type="number"
                   min={2000}
                   max={2026}
-                  placeholder="2020"
+                  placeholder="e.g. 2020"
                   className={field}
                 />
               </div>
 
               <div>
                 <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
-                  Something Tomide will probably deny 😂 (optional)
+                  Something from the story I’ll probably deny 😂 (optional)
                 </label>
                 <input
                   value={deny}
                   onChange={(e) => setDeny(e.target.value)}
-                  placeholder="Best kept as a whisper"
+                  placeholder="This is your chance to put it on record."
                   className={field}
                 />
               </div>
@@ -242,7 +242,7 @@ export default function StoryComposer({
 
               <div className="md:col-span-2">
                 <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
-                  Who can see it?
+                  Who can see your story?
                 </label>
                 <div className="flex gap-2">
                   <button
@@ -255,7 +255,7 @@ export default function StoryComposer({
                         : "border-white/15 text-cream/50",
                     )}
                   >
-                    Public · everyone sees it
+                    Public · Everyone can read it
                   </button>
                   <button
                     type="button"
@@ -267,7 +267,7 @@ export default function StoryComposer({
                         : "border-white/15 text-cream/50",
                     )}
                   >
-                    Only Tomide
+                    Only Tomide · Just for me
                   </button>
                 </div>
               </div>
@@ -283,7 +283,7 @@ export default function StoryComposer({
               type="submit"
               className="w-full rounded-full bg-gradient-to-r from-acid via-violet to-magenta px-6 py-4 font-display text-sm font-bold uppercase tracking-widest text-ink shadow-[0_0_40px_rgba(34,211,238,0.25)] transition-transform hover:scale-[1.01]"
             >
-              Add your chapter
+              Add Your Chapter
             </button>
           </motion.form>
         )}

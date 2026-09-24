@@ -28,7 +28,7 @@ export default function StoriesExperience() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            Your Stories
+            The Storybook
           </motion.p>
           <motion.h1
             className="mt-3 font-display text-4xl font-black text-cream md:text-6xl"
@@ -44,7 +44,9 @@ export default function StoriesExperience() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
           >
-            Everybody knows a different version of me. Tell me yours.
+            We’ve crossed paths somewhere along the way, and there’s probably a
+            story in there. Something funny, meaningful, chaotic, random, or
+            unforgettable.
           </motion.p>
         </header>
 
