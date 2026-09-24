@@ -35,18 +35,6 @@ export default function HeroExperience({
 
   return (
     <section className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 text-center">
-      <motion.div
-        className="pointer-events-none absolute inset-0 opacity-[0.14]"
-        aria-hidden
-      >
-        <motion.div
-          className="absolute left-1/2 top-1/2 h-[46vmin] w-[34vmin] rounded-3xl border border-white/10 bg-gradient-to-br from-violet/50 via-magenta/30 to-sunset/40"
-          style={{ transform: "rotate(-3deg)" }}
-          animate={{ scale: [1, 1.035, 1], rotate: [-3, -5, -3] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </motion.div>
-
       <motion.p
         className="font-hand text-xl text-cream/60"
         initial={{ opacity: 0, y: 12 }}

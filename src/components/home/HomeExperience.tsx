@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import type { SiteSettings, TimelineYear, MicroMemory } from "@/lib/types";
 import Preloader from "@/components/home/Preloader";
 import HeroExperience from "@/components/home/HeroExperience";
+import PhotoFan from "@/components/home/PhotoFan";
 import Timeline from "@/components/home/Timeline";
 import PresentDay from "@/components/home/PresentDay";
 import PeopleMosaic from "@/components/home/PeopleMosaic";
@@ -67,6 +68,8 @@ export default function HomeExperience({ settings, years, memories }: Props) {
           onNext={() => {}}
           timelineRef={timelineRef as React.RefObject<HTMLElement | null>}
         />
+
+        <PhotoFan />
 
         <div ref={timelineRef} onClick={handle27Click}>
           <Timeline years={years} memories={memories} />
