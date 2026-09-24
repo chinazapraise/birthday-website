@@ -20,6 +20,7 @@ const ROTATIONS = [-1.2, 0.9, -0.6, 1.4, -1, 0.5];
  * Editorial magazine page. `variant="card"` is the tappable tile;
  * `variant="spread"` is the full readable page inside the reader.
  * Photos are woven in as a montage, never dumped as a plain grid.
+ * `compact` tightens typography so long stories fit one page.
  */
 export default function MagazineStory({
   story,
@@ -27,12 +28,14 @@ export default function MagazineStory({
   onOpen,
   variant = "card",
   index = 0,
+  compact = false,
 }: {
   story: CommunityStory;
   number: string;
   onOpen?: () => void;
   variant?: "card" | "spread";
   index?: number;
+  compact?: boolean;
 }) {
   const a = ACCENTS[index % ACCENTS.length];
   const rot = ROTATIONS[index % ROTATIONS.length];
@@ -48,8 +51,8 @@ export default function MagazineStory({
         isCard &&
           "group flex flex-col shadow-lg transition hover:border-white/25 hover:shadow-[0_0_45px_rgba(139,92,246,0.15)] md:p-7",
       )}
-      initial={{ opacity: 0, y: 26 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={isCard ? { opacity: 0, y: 26 } : undefined}
+      whileInView={isCard ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.6, ease: EASE }}
       style={isCard ? { rotate: `${rot}deg` } : undefined}
@@ -82,7 +85,14 @@ export default function MagazineStory({
           {story.year && <span className="border-l border-white/15 pl-3">{story.year}</span>}
         </div>
 
-        <h3 className="mt-2 font-display text-xl font-bold leading-tight text-cream md:text-[1.7rem]">
+        <h3
+          className={cn(
+            "mt-2 font-display font-bold leading-tight text-cream",
+            compact
+              ? "text-lg md:text-2xl"
+              : "text-xl md:text-[1.7rem]",
+          )}
+        >
           {story.title}
         </h3>
 
@@ -93,14 +103,21 @@ export default function MagazineStory({
 
       {story.photos.length > 0 && (
         <div className="relative z-10 mt-5">
-          <PhotoMontage photos={story.photos} title={story.title} />
+          <PhotoMontage
+            photos={story.photos}
+            title={story.title}
+            compact={compact}
+          />
         </div>
       )}
 
       <div
         className={cn(
-          "relative z-10 mt-5 text-sm leading-relaxed text-cream/70",
-          isCard ? "line-clamp-4 md:line-clamp-5" : "text-[0.95rem] md:text-base md:leading-8",
+          "relative z-10 mt-5 leading-relaxed text-cream/70",
+          compact
+            ? "text-sm md:leading-7"
+            : "md:leading-8",
+          isCard ? "line-clamp-4 text-sm md:line-clamp-5" : "text-[0.95rem] md:text-base",
         )}
       >
         {story.body.split("\n").map((p, i) => (
@@ -135,14 +152,24 @@ export default function MagazineStory({
   );
 }
 
-function PhotoMontage({ photos, title }: { photos: string[]; title: string }) {
+function PhotoMontage({
+  photos,
+  title,
+  compact = false,
+}: {
+  photos: string[];
+  title: string;
+  compact?: boolean;
+}) {
+  const s = compact ? "h-28 md:h-36" : "h-40 md:h-52";
+  const s2 = compact ? "h-20 md:h-28" : "h-32 md:h-44";
   if (photos.length === 1) {
     return (
       <div className="-rotate-[1.2deg] overflow-hidden rounded-lg border border-white/15 shadow-lg">
         <img
           src={photos[0]}
           alt={`From the story ${title}`}
-          className="h-40 w-full object-cover transition-transform duration-700 group-hover:scale-[1.04] md:h-52"
+          className={`${s} w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]`}
         />
       </div>
     );
@@ -153,12 +180,12 @@ function PhotoMontage({ photos, title }: { photos: string[]; title: string }) {
         <img
           src={photos[0]}
           alt={`From the story ${title}`}
-          className="h-32 w-full -rotate-1 rounded-lg border border-white/15 object-cover shadow-md md:h-44"
+          className={`${s2} w-full -rotate-1 rounded-lg border border-white/15 object-cover shadow-md`}
         />
         <img
           src={photos[1]}
           alt={`From the story ${title}`}
-          className="h-32 w-full rotate-1 rounded-lg border border-white/15 object-cover shadow-md md:h-44"
+          className={`${s2} w-full rotate-1 rounded-lg border border-white/15 object-cover shadow-md`}
         />
       </div>
     );
@@ -168,18 +195,18 @@ function PhotoMontage({ photos, title }: { photos: string[]; title: string }) {
       <img
         src={photos[0]}
         alt={`From the story ${title}`}
-        className="h-32 w-2/3 rounded-lg border border-white/15 object-cover shadow-md md:h-44"
+        className={`${s2} w-2/3 rounded-lg border border-white/15 object-cover shadow-md`}
       />
       <div className="flex w-1/3 flex-col gap-2">
         <img
           src={photos[1]}
           alt={`From the story ${title}`}
-          className="h-1/2 w-full rounded-lg border border-white/15 object-cover shadow-md"
+          className={`${s2} w-full rounded-lg border border-white/15 object-cover shadow-md`}
         />
         <img
           src={photos[2]}
           alt={`From the story ${title}`}
-          className="h-1/2 w-full rounded-lg border border-white/15 object-cover shadow-md"
+          className={`${s2} w-full rounded-lg border border-white/15 object-cover shadow-md`}
         />
       </div>
     </div>
