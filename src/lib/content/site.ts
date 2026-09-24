@@ -1,0 +1,142 @@
+import type { SiteSettings, WishlistItem, Wish, CommunityStory } from "@/lib/types";
+
+export const siteSettingsSeed: SiteSettings = {
+  siteTitle: "TOMIDE / 27",
+  heroCopy: {
+    headline: "27",
+    subline: "A lot happened before we got here.",
+    supporting: "2016 — 2026. The story so far.",
+    cta: "Start my story",
+    skip: "Skip to the birthday",
+  },
+  birthdayDate: "2026-09-24T12:00:00",
+  birthdayTimezone: "Africa/Lagos",
+  countdownMode: "countdown",
+  birthdayLockMode: false,
+  subscriptionsPaused: false,
+  social: {
+    instagram: "https://instagram.com",
+    linkedin: "https://linkedin.com",
+    twitter: "https://x.com",
+    whatsapp: "https://wa.me/",
+  },
+  wishlistTitle: "27 things I'd love.",
+  wishlistCopy: "No pressure. But since you asked… 😌",
+  people: [
+    {
+      id: "p-1",
+      name: "[PERSON 01]",
+      role: "[RELATIONSHIP / ROLE]",
+      sentence: "[ONE SHORT SENTENCE]",
+      years: [2024],
+    },
+    {
+      id: "p-2",
+      name: "[PERSON 02]",
+      role: "[RELATIONSHIP / ROLE]",
+      sentence: "[ONE SHORT SENTENCE]",
+      years: [2020],
+    },
+    {
+      id: "p-3",
+      name: "[PERSON 03]",
+      role: "[RELATIONSHIP / ROLE]",
+      sentence: "[ONE SHORT SENTENCE]",
+      years: [2021],
+    },
+  ],
+  endingGratitude:
+    "Thank you for eight years of memories, lessons, laughter, and patience. This is yours as much as it is mine.",
+};
+
+export const wishlistSeed: WishlistItem[] = [
+  {
+    id: "g-1",
+    name: "[GIFT NAME 01]",
+    description: "[Short description of what this is and why it matters.]",
+    funnyNote: "[optional funny note]",
+    price: 50000,
+    currency: "NGN",
+    targetAmount: 50000,
+    amountConfirmed: 0,
+    quantity: 1,
+    quantityReserved: 0,
+    allowClaim: true,
+    allowContribution: true,
+    status: "available",
+    sortOrder: 1,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "g-2",
+    name: "[GIFT NAME 02]",
+    description: "[Short description of what this is and why it matters.]",
+    funnyNote: "[optional funny note]",
+    price: 120000,
+    currency: "NGN",
+    targetAmount: 120000,
+    amountConfirmed: 0,
+    quantity: 1,
+    quantityReserved: 0,
+    allowClaim: true,
+    allowContribution: true,
+    status: "available",
+    sortOrder: 2,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "g-3",
+    name: "[GIFT NAME 03]",
+    description: "[Short description of what this is and why it matters.]",
+    funnyNote: "[optional funny note]",
+    price: 25000,
+    currency: "NGN",
+    targetAmount: 25000,
+    amountConfirmed: 0,
+    quantity: 2,
+    quantityReserved: 0,
+    allowClaim: false,
+    allowContribution: true,
+    status: "available",
+    sortOrder: 3,
+    createdAt: new Date().toISOString(),
+  },
+];
+
+export const wishesSeed: Wish[] = [
+  {
+    id: "w-seed-1",
+    senderName: "A friend from the start",
+    relationship: "friends",
+    message:
+      "Those eight years went fast. May the next chapter be the one you look back on and smile hardest about. Happy birthday, Tomide.",
+    anonymous: false,
+    status: "published",
+    createdAt: "2026-09-20T10:00:00Z",
+  },
+  {
+    id: "w-seed-2",
+    senderName: "Anonymous",
+    relationship: undefined,
+    message: "Whatever 27 brings, I hope it brings you peace and good people. You deserve both.",
+    anonymous: true,
+    status: "published",
+    createdAt: "2026-09-21T14:30:00Z",
+  },
+];
+
+export const storiesSeed: CommunityStory[] = [
+  {
+    id: "s-seed-1",
+    senderName: "[STORY SENDER 01]",
+    meetingContext: "[where/how we met]",
+    title: "[STORY TITLE PLACEHOLDER]",
+    body: "[STORY PLACEHOLDER — tell the story here.]",
+    year: 2020,
+    funnyPromptAnswer: "[OPTIONAL — something Tomide will deny 😂]",
+    photos: [],
+    status: "published",
+    featured: false,
+    createdAt: "2026-09-19T09:00:00Z",
+  },
+];
