@@ -6,6 +6,7 @@ import type { TimelineYear } from "@/lib/types";
 import PhotoPlaceholder from "@/components/ui/PhotoPlaceholder";
 import MemoryLightbox from "@/components/shared/MemoryLightbox";
 import FloatingNav from "@/components/nav/FloatingNav";
+import ConfettiLayer from "@/components/effects/ConfettiLayer";
 import { EASE } from "@/lib/motion";
 import { mergeTimelineMedia } from "@/lib/timelineMedia";
 import { useTimelineMedia } from "@/lib/hooks";
@@ -50,6 +51,7 @@ export default function GalleryExperience({
 
   return (
     <main className="relative min-h-[100dvh] px-6 pb-28 pt-28">
+      <ConfettiLayer />
       <FloatingNav />
       <div className="mx-auto max-w-6xl">
         <motion.p

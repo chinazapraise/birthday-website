@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import MagazineStory from "@/components/stories/MagazineStory";
 import { EASE } from "@/lib/motion";
+import { fireConfettiAtPoint } from "@/components/effects/ConfettiLayer";
 import { cn } from "@/lib/utils";
 import {
   CaretLeft,
@@ -102,7 +103,8 @@ export default function StoryGallery() {
               <motion.button
                 key="cover"
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  fireConfettiAtPoint(e, 18);
                   setDir(1);
                   setPage(0);
                   setOpen(true);

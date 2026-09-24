@@ -27,7 +27,7 @@ export default function Countdown({
   useEffect(() => {
     if (cd.state === "today" && !celebratedRef.current) {
       celebratedRef.current = true;
-      fireConfetti("rain");
+      fireConfetti("rain", { balloons: 3 });
     }
   }, [cd.state]);
 

@@ -59,7 +59,7 @@ export default function WishComposer({
         anonymous: anon,
       });
       setState("sealed");
-      fireConfetti("rain");
+      fireConfetti("rain", { balloons: 4 });
     }, 1400);
   };
 

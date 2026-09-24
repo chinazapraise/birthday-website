@@ -146,6 +146,62 @@ html {
   }
 }
 
+/* Celebratory balloons — the ConfettiLayer spawns these for big moments */
+.balloon {
+  position: absolute;
+  bottom: -150px;
+  width: var(--b-size);
+  pointer-events: none;
+  will-change: transform;
+  animation: balloon-rise var(--b-dur) linear var(--b-delay) both;
+}
+.balloon-body {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1.18;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background:
+    radial-gradient(38% 30% at 32% 26%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 60%),
+    var(--b-color);
+  box-shadow:
+    inset -8px -12px 24px rgba(0, 0, 0, 0.22),
+    0 14px 34px rgba(0, 0, 0, 0.28);
+}
+.balloon-string {
+  display: block;
+  width: 1px;
+  height: calc(var(--b-size) * 0.95);
+  margin: -2px auto 0;
+  background: rgba(247, 239, 223, 0.35);
+  border-radius: 1px;
+}
+@keyframes balloon-rise {
+  0% {
+    transform: translate(0, 0) rotate(var(--b-tilt));
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  60% {
+    transform: translate(calc(var(--b-drift) * 0.6), -74vh) rotate(var(--b-tilt));
+  }
+  100% {
+    transform: translate(var(--b-drift), -120vh) rotate(var(--b-tilt));
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-x {
+    animation: none;
+  }
+  .balloon {
+    animation: none;
+    display: none;
+  }
+}
+
 .param-line {
   transform-origin: 50% 50%;
 }

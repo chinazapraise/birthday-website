@@ -5,6 +5,7 @@ import { X, CaretLeft, CaretRight, Play } from "@phosphor-icons/react";
 import { useEffect } from "react";
 import type { TimelineMedia } from "@/lib/types";
 import PhotoPlaceholder from "@/components/ui/PhotoPlaceholder";
+import { fireConfetti } from "@/components/effects/ConfettiLayer";
 
 /**
  * Immersive lightbox with caption, prev/next, keyboard + swipe.
@@ -23,6 +24,10 @@ export default function MemoryLightbox({
   onIndexChange: (i: number) => void;
 }) {
   const item = media[index];
+
+  useEffect(() => {
+    fireConfetti("burst", { y: window.innerHeight * 0.32, count: 22 });
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

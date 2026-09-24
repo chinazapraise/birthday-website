@@ -76,7 +76,7 @@ export default function GiftClaimModal({
       });
       if (ok) {
         setDone("claim");
-        fireConfetti("burst");
+        fireConfetti("burst", { count: 70, balloons: 4 });
       } else {
         setError(
           item.kind === "trip"
@@ -92,6 +92,7 @@ export default function GiftClaimModal({
         anonymous,
       });
       setDone("reserve");
+      fireConfetti("burst", { count: 26 });
     }
   };
 

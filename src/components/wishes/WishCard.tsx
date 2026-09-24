@@ -46,7 +46,7 @@ export default function WishCard({
   const reveal = () => {
     if (open) return;
     setOpen(true);
-    fireConfetti("burst");
+    fireConfetti("burst", { count: 30 });
   };
 
   return (

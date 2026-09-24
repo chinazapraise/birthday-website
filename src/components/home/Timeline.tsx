@@ -46,7 +46,7 @@ export default function Timeline({
   return (
     <section id="timeline" className="relative">
       {/* Timeline intro */}
-      <div className="mx-auto max-w-3xl px-6 pb-16 pt-28 text-center md:pt-36">
+      <div className="mx-auto max-w-3xl px-6 pb-16 pt-12 text-center md:pt-24">
         <motion.p
           className="font-hand text-2xl text-cream/50 md:text-3xl"
           initial={{ opacity: 0 }}

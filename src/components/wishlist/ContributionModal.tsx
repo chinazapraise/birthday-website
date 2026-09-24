@@ -6,6 +6,7 @@ import { X, ArrowRight, LockKey } from "@phosphor-icons/react";
 import type { WishlistItem } from "@/lib/types";
 import { formatNaira } from "@/lib/utils";
 import { EASE } from "@/lib/motion";
+import { fireConfetti } from "@/components/effects/ConfettiLayer";
 
 type Step = "amount" | "pay" | "done" | "note";
 
@@ -75,6 +76,7 @@ export default function ContributionModal({
       });
       setProcessing(false);
       setStep(isCash ? "done" : "note");
+      fireConfetti("burst", { count: 60, balloons: 4 });
     }, 900);
   };
 

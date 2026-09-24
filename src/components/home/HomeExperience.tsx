@@ -29,23 +29,17 @@ export default function HomeExperience({ settings, years, memories }: Props) {
 
   const onReady = useCallback(() => {
     setReady(true);
-    // First-visit celebration: once per browser, right after the loader
-    // finishes and the homepage reveals, fire an amplified grand confetti.
-    try {
-      if (localStorage.getItem("bday.firstVisit") === "1") return;
-      localStorage.setItem("bday.firstVisit", "1");
-      window.setTimeout(() => fireConfetti("grand"), 600);
-    } catch {
-      /* storage unavailable — skip celebration */
-    }
+    // Entrance celebration: every time the homepage reveals — first visit
+    // or any refresh — a big full-screen confetti + balloon burst.
+    window.setTimeout(() => fireConfetti("grand", { balloons: 12 }), 600);
   }, []);
 
-  // Easter egg: click "27" 7 times → mini confetti burst
+  // Easter egg: click "27" 7 times → celebratory burst with balloons
   const handle27Click = () => {
     clickCount.current += 1;
     if (clickCount.current >= 7) {
       clickCount.current = 0;
-      fireConfetti("burst");
+      fireConfetti("burst", { count: 60, balloons: 4 });
     }
   };
 

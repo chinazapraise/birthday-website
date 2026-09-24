@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ArrowRight } from "@phosphor-icons/react";
 import { EASE, DUR } from "@/lib/motion";
 import MagneticButton from "@/components/ui/MagneticButton";
+import { fireConfettiAtPoint } from "@/components/effects/ConfettiLayer";
 import type { SiteSettings } from "@/lib/types";
 
 interface HeroProps {
@@ -87,7 +88,10 @@ export default function HeroExperience({
             >
               <MagneticButton>
                 <button
-                  onClick={beginStory}
+                  onClick={(e) => {
+                    fireConfettiAtPoint(e, 26);
+                    beginStory();
+                  }}
                   className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-violet via-magenta to-sunset px-8 py-4 font-display text-sm font-bold uppercase tracking-widest text-ink shadow-[0_0_50px_rgba(244,63,158,0.35)] transition-transform hover:scale-[1.03]"
                 >
                   {settings.heroCopy.cta}

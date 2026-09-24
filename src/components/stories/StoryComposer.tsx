@@ -60,7 +60,7 @@ export default function StoryComposer({
       anonymous_publicly: visibility === "only-tomide",
     } as StorySubmission);
     setDone(true);
-    fireConfetti("burst");
+    fireConfetti("rain", { balloons: 4 });
     setName("");
     setMeeting("");
     setTitle("");
