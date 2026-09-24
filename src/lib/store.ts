@@ -27,7 +27,10 @@ import type {
 
 const K = {
   wishes: "birthday.wishes",
-  stories: "birthday.stories",
+  // v2: seed now carries two real sample stories so the magazine
+  // reads properly out of the box; bump forces everyone to the
+  // fresh seed (no stale placeholder snapshots).
+  stories: "birthday.stories.v2",
   // v2: seed gained per-gift funny one-liners; bumps force everyone to
   // the fresh seed and release every gift (no stale local snapshots).
   wishlist: "birthday.wishlist.v2",
