@@ -44,6 +44,8 @@ function compactNaira(amount: number): string {
 export default function GiftCard({
   item,
   index,
+  number,
+  outcast,
   claims,
   reserves,
   contributions,
@@ -52,6 +54,8 @@ export default function GiftCard({
 }: {
   item: WishlistItem;
   index: number;
+  number?: string;
+  outcast?: boolean;
   claims: GiftClaim[];
   reserves: GiftReserve[];
   contributions: Contribution[];
@@ -66,7 +70,11 @@ export default function GiftCard({
 
   return (
     <motion.article
-      className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-gold/40"
+      className={`group flex flex-col justify-between overflow-hidden rounded-3xl border bg-white/[0.03] p-6 transition ${
+        outcast
+          ? "border-dashed border-white/25 hover:border-gold/40"
+          : "border-white/10 hover:border-gold/40"
+      }`}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -77,9 +85,16 @@ export default function GiftCard({
           <h3 className="font-display text-xl font-bold text-cream">
             {item.name}
           </h3>
-          <span className="shrink-0 text-gold">
-            <Gift size={22} weight="duotone" />
-          </span>
+          <div className="flex shrink-0 items-center gap-2">
+            {number && (
+              <span className="font-mono text-[0.6rem] tracking-[0.15em] text-cream/30">
+                {outcast ? "☆" : number}
+              </span>
+            )}
+            <span className="text-gold">
+              <Gift size={22} weight="duotone" />
+            </span>
+          </div>
         </div>
 
         <p className="mt-2 text-sm leading-relaxed text-cream/60">

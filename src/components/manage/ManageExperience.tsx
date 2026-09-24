@@ -283,15 +283,17 @@ export default function ManageExperience() {
                           key={c.id}
                           className="mt-2 flex flex-wrap items-center gap-2 rounded-xl bg-white/[0.03] px-3 py-2 text-xs text-cream/70"
                         >
-                          <span className="text-magenta">{c.name}</span>
-                          {c.anonymous && (
-                            <span className="rounded-full border border-magenta/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-magenta">
-                              Anonymous publicly
-                            </span>
-                          )}
-                          <span>
-                            · {c.contact ?? "no contact"} · qty {c.quantity}
+<span className="text-magenta">
+                          {c.anonymous
+                            ? "Anonymous"
+                            : `${c.name}${c.contact ? ` (${c.contact})` : ""}`}
+                        </span>
+                        {c.anonymous && (
+                          <span className="rounded-full border border-magenta/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-magenta">
+                            Identity hidden
                           </span>
+                        )}
+                        <span>· qty {c.quantity}</span>
                           <button
                             onClick={() => markGifted(c.id, !c.gifted)}
                             className={cn(
@@ -310,11 +312,10 @@ export default function ManageExperience() {
                           {itemContribs.length} contribution
                           {itemContribs.length === 1 ? "" : "s"} ·{" "}
                           {itemContribs
-                            .map(
-                              (c) =>
-                                `₦${c.amount.toLocaleString()}${
-                                  c.anonymous ? " (anonymous)" : ""
-                                }`,
+                            .map((c) =>
+                              `₦${c.amount.toLocaleString()}${
+                                c.anonymous ? " · anonymous (identity hidden)" : ""
+                              }`,
                             )
                             .join(", ")}{" "}
                           · pending

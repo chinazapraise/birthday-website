@@ -261,8 +261,8 @@ export default function GiftClaimModal({
                   />
                   <span className="text-xs leading-snug text-cream/55">
                     {mode === "claim"
-                      ? "Stay anonymous. Only Tomide will know you claimed this."
-                      : "Stay anonymous. Only Tomide will know you reserved this."}
+                      ? "Stay anonymous. Tomide won't know you gave this."
+                      : "Stay anonymous. Tomide won't know you reserved this."}
                   </span>
                 </label>
 

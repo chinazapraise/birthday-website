@@ -160,7 +160,7 @@ export default function ContributionModal({
                     className="h-4 w-4 accent-gold"
                   />
                   <span className="text-xs leading-snug text-cream/55">
-                    Stay anonymous. Only Tomide will know who chipped in.
+                    Stay anonymous. Tomide won&apos;t know you chipped in.
                   </span>
                 </label>
 

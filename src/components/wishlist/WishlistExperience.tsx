@@ -43,6 +43,9 @@ export default function WishlistExperience() {
     .filter((i) => i.status !== "hidden")
     .sort((a, b) => a.sortOrder - b.sortOrder);
 
+  const numbered = visible.slice(0, 27);
+  const outcast = visible.slice(27);
+
   const openClaim = (item: WishlistItem) => {
     setModalItem(item);
     setModalKind("claim");
@@ -139,11 +142,12 @@ export default function WishlistExperience() {
         ) : (
           <section className="mx-auto max-w-6xl px-6 py-14">
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {visible.map((item, i) => (
+              {numbered.map((item, i) => (
                 <GiftCard
                   key={item.id}
                   item={item}
                   index={i}
+                  number={String(i + 1).padStart(2, "0")}
                   claims={claims}
                   reserves={reserves}
                   onGet={() => openClaim(item)}
@@ -152,6 +156,21 @@ export default function WishlistExperience() {
                 />
               ))}
             </div>
+
+            {outcast.map((item) => (
+              <div key={item.id} className="mx-auto mt-10 max-w-xl md:mt-14">
+                <GiftCard
+                  item={item}
+                  index={0}
+                  outcast
+                  claims={claims}
+                  reserves={reserves}
+                  onGet={() => openClaim(item)}
+                  onContribute={() => openContribute(item)}
+                  contributions={contributions}
+                />
+              </div>
+            ))}
             <p className="mt-12 text-center font-hand text-xl text-cream/40">
               Every single one means something. Thank you. 💛
             </p>

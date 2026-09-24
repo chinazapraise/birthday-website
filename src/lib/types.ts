@@ -119,7 +119,7 @@ export interface WishlistItem {
 
 /**
  * Reserve = "I'm interested." Never blocks. Anyone can reserve.
- * anonymous = keep identity private. Name stays visible to Tomide in admin.
+ * anonymous = keep identity private. Hidden from Tomide too.
  */
 export interface GiftReserve {
   id: string;
@@ -133,7 +133,7 @@ export interface GiftReserve {
 
 /**
  * Claim = "I'm getting this." Blocks single/expensive/trip gifts.
- * anonymous = keep identity private. Name stays visible to Tomide in admin.
+ * anonymous = keep identity private. Hidden from Tomide too.
  */
 export interface GiftClaim {
   id: string;
@@ -151,7 +151,7 @@ export interface GiftClaim {
  * Contribution = money toward an expensive/trip gift, or a cash gift.
  * kind "contribution" → "X people contributed".
  * kind "gift"        → cash gifts, "X people gifted this".
- * anonymous = keep identity private. Email stays visible to Tomide in admin.
+ * anonymous = keep identity private. Hidden from Tomide too.
  */
 export interface Contribution {
   id: string;
