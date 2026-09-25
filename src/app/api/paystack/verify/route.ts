@@ -30,8 +30,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "bad body" }, { status: 400 });
   }
 
-  const { reference, contributionId } = body;
-  if (!reference || !contributionId) {
+  let { reference, contributionId } = body;
+  if (!reference) {
     return NextResponse.json(
       { ok: false, error: "missing reference" },
       { status: 400 },
@@ -72,6 +72,10 @@ export async function POST(request: Request) {
   }
 
   const amountKobo = verify.data.amount ?? 0;
+  if (!contributionId) {
+    const meta = (verify.data as { metadata?: { contributionId?: string } })?.metadata;
+    contributionId = meta?.contributionId || reference;
+  }
   const marked = await markContributionPaid(
     contributionId,
     reference,

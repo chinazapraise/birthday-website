@@ -7,7 +7,11 @@ import type { WishlistItem, Contribution } from "@/lib/types";
 import { formatNaira } from "@/lib/utils";
 import { EASE } from "@/lib/motion";
 import { fireConfetti } from "@/components/effects/ConfettiLayer";
-import { openPaystackCheckout, preloadPaystack } from "@/lib/paystack";
+import {
+  openPaystackCheckout,
+  redirectToPaystackCheckout,
+  preloadPaystack,
+} from "@/lib/paystack";
 import { fundingPlanFor, fixedFundingAmount, unitPriceFor } from "@/lib/giftFlow";
 
 type Step = "amount" | "pay" | "done" | "note";
@@ -126,7 +130,7 @@ export default function ContributionModal({
     preloadPaystack();
   }, []);
 
-  const submitAmount = (e: React.FormEvent) => {
+  const submitAmount = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!name.trim()) {
@@ -151,12 +155,9 @@ export default function ContributionModal({
       setError("Enter a valid amount in Naira.");
       return;
     }
-    setStep("pay");
-  };
 
-  const submitPay = async () => {
-    setError(null);
-    // Record intent first so a reference exists even if the popup is closed.
+    setProcessing(true);
+
     const created = onContribute({
       name: name.trim(),
       email: email.trim(),
@@ -167,32 +168,50 @@ export default function ContributionModal({
       anonymous,
     });
     if (!created) {
+      setProcessing(false);
       setError("Something went wrong starting the payment.");
       return;
     }
     setContribution(created);
     setContribId(created.id);
     onMarkAttempted(created.id);
-    setProcessing(true);
-    setVerifying(true);
 
     const reference = `TW${created.id.replace(/-/g, "").slice(0, 16)}`;
-    await openPaystackCheckout({
+    const callbackUrl = `${window.location.origin}/wishlist?reference=${reference}&item=${encodeURIComponent(item.name)}`;
+
+    const res = await redirectToPaystackCheckout({
       email: email.trim(),
-      amountKobo: parsed * 100,
-      currency: "NGN",
-      reference,
-      onSuccess: async (ref) => {
-        await verifyPayment(created, ref);
-      },
-      onClose: () => {
-        setProcessing(false);
-        setVerifying(false);
-        setError("Payment window closed. Nothing was charged.");
-        setStep("amount");
-      },
+      amount: parsed,
+      name: name.trim(),
+      phone: phone.trim() || undefined,
+      itemId: item.id,
+      itemName: item.name,
+      kind: isGift ? "gift" : "contribution",
+      anonymous,
+      contributionId: created.id,
+      callbackUrl,
     });
+
+    if (!res.ok) {
+      // Fallback: try opening inline checkout if server init returns an error
+      await openPaystackCheckout({
+        email: email.trim(),
+        amountKobo: parsed * 100,
+        currency: "NGN",
+        reference,
+        onSuccess: async (ref) => {
+          await verifyPayment(created, ref);
+        },
+        onClose: () => {
+          setProcessing(false);
+          setVerifying(false);
+          setError("Payment window closed. Nothing was charged.");
+        },
+      });
+    }
   };
+
+  const submitPay = submitAmount;
 
   const recheckPayment = () => {
     setError(null);
@@ -380,9 +399,15 @@ export default function ContributionModal({
 
                 <button
                   type="submit"
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold to-sunset px-6 py-4 font-display text-sm font-bold uppercase tracking-widest text-ink transition-transform hover:scale-[1.01]"
+                  disabled={processing}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold to-sunset px-6 py-4 font-display text-sm font-bold uppercase tracking-widest text-ink transition-transform hover:scale-[1.01] disabled:opacity-75"
                 >
-                  {isFixed ? (
+                  {processing ? (
+                    <span className="flex items-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink/30 border-t-ink" />
+                      Redirecting to Paystack checkout…
+                    </span>
+                  ) : isFixed ? (
                     <>
                       <Coin size={15} weight="bold" /> Gift {item.name} 🎁
                     </>
@@ -427,9 +452,7 @@ export default function ContributionModal({
                 {processing ? (
                   <span className="flex items-center gap-2">
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink/30 border-t-ink" />
-                    {verifying
-                      ? "Confirming with the bank…"
-                      : "Opening payment…"}
+                    Redirecting to Paystack checkout…
                   </span>
                 ) : (
                   <>
@@ -437,12 +460,7 @@ export default function ContributionModal({
                   </>
                 )}
               </button>
-              {processing && verifying && (
-                <p className="mt-2 text-xs text-cream/40">
-                  This can take a few seconds. We check the bank on your behalf
-                  — no need to click anything.
-                </p>
-              )}
+
               {error && !processing && (
                 <div className="mt-3 rounded-xl border border-magenta/40 bg-magenta/10 px-4 py-3">
                   <p className="text-sm font-medium text-magenta" role="alert">

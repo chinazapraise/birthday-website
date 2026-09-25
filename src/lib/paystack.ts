@@ -13,8 +13,8 @@ type PaystackPopWindow = {
       ref?: string;
       metadata?: Record<string, unknown>;
       callback: (response: PaystackSuccess) => void;
-      onClose: (response: PaystackCancelled) => void;
-    }) => void;
+      onClose: (response?: PaystackCancelled) => void;
+    }) => { openIframe: () => void };
   };
 };
 
@@ -49,8 +49,7 @@ function loadPaystack(): Promise<PaystackPopWindow> {
 
 /**
  * Warm up the Paystack script in the background so the checkout popup
- * opens instantly when the user taps "Pay" instead of waiting on the
- * external script to download at that exact moment.
+ * opens instantly if the inline flow is invoked.
  */
 export function preloadPaystack(): void {
   if (preloadStarted) return;
@@ -62,6 +61,47 @@ export function preloadPaystack(): void {
 
 export const paystackPublicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
 
+/**
+ * Direct server-initialized checkout redirect.
+ * Bypasses all popup/iframe hurdles and immediately redirects the user
+ * to the official Paystack checkout page.
+ */
+export async function redirectToPaystackCheckout(opts: {
+  email: string;
+  amount: number; // NGN
+  name: string;
+  phone?: string;
+  itemId: string;
+  itemName: string;
+  kind?: "contribution" | "gift";
+  anonymous?: boolean;
+  contributionId?: string;
+  callbackUrl?: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await fetch("/api/paystack/initialize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(opts),
+    });
+    const data = await res.json();
+    if (!data.ok || !data.authorizationUrl) {
+      return {
+        ok: false,
+        error: data.error || "Could not initialize Paystack checkout",
+      };
+    }
+    // Instant redirect to Paystack official checkout
+    window.location.href = data.authorizationUrl;
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Network error connecting to payment gateway" };
+  }
+}
+
+/**
+ * Inline popup checkout (calls handler.openIframe() correctly).
+ */
 export async function openPaystackCheckout(opts: {
   email: string;
   amountKobo: number;
@@ -76,7 +116,7 @@ export async function openPaystackCheckout(opts: {
     return;
   }
   const win = await loadPaystack();
-  win.PaystackPop.setup({
+  const handler = win.PaystackPop.setup({
     key,
     email: opts.email,
     amount: opts.amountKobo,
@@ -85,4 +125,5 @@ export async function openPaystackCheckout(opts: {
     callback: (response) => opts.onSuccess(response.reference),
     onClose: () => opts.onClose(),
   });
+  handler?.openIframe?.();
 }

@@ -17,10 +17,11 @@ export async function markContributionPaid(
 ): Promise<boolean> {
   if (!supabaseServer) return false;
   const amountNgn = Math.round(amountKobo / 100);
+  // Match either by contribution ID or by payment reference
   const { error } = await supabaseServer
     .from("wishlist_contributions")
     .update({ paid: true, reference, amount: amountNgn })
-    .eq("id", id);
+    .or(`id.eq.${id},reference.eq.${reference}`);
   return !error;
 }
 

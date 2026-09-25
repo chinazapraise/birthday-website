@@ -110,7 +110,15 @@ function loadWishlist(): WishlistItem[] {
     write(K.wishlist, wishlistSeed);
     return wishlistSeed;
   }
-  return stored;
+  return stored.map((item) => {
+    const seed = wishlistSeed.find((s) => s.id === item.id);
+    if (!seed) return item;
+    return {
+      ...item,
+      description: seed.description,
+      funnyNote: seed.funnyNote,
+    };
+  });
 }
 function loadSettings(): SiteSettings {
   const stored = read<SiteSettings>(K.settings, siteSettingsSeed);

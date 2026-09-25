@@ -15,7 +15,7 @@ import ContributionModal from "@/components/wishlist/ContributionModal";
 import FloatingNav from "@/components/nav/FloatingNav";
 import MeshBackground from "@/components/ambient/MeshBackground";
 import CursorGlow from "@/components/ambient/CursorGlow";
-import ConfettiLayer from "@/components/effects/ConfettiLayer";
+import ConfettiLayer, { fireConfetti } from "@/components/effects/ConfettiLayer";
 import { EASE } from "@/lib/motion";
 import { preloadPaystack } from "@/lib/paystack";
 import type { WishlistItem } from "@/lib/types";
@@ -47,12 +47,42 @@ export default function WishlistExperience() {
   const [modalItem, setModalItem] = useState<WishlistItem | null>(null);
   const [modalKind, setModalKind] = useState<ModalKind>(null);
   const [prefill, setPrefill] = useState<PrefillDetails | null>(null);
+  const [successNotice, setSuccessNotice] = useState<{
+    reference: string;
+    itemName?: string;
+  } | null>(null);
 
   // Warm up the Paystack popup the moment the wishlist loads, so by the time
   // someone taps "Pay" the checkout script is already cached and loads fast.
   useEffect(() => {
     preloadPaystack();
   }, []);
+
+  // Handle return redirect from Paystack checkout
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get("reference") || urlParams.get("trxref");
+    if (!ref) return;
+
+    const itemName = urlParams.get("item") || undefined;
+    window.history.replaceState({}, "", window.location.pathname);
+
+    void fetch("/api/paystack/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reference: ref }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok) {
+          markSuccessful(ref, ref);
+          fireConfetti("burst", { count: 90, balloons: 5 });
+          setSuccessNotice({ reference: ref, itemName });
+        }
+      })
+      .catch((e) => console.warn("Verify check on return failed:", e));
+  }, [markSuccessful]);
 
   const visible = items
     .filter((i) => i.status !== "hidden")
@@ -252,6 +282,39 @@ export default function WishlistExperience() {
           onNote={handleContributionNote}
           onClose={closeModal}
         />
+      )}
+
+      {successNotice && (
+        <div
+          className="fixed inset-0 z-[160] flex items-center justify-center bg-ink/90 p-4 backdrop-blur-md"
+          role="dialog"
+          aria-modal="true"
+        >
+          <motion.div
+            className="w-full max-w-md rounded-3xl border border-gold/30 bg-[#120f20] p-6 text-center shadow-2xl md:p-8"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+          >
+            <span className="text-5xl">🎉</span>
+            <h3 className="mt-4 font-display text-2xl font-black text-cream">
+              Gift Received!
+            </h3>
+            <p className="mt-2 text-sm text-cream/70">
+              {successNotice.itemName
+                ? `Your gift for "${successNotice.itemName}" has been processed and received.`
+                : "Your birthday gift has been processed and received."}
+            </p>
+            <p className="mt-3 font-hand text-lg text-gold">
+              Thank you so much for celebrating 27 with me! 💛
+            </p>
+            <button
+              onClick={() => setSuccessNotice(null)}
+              className="mt-6 w-full rounded-full bg-gradient-to-r from-gold to-sunset px-6 py-3 font-display text-sm font-bold uppercase tracking-widest text-ink transition hover:scale-[1.02]"
+            >
+              Continue Celebrating
+            </button>
+          </motion.div>
+        </div>
       )}
     </>
   );

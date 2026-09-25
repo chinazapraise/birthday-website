@@ -64,31 +64,31 @@ export default function Countdown({
           {cd.days === 0 ? "Tonight." : "27 begins in…"}
         </p>
       )}
-      <div className="mx-auto grid max-w-[15rem] grid-cols-2 gap-x-4 gap-y-4 rounded-3xl border border-white/10 bg-white/[0.03] px-4 py-5 shadow-[0_0_60px_rgba(139,92,246,0.15)] backdrop-blur-sm md:flex md:max-w-none md:gap-0 md:px-8">
+      <div className="inline-flex items-center justify-center gap-1.5 rounded-3xl border border-white/10 bg-white/[0.03] px-4 py-4 shadow-[0_0_60px_rgba(139,92,246,0.15)] backdrop-blur-sm sm:gap-3 sm:px-6 sm:py-5 md:gap-4 md:px-8 md:py-6 lg:gap-5">
         {CLOCK_UNITS.map((u, i) => {
           const val = cd[u.key];
           const pad = String(val).padStart(2, "0");
           return (
             <div
               key={u.key}
-              className="flex items-start gap-2 md:flex-col md:items-center"
+              className="flex items-center gap-1.5 sm:gap-3 md:gap-4 lg:gap-5"
             >
               <motion.div
-                className="flex flex-col items-center w-full"
+                className="flex flex-col items-center"
                 animate={{ opacity: 1 }}
                 key={pad}
                 initial={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.3 }}
               >
-                <span className="font-display text-3xl font-black tabular-nums text-cream md:text-7xl">
+                <span className="font-display text-3xl font-black tabular-nums text-cream sm:text-5xl md:text-6xl lg:text-7xl">
                   {pad}
                 </span>
-                <span className="mt-1 text-[0.55rem] uppercase tracking-[0.25em] text-cream/40 md:mt-1 md:text-xs">
+                <span className="mt-1 text-[0.55rem] uppercase tracking-[0.25em] text-cream/40 sm:text-[0.65rem] md:text-xs">
                   {u.label}
                 </span>
               </motion.div>
               {i < CLOCK_UNITS.length - 1 && (
-                <span className="mt-1 hidden font-display text-3xl font-black text-magenta/70 md:inline-block md:text-6xl">
+                <span className="mb-3.5 font-display text-2xl font-black text-magenta select-none sm:mb-4 sm:text-4xl md:mb-5 md:text-5xl lg:text-6xl">
                   :
                 </span>
               )}
