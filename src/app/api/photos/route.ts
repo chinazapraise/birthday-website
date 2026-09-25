@@ -3,11 +3,13 @@ import { isValidAdminPassword } from "@/lib/adminAuth";
 import {
   deletePhoto,
   readManifest,
+  readPeople,
   storageConfigured,
   uploadPhoto,
   writeManifest,
+  writePeople,
 } from "@/lib/photoCloud";
-import type { YearPhoto } from "@/lib/types";
+import type { YearPhoto, Person } from "@/lib/types";
 
 export const runtime = "nodejs";
 
@@ -38,11 +40,14 @@ function notConfigured() {
 
 export async function GET() {
   if (!storageConfigured()) return notConfigured();
-  const photos = await readManifest();
-  return NextResponse.json({ ok: true, photos }, { headers: noStore });
+  const [photos, people] = await Promise.all([readManifest(), readPeople()]);
+  return NextResponse.json(
+    { ok: true, photos, people: people ?? [] },
+    { headers: noStore },
+  );
 }
 
-/** Upload one compressed image: append it, or swap it onto an existing photo. */
+/** Upload one compressed image: append it, swap it onto an existing photo, or handle people. */
 export async function POST(request: Request) {
   if (!isValidAdminPassword(request.headers.get("x-admin-password") ?? "")) {
     return unauthorized();
@@ -54,7 +59,21 @@ export async function POST(request: Request) {
     dataBase64?: unknown;
     contentType?: unknown;
     photoId?: unknown;
+    people?: unknown;
+    isPersonPhoto?: unknown;
   } | null;
+
+  // Handle saving the full people list
+  if (Array.isArray(body?.people)) {
+    const success = await writePeople(body.people as Person[]);
+    if (!success) {
+      return NextResponse.json(
+        { ok: false, error: "could not save people list" },
+        { status: 500 },
+      );
+    }
+    return NextResponse.json({ ok: true, people: body.people }, { headers: noStore });
+  }
 
   const yearId = typeof body?.yearId === "string" ? body.yearId : "";
   const dataBase64 = typeof body?.dataBase64 === "string" ? body.dataBase64 : "";
@@ -63,6 +82,16 @@ export async function POST(request: Request) {
     typeof body?.contentType === "string" && body.contentType.startsWith("image/")
       ? body.contentType
       : "image/jpeg";
+
+  // Handle uploading a photo for a person in the story
+  if (yearId === "people" || body?.isPersonPhoto) {
+    if (!dataBase64) return badRequest("dataBase64 is required");
+    const url = await uploadPhoto(dataBase64, contentType);
+    if (!url) {
+      return NextResponse.json({ ok: false, error: "upload failed" }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true, url }, { headers: noStore });
+  }
 
   if (!yearId) return badRequest("yearId is required");
   if (!dataBase64) return badRequest("dataBase64 is required");

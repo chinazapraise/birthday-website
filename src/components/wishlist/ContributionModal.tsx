@@ -368,7 +368,7 @@ export default function ContributionModal({
                     className="h-4 w-4 accent-gold"
                   />
                   <span className="text-xs leading-snug text-cream/55">
-                    Stay anonymous. The gift still shows on the board — your name just won&apos;t.
+                    Stay anonymous.
                   </span>
                 </label>
 

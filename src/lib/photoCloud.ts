@@ -1,5 +1,5 @@
 import { supabaseServer } from "@/lib/supabaseServer";
-import type { YearPhoto } from "@/lib/types";
+import type { YearPhoto, Person } from "@/lib/types";
 
 /*
  * Server-only. Photos live in a PUBLIC Supabase Storage bucket so every
@@ -12,6 +12,7 @@ import type { YearPhoto } from "@/lib/types";
 
 const BUCKET = "timeline-photos";
 const MANIFEST_PATH = "manifest.json";
+const PEOPLE_PATH = "people.json";
 
 export type PhotoManifest = Record<string, YearPhoto[]>;
 
@@ -76,6 +77,36 @@ export async function writeManifest(manifest: PhotoManifest): Promise<boolean> {
     upsert: true,
   });
   if (error) console.error("photo manifest write failed", error.message);
+  return !error;
+}
+
+export async function readPeople(): Promise<Person[] | null> {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!base || !key) return null;
+  try {
+    const res = await fetch(
+      `${base}/storage/v1/object/${BUCKET}/${PEOPLE_PATH}?fresh=${Date.now()}`,
+      { headers: { authorization: `Bearer ${key}` }, cache: "no-store" },
+    );
+    if (!res.ok) return null;
+    const text = await res.text();
+    const parsed = JSON.parse(text);
+    return Array.isArray(parsed) ? (parsed as Person[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function writePeople(people: Person[]): Promise<boolean> {
+  const b = bucket();
+  if (!b) return false;
+  const { error } = await b.upload(PEOPLE_PATH, JSON.stringify(people, null, 2), {
+    contentType: "application/json",
+    cacheControl: "no-store",
+    upsert: true,
+  });
+  if (error) console.error("people write failed", error.message);
   return !error;
 }
 

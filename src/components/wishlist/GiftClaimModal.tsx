@@ -419,7 +419,7 @@ export default function GiftClaimModal({
                     className="h-4 w-4 accent-magenta"
                   />
                   <span className="text-xs leading-snug text-cream/55">
-                    Stay anonymous. The gift still shows on the board — your name just won&apos;t.
+                    Stay anonymous.
                   </span>
                 </label>
 

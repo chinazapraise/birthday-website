@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { store } from "@/lib/store";
 import type { Store } from "@/lib/store";
 import { getAdminPassword } from "@/lib/admin";
-import type { Contribution, GiftClaim, YearPhoto } from "@/lib/types";
+import type { Contribution, GiftClaim, YearPhoto, Person } from "@/lib/types";
 
 export type CloudPhotoMap = Record<string, YearPhoto[]>;
 
@@ -256,7 +256,13 @@ export function useWishlist() {
   };
 }
 
-type PhotoResponse = { ok: boolean; photos?: CloudPhotoMap; error?: string };
+type PhotoResponse = {
+  ok: boolean;
+  photos?: CloudPhotoMap;
+  people?: Person[];
+  url?: string;
+  error?: string;
+};
 
 async function photoRequest(
   method: "POST" | "PATCH" | "DELETE",
@@ -293,7 +299,13 @@ export function useCloudYearPhotos() {
     try {
       const res = await fetch("/api/photos", { cache: "no-store" });
       const json = (await res.json().catch(() => null)) as PhotoResponse | null;
-      if (json?.ok && json.photos) setPhotos(json.photos);
+      if (json?.ok) {
+        if (json.photos) setPhotos(json.photos);
+        if (Array.isArray(json.people) && json.people.length > 0) {
+          store.updateSettings({ people: json.people });
+          emit();
+        }
+      }
     } catch {
       /* leave whatever we already have */
     } finally {
@@ -312,7 +324,7 @@ export function useCloudYearPhotos() {
       setError(null);
       const json = await photoRequest(method, body);
       if (json.ok && json.photos) setPhotos(json.photos);
-      else setError(json.error ?? "could not save photos");
+      else if (!json.ok) setError(json.error ?? "could not save photos");
       setBusy(false);
       return json;
     },
@@ -333,6 +345,46 @@ export function useCloudYearPhotos() {
       });
     },
     [run],
+  );
+
+  /** Upload a compressed photo for a person in 'Those who made the story possible'. */
+  const uploadPersonPhoto = useCallback(
+    async (dataUrl: string) => {
+      const comma = dataUrl.indexOf(",");
+      if (comma === -1) return { ok: false, error: "bad image" };
+      const header = dataUrl.slice(0, comma);
+      const contentType = header.slice(5).split(";")[0] || "image/jpeg";
+      setBusy(true);
+      setError(null);
+      const res = await photoRequest("POST", {
+        yearId: "people",
+        isPersonPhoto: true,
+        dataBase64: dataUrl.slice(comma + 1),
+        contentType,
+      });
+      if (!res.ok) setError(res.error ?? "could not upload photo");
+      setBusy(false);
+      return res;
+    },
+    [],
+  );
+
+  /** Save the list of people in 'Those who made the story possible'. */
+  const savePeople = useCallback(
+    async (people: Person[]) => {
+      setBusy(true);
+      setError(null);
+      const res = await photoRequest("POST", { people });
+      if (res.ok) {
+        store.updateSettings({ people });
+        emit();
+      } else {
+        setError(res.error ?? "could not save people");
+      }
+      setBusy(false);
+      return res;
+    },
+    [],
   );
 
   const setCaption = useCallback(
@@ -369,7 +421,20 @@ export function useCloudYearPhotos() {
     [run],
   );
 
-  return { photos, loading, busy, error, refresh, upload, setCaption, replace, remove, reorder };
+  return {
+    photos,
+    loading,
+    busy,
+    error,
+    refresh,
+    upload,
+    uploadPersonPhoto,
+    savePeople,
+    setCaption,
+    replace,
+    remove,
+    reorder,
+  };
 }
 
 export default useStore;

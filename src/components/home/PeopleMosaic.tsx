@@ -40,6 +40,8 @@ export default function PeopleMosaic({ people }: { people: Person[] }) {
               label={p.imageUrl ? "photo" : `${p.name} photo placeholder`}
               aspect="4:5"
               className="h-full w-full rounded-none border-0"
+              url={p.imageUrl}
+              alt={p.name}
             />
             <figcaption className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-ink/80 p-4 text-center opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
               <span className="font-display text-lg font-bold text-cream">

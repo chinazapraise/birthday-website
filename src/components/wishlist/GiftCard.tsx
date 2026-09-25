@@ -28,6 +28,12 @@ function actionLabel(item: WishlistItem): string {
   }
 }
 
+function claimedLabel(item: WishlistItem, gifted?: boolean): string {
+  if (item.kind === "trip") return "Sponsored";
+  if (gifted) return "Gifted";
+  return "Claimed";
+}
+
 function compactNaira(amount: number): string {
   if (amount >= 1_000_000) return `₦${(amount / 1_000_000).toFixed(1)}M`;
   if (amount >= 1_000) {
@@ -132,16 +138,18 @@ export default function GiftCard({
             <button
               onClick={onGet}
               disabled={!view.claimable}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-white/20 px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-cream transition hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-40 sm:py-3"
+              className="flex h-11 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 px-4 text-xs font-bold uppercase tracking-wider text-cream transition hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-40"
             >
               <HandHeart size={15} weight="bold" />
-              {view.claimable ? actionLabel(item) : view.primary}
+              {view.claimable
+                ? actionLabel(item)
+                : claimedLabel(item, stats.claim?.gifted)}
             </button>
           )}
           {hasContribute && (
             <button
               onClick={onContribute}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r px-4 py-3.5 text-xs font-bold uppercase tracking-wider transition-transform hover:scale-[1.02] sm:py-3 ${
+              className={`flex h-11 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r px-4 text-xs font-bold uppercase tracking-wider transition-transform hover:scale-[1.02] ${
                 isCash
                   ? "from-gold to-sunset text-ink"
                   : "from-violet/90 to-magenta/90 text-cream"

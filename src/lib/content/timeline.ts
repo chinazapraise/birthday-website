@@ -30,7 +30,7 @@ export const timelineSeed: TimelineYear[] = [
     location: "[ABUJA, NIGERIA]",
     media: [
       M("2016-1", "PHOTO PLACEHOLDER · 2016 HERO · portrait 4:5"),
-      M("2016-2", "PHOTO PLACEHOLDER · 2016 MEMORY 01 · landscape 16:9", "16:9"),
+      M("2016-2", "PHOTO PLACEHOLDER · 2016 MEMORY 01 · portrait 4:5"),
       M("2016-3", "PHOTO PLACEHOLDER · 2016 MEMORY 02 · portrait 4:5"),
       M("2016-4", "PHOTO PLACEHOLDER · 2016 MEMORY 03 · landscape 16:9", "16:9"),
       M("2016-5", "PHOTO PLACEHOLDER · 2016 MEMORY 04 · portrait 4:5"),
@@ -73,7 +73,7 @@ export const timelineSeed: TimelineYear[] = [
     location: "[ABUJA, NIGERIA]",
     media: [
       M("2018-1", "PHOTO PLACEHOLDER · 2018 HERO · portrait 4:5"),
-      M("2018-2", "PHOTO PLACEHOLDER · 2018 MEMORY 01 · landscape 16:9", "16:9"),
+      M("2018-2", "PHOTO PLACEHOLDER · 2018 MEMORY 01 · portrait 4:5"),
       M("2018-3", "PHOTO PLACEHOLDER · 2018 MEMORY 02 · portrait 4:5"),
       M("2018-4", "PHOTO PLACEHOLDER · 2018 MEMORY 03 · landscape 16:9", "16:9"),
       M("2018-5", "PHOTO PLACEHOLDER · 2018 MEMORY 04 · portrait 4:5"),
@@ -257,9 +257,10 @@ export const timelineSeed: TimelineYear[] = [
     location: "[LAGOS, NIGERIA]",
     media: [
       M("2026-1", "PHOTO PLACEHOLDER · 2026 CURRENT · portrait 4:5"),
-      M("2026-2", "PHOTO PLACEHOLDER · 2026 02 · landscape 16:9", "16:9"),
+      M("2026-2", "PHOTO PLACEHOLDER · 2026 02 · portrait 4:5"),
       M("2026-3", "PHOTO PLACEHOLDER · 2026 03 · portrait 4:5"),
-      M("2026-4", "PHOTO PLACEHOLDER · 2026 04 · landscape 16:9", "16:9"),
+      M("2026-4", "PHOTO PLACEHOLDER · 2026 04 · portrait 4:5"),
+      M("2026-5", "PHOTO PLACEHOLDER · 2026 05 · portrait 4:5"),
     ],
     layoutVariant: "editorial",
     theme: {
