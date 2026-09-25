@@ -34,7 +34,10 @@ export async function clearAllGiftActivity(): Promise<boolean> {
   ] as const;
   let ok = true;
   for (const table of tables) {
-    const { error } = await supabaseServer.from(table).delete().neq("id", "");
+    const { error } = await supabaseServer
+      .from(table)
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
     if (error) {
       console.error(`clear ${table} failed`, error.message);
       ok = false;
