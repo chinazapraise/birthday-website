@@ -15,8 +15,8 @@ export const siteSettingsSeed: SiteSettings = {
   birthdayLockMode: false,
   subscriptionsPaused: false,
   social: {
-    instagram: "https://instagram.com",
-    linkedin: "https://linkedin.com",
+    instagram: "https://www.instagram.com/tomidewilliams.ai/",
+    linkedin: "https://www.linkedin.com/in/tomidewill/",
     twitter: "https://x.com",
     whatsapp: "https://wa.me/",
   },

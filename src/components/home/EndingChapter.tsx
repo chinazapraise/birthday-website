@@ -101,18 +101,24 @@ export default function EndingChapter({ settings }: { settings: SiteSettings }) 
             </Link>
           </nav>
 
-          <div className="flex items-center gap-4 text-xs text-cream/35">
-            <span>2016-2026 · Eleven years</span>
-            {settings.social?.instagram && (
-              <a
-                href={settings.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-cream/70"
-              >
-                Instagram
-              </a>
-            )}
+          <div className="flex flex-wrap items-center gap-4 text-xs text-cream/35">
+            <span>2016–2026</span>
+            <a
+              href={settings.social?.linkedin || "https://www.linkedin.com/in/tomidewill/"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-cream/70"
+            >
+              LinkedIn
+            </a>
+            <a
+              href={settings.social?.instagram || "https://www.instagram.com/tomidewilliams.ai/"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-cream/70"
+            >
+              Instagram
+            </a>
           </div>
         </div>
         <p className="mt-10 pb-2 text-center font-hand text-2xl text-cream/40">
