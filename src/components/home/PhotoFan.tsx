@@ -11,34 +11,13 @@ interface PhotoFanProps {
 
 interface FanSlotConfig {
   index: number;
-  label: string;
-  badge: string;
-  subline: string;
   tint: string;
 }
 
 const SLOTS: FanSlotConfig[] = [
-  {
-    index: 0,
-    label: "THE EARLY DAYS",
-    badge: "2016 · Early Days",
-    subline: "Where the story started",
-    tint: "#3b2f5f",
-  },
-  {
-    index: 1,
-    label: "THE MIDDLE",
-    badge: "The Journey",
-    subline: "Lessons, trials & grit",
-    tint: "#2f3b5f",
-  },
-  {
-    index: 2,
-    label: "THE NOW",
-    badge: "2026 · The Now",
-    subline: "Standing at twenty-seven",
-    tint: "#3b1f4f",
-  },
+  { index: 0, tint: "#3b2f5f" },
+  { index: 1, tint: "#2f3b5f" },
+  { index: 2, tint: "#3b1f4f" },
 ];
 
 /**

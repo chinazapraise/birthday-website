@@ -524,17 +524,17 @@ export default function ManageExperience() {
             </h2>
             <p className="mt-1 text-xs text-cream/45">
               The 3 cards that fan out on the homepage as visitors scroll past the hero.
-              Card 1 is Left (The Early Days), Card 2 is Center (The Journey), Card 3 is Right (The Now).
+              Card 1 is Left, Card 2 is Center, Card 3 is Right.
               Upload, replace, remove, or drag to reorder.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-4">
             {[
-              { index: 0, label: "Card 1 · Left", subline: "2016 · Early Days" },
-              { index: 1, label: "Card 2 · Center", subline: "The Journey" },
-              { index: 2, label: "Card 3 · Right", subline: "2026 · The Now" },
-            ].map(({ index, label, subline }) => {
+              { index: 0, label: "Card 1 · Left" },
+              { index: 1, label: "Card 2 · Center" },
+              { index: 2, label: "Card 3 · Right" },
+            ].map(({ index, label }) => {
               const photo = (photos["fan"] ?? [])[index];
 
               if (photo) {
@@ -577,9 +577,6 @@ export default function ManageExperience() {
                         {label}
                       </span>
                     </div>
-                    <p className="mt-1.5 font-mono text-[0.65rem] font-semibold text-cream/70 truncate">
-                      {subline}
-                    </p>
                     <div className="mt-2 flex gap-1.5">
                       <label className="flex-1 cursor-pointer rounded-md border border-violet/40 px-2 py-1 text-center font-mono text-[0.6rem] font-semibold uppercase tracking-wider text-violet transition hover:border-violet hover:bg-violet/10">
                         Replace
@@ -622,9 +619,6 @@ export default function ManageExperience() {
                   </span>
                   <span className="font-mono text-[0.68rem] font-bold uppercase tracking-wider text-cream/75">
                     {label}
-                  </span>
-                  <span className="font-mono text-[0.58rem] text-cream/40">
-                    {subline}
                   </span>
                   <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[0.52rem] uppercase tracking-wider text-gold/80">
                     Click to upload
