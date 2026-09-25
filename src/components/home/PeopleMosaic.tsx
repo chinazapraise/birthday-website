@@ -1,22 +1,41 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Person } from "@/lib/types";
+import type { YearPhoto } from "@/lib/types";
 import { EASE } from "@/lib/motion";
 import PhotoPlaceholder from "@/components/ui/PhotoPlaceholder";
 
 /**
- * "People who made the story possible." Cinematic marquee.
+ * "People who made the story possible." Pure cinematic photo marquee.
+ * No names, titles or captions — just pure photos.
  */
-export default function PeopleMosaic({ people }: { people: Person[] }) {
-  if (!people || people.length === 0) return null;
-  const doubled = [...people, ...people];
+export default function PeopleMosaic({ photos = [] }: { photos?: YearPhoto[] }) {
+  // If no photos uploaded yet, show 6 elegant placeholders so the section remains visible
+  const items =
+    photos.length > 0
+      ? photos
+      : Array.from({ length: 6 }).map((_, i) => ({
+          id: `placeholder-${i + 1}`,
+          url: "",
+          placeholderLabel: `PHOTO · 0${i + 1}`,
+        }));
+
+  // Duplicate the array so it scrolls infinitely without gaps
+  const doubled = [...items, ...items];
 
   return (
     <section className="relative overflow-hidden py-24 md:py-32">
       <div className="mx-auto mb-12 max-w-4xl px-6 text-center">
+        <motion.p
+          className="font-hand text-2xl text-cream/60"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          Gratitude
+        </motion.p>
         <motion.h2
-          className="font-display text-3xl font-bold text-cream md:text-5xl"
+          className="mt-2 font-display text-3xl font-bold text-cream md:text-5xl"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -26,36 +45,30 @@ export default function PeopleMosaic({ people }: { people: Person[] }) {
         </motion.h2>
       </div>
 
-      <div className="animate-marquee-x flex w-max gap-6 px-6 hover:[animation-play-state:paused]">
+      <div className="animate-marquee-x flex w-max gap-5 px-6 hover:[animation-play-state:paused]">
         {doubled.map((p, i) => (
           <motion.figure
             key={`${p.id}-${i}`}
-            className="group relative h-56 w-44 shrink-0 overflow-hidden rounded-2xl border border-white/10 md:h-64 md:w-52"
+            className="group relative h-64 w-48 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-xl md:h-80 md:w-60"
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.5, delay: (i % people.length) * 0.06, ease: EASE }}
+            transition={{ duration: 0.5, delay: (i % items.length) * 0.05, ease: EASE }}
           >
-            <PhotoPlaceholder
-              label={p.imageUrl ? "photo" : `${p.name} photo placeholder`}
-              aspect="4:5"
-              className="h-full w-full rounded-none border-0"
-              url={p.imageUrl}
-              alt={p.name}
-            />
-            <figcaption className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-ink/80 p-4 text-center opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
-              <span className="font-display text-lg font-bold text-cream">
-                {p.name}
-              </span>
-              <span className="text-xs uppercase tracking-[0.2em] text-cream/50">
-                {p.role}
-              </span>
-              {p.sentence && (
-                <span className="mt-1 text-xs leading-relaxed text-cream/70">
-                  “{p.sentence}”
-                </span>
-              )}
-            </figcaption>
+            {p.url ? (
+              <img
+                src={p.url}
+                alt="Part of the story"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+            ) : (
+              <PhotoPlaceholder
+                label={(p as { placeholderLabel?: string }).placeholderLabel ?? "PHOTO PLACEHOLDER"}
+                aspect="4:5"
+                className="h-full w-full rounded-none border-0"
+              />
+            )}
           </motion.figure>
         ))}
       </div>

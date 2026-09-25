@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import useStore, { emit, useSettings, useCloudYearPhotos } from "@/lib/hooks";
-import type { Wish, CommunityStory, WishlistItem, Person } from "@/lib/types";
+import type { Wish, CommunityStory, WishlistItem } from "@/lib/types";
 import FloatingNav from "@/components/nav/FloatingNav";
 import MeshBackground from "@/components/ambient/MeshBackground";
 import CursorGlow from "@/components/ambient/CursorGlow";
@@ -29,8 +29,6 @@ export default function ManageExperience() {
     busy: photosBusy,
     error: photosError,
     upload,
-    uploadPersonPhoto,
-    savePeople,
     setCaption,
     replace,
     remove,
@@ -52,109 +50,6 @@ export default function ManageExperience() {
   const [wishlistDraft, setWishlistDraft] = useState<WishlistItem[]>(
     () => store.getWishlist(),
   );
-
-  const [peopleDraft, setPeopleDraft] = useState<Person[]>(
-    () => settings.people ?? [],
-  );
-  const [peopleSaving, setPeopleSaving] = useState(false);
-  const [peopleSaveStatus, setPeopleSaveStatus] = useState<string | null>(null);
-  const [uploadingPersonId, setUploadingPersonId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (settings.people && settings.people.length > 0) {
-      setPeopleDraft(settings.people);
-    }
-  }, [settings.people]);
-
-  const handlePersonPhotoUpload = async (personId: string, file: File) => {
-    setUploadingPersonId(personId);
-    setPeopleSaveStatus(null);
-    try {
-      const dataUrl = await fileToCompressedDataUrl(file);
-      if (!dataUrl) {
-        setPeopleSaveStatus("Could not process image file.");
-        return;
-      }
-      const res = await uploadPersonPhoto(dataUrl);
-      if (res.ok && res.url) {
-        const next = peopleDraft.map((p) =>
-          p.id === personId ? { ...p, imageUrl: res.url } : p,
-        );
-        setPeopleDraft(next);
-        await savePeople(next);
-        setPeopleSaveStatus("Photo updated & saved to cloud!");
-      } else {
-        setPeopleSaveStatus(res.error ?? "Failed to upload photo.");
-      }
-    } finally {
-      setUploadingPersonId(null);
-    }
-  };
-
-  const handleRemovePersonPhoto = async (personId: string) => {
-    const next = peopleDraft.map((p) =>
-      p.id === personId ? { ...p, imageUrl: undefined } : p,
-    );
-    setPeopleDraft(next);
-    await savePeople(next);
-    setPeopleSaveStatus("Photo removed & saved.");
-  };
-
-  const handleAddPerson = () => {
-    const newPerson: Person = {
-      id: `p-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      name: "",
-      role: "",
-      sentence: "",
-      years: [2026],
-    };
-    const next = [...peopleDraft, newPerson];
-    setPeopleDraft(next);
-  };
-
-  const handleDeletePerson = async (personId: string) => {
-    if (!window.confirm("Remove this person from the marquee?")) return;
-    const next = peopleDraft.filter((p) => p.id !== personId);
-    setPeopleDraft(next);
-    await savePeople(next);
-    setPeopleSaveStatus("Person removed & saved.");
-  };
-
-  const movePerson = (from: number, to: number) => {
-    if (
-      from === to ||
-      from < 0 ||
-      to < 0 ||
-      from >= peopleDraft.length ||
-      to >= peopleDraft.length
-    )
-      return;
-    const next = [...peopleDraft];
-    const [moved] = next.splice(from, 1);
-    next.splice(to, 0, moved);
-    setPeopleDraft(next);
-  };
-
-  const updatePerson = (personId: string, patch: Partial<Person>) => {
-    setPeopleDraft((prev) =>
-      prev.map((p) => (p.id === personId ? { ...p, ...patch } : p)),
-    );
-  };
-
-  const handleSavePeople = async () => {
-    setPeopleSaving(true);
-    setPeopleSaveStatus(null);
-    try {
-      const res = await savePeople(peopleDraft);
-      if (res.ok) {
-        setPeopleSaveStatus("All people saved successfully!");
-      } else {
-        setPeopleSaveStatus(res.error ?? "Failed to save people.");
-      }
-    } finally {
-      setPeopleSaving(false);
-    }
-  };
 
   const [releasing, setReleasing] = useState(false);
   const [releaseMessage, setReleaseMessage] = useState<string | null>(null);
@@ -620,175 +515,110 @@ export default function ManageExperience() {
 
         {/* Those who made the story possible */}
         <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="font-display text-lg font-bold text-cream">
-                Those who made the story possible{" "}
-                <span className="text-magenta">({peopleDraft.length})</span>
-              </h2>
-              <p className="mt-1 text-xs text-cream/45">
-                People in the cinematic marquee on the homepage. Upload their photos, edit their name, role, and quote.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleAddPerson}
-                className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold text-cream transition hover:border-white/40 hover:bg-white/5"
-              >
-                + Add person
-              </button>
-              <button
-                type="button"
-                onClick={handleSavePeople}
-                disabled={peopleSaving}
-                className="rounded-full bg-gradient-to-r from-violet to-magenta px-5 py-2 text-xs font-bold uppercase tracking-wider text-ink transition-transform hover:scale-105 disabled:opacity-50"
-              >
-                {peopleSaving ? "Saving…" : "Save people"}
-              </button>
-            </div>
+          <div className="mb-4">
+            <h2 className="font-display text-lg font-bold text-cream">
+              Those who made the story possible{" "}
+              <span className="text-magenta">
+                ({(photos["people"] ?? []).length} photos)
+              </span>
+            </h2>
+            <p className="mt-1 text-xs text-cream/45">
+              Photos for the scrolling marquee on the homepage. Click + Add photos to upload as many pictures as you want. Drag to reorder, replace, or remove anytime.
+            </p>
           </div>
 
-          {peopleSaveStatus && (
-            <p className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-xs text-cream/75">
-              {peopleSaveStatus}
-            </p>
-          )}
-
-          <div className="mt-6 space-y-4">
-            {peopleDraft.map((p, idx) => (
+          <div className="flex flex-wrap gap-3">
+            {(photos["people"] ?? []).map((photo, i) => (
               <div
-                key={p.id}
-                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:flex-row sm:items-start"
+                key={photo.id}
+                draggable
+                onDragStart={() =>
+                  setDragPhoto({ yearId: "people", from: i })
+                }
+                onDragEnd={() => {
+                  setDragPhoto(null);
+                  setDropTarget(null);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDropTarget(`people-${photo.id}`);
+                }}
+                onDrop={() => {
+                  if (dragPhoto && dragPhoto.yearId === "people") {
+                    movePhoto("people", dragPhoto.from, i);
+                  }
+                  setDragPhoto(null);
+                  setDropTarget(null);
+                }}
+                className={cn(
+                  "group relative flex w-36 flex-col rounded-xl border border-white/10 bg-white/[0.04] p-2 transition",
+                  dropTarget === `people-${photo.id}` &&
+                    "border-magenta scale-105",
+                )}
               >
-                {/* Photo & Upload Box */}
-                <div className="flex shrink-0 flex-col items-center gap-2">
-                  <div className="relative flex h-36 w-28 items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-black/40">
-                    {p.imageUrl ? (
-                      <img
-                        src={p.imageUrl}
-                        alt={p.name || "Person"}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center p-3 text-center">
-                        <span className="font-mono text-2xl text-cream/30">👤</span>
-                        <span className="mt-1 font-mono text-[0.6rem] text-cream/40">No photo</span>
-                      </div>
-                    )}
-                    {uploadingPersonId === p.id && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-xs font-semibold text-cream">
-                        Uploading…
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex w-28 flex-col gap-1">
-                    <label className="cursor-pointer rounded-md border border-violet/40 px-2 py-1 text-center font-mono text-[0.6rem] font-semibold uppercase tracking-wider text-violet transition hover:border-violet hover:bg-violet/10">
-                      {p.imageUrl ? "Change photo" : "Upload photo"}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) void handlePersonPhotoUpload(p.id, file);
-                          e.target.value = "";
-                        }}
-                      />
-                    </label>
-                    {p.imageUrl && (
-                      <button
-                        type="button"
-                        onClick={() => void handleRemovePersonPhoto(p.id)}
-                        className="rounded-md border border-magenta/40 px-2 py-1 font-mono text-[0.6rem] font-semibold uppercase tracking-wider text-magenta transition hover:border-magenta hover:bg-magenta/10"
-                      >
-                        Remove photo
-                      </button>
-                    )}
-                  </div>
+                <div className="relative overflow-hidden rounded-lg">
+                  <img
+                    src={photo.url}
+                    alt={`Person photo ${i + 1}`}
+                    className="h-36 w-full rounded-lg object-cover"
+                    loading="lazy"
+                  />
+                  <span className="absolute left-1 top-1 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[0.55rem] text-cream">
+                    {i + 1}
+                  </span>
                 </div>
-
-                {/* Info Fields */}
-                <div className="flex flex-1 flex-col gap-3">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <label className="block">
-                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-cream/45">
-                        Name
-                      </span>
-                      <input
-                        type="text"
-                        value={p.name}
-                        onChange={(e) => updatePerson(p.id, { name: e.target.value })}
-                        placeholder="e.g. Mum & Dad, Bedge"
-                        className="w-full rounded-xl border border-white/10 bg-black/20 px-3.5 py-2 text-sm text-cream focus:border-magenta focus:outline-none"
-                      />
-                    </label>
-                    <label className="block">
-                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-cream/45">
-                        Role / Relationship
-                      </span>
-                      <input
-                        type="text"
-                        value={p.role}
-                        onChange={(e) => updatePerson(p.id, { role: e.target.value })}
-                        placeholder="e.g. Foundational Grace, Mentor"
-                        className="w-full rounded-xl border border-white/10 bg-black/20 px-3.5 py-2 text-sm text-cream focus:border-magenta focus:outline-none"
-                      />
-                    </label>
-                  </div>
-
-                  <label className="block">
-                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-cream/45">
-                      Quote / Short Sentence
-                    </span>
-                    <textarea
-                      rows={2}
-                      value={p.sentence}
-                      onChange={(e) => updatePerson(p.id, { sentence: e.target.value })}
-                      placeholder="One short sentence / tribute..."
-                      className="w-full resize-none rounded-xl border border-white/10 bg-black/20 px-3.5 py-2 text-sm text-cream focus:border-magenta focus:outline-none"
+                <div className="mt-2 flex gap-1">
+                  <label className="flex-1 cursor-pointer rounded-md border border-violet/40 px-2 py-1 text-center font-mono text-[0.6rem] font-semibold uppercase tracking-wider text-violet transition hover:border-violet hover:bg-violet/10">
+                    Replace
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          void handlePhotoReplace(
+                            "people",
+                            photo.id,
+                            file,
+                          );
+                        }
+                        e.target.value = "";
+                      }}
                     />
                   </label>
-
-                  {/* Ordering & Delete */}
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => movePerson(idx, idx - 1)}
-                        disabled={idx === 0}
-                        className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-cream/60 transition hover:border-white/30 hover:text-cream disabled:opacity-30"
-                      >
-                        ↑ Move up
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => movePerson(idx, idx + 1)}
-                        disabled={idx === peopleDraft.length - 1}
-                        className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-cream/60 transition hover:border-white/30 hover:text-cream disabled:opacity-30"
-                      >
-                        ↓ Move down
-                      </button>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => void handleDeletePerson(p.id)}
-                      className="rounded-lg border border-magenta/30 px-3 py-1 text-xs font-semibold text-magenta transition hover:border-magenta hover:bg-magenta/10"
-                    >
-                      Remove person
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => void remove("people", photo.id)}
+                    className="flex-1 rounded-md border border-magenta/40 px-2 py-1 font-mono text-[0.6rem] font-semibold uppercase tracking-wider text-magenta transition hover:border-magenta hover:bg-magenta/10"
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
             ))}
 
-            {peopleDraft.length === 0 && (
-              <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-sm text-cream/40">
-                No people added yet. Click &ldquo;+ Add person&rdquo; to add someone to the story.
-              </div>
-            )}
+            <label className="flex h-48 w-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 bg-white/[0.02] text-center transition hover:border-magenta hover:bg-magenta/5">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-2xl text-cream/70 transition group-hover:border-magenta group-hover:text-magenta">
+                +
+              </span>
+              <span className="max-w-[85%] font-mono text-[0.65rem] font-semibold uppercase tracking-wider text-cream/50">
+                Add photos
+              </span>
+              <span className="font-mono text-[0.55rem] text-cream/30">
+                Select 1 or more
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  void handlePhotoUpload("people", e.target.files);
+                  e.target.value = "";
+                }}
+              />
+            </label>
           </div>
         </section>
 

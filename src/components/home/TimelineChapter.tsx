@@ -188,8 +188,16 @@ export default function TimelineChapter({
   );
 }
 
-function truncateStory(text: string, max: number): string {
+function truncateStory(text: string, max: number = 240): string {
   if (text.length <= max) return text;
+  // If there is a paragraph break within 120-280 chars, break at paragraph for a much cleaner preview
+  const paragraphs = text.split("\n\n");
+  if (paragraphs.length > 1 && paragraphs[0].length <= 260) {
+    if (paragraphs[0].length < 120 && paragraphs.length > 2 && (paragraphs[0].length + paragraphs[1].length + 2) <= 260) {
+      return `${paragraphs[0]}\n\n${paragraphs[1]}…`;
+    }
+    return `${paragraphs[0]}…`;
+  }
   const cut = text.slice(0, max);
   const lastSpace = cut.lastIndexOf(" ");
   const end = lastSpace > max * 0.6 ? lastSpace : max;
@@ -207,18 +215,20 @@ function StoryModal({
 }) {
   return (
     <motion.div
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-xl md:p-10"
+      className="fixed inset-0 z-[150] flex items-center justify-center bg-ink/90 p-4 backdrop-blur-xl md:p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
+      {/* Top right viewport close button */}
       <button
-        className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-cream transition hover:border-white/50"
+        type="button"
+        className="fixed right-4 top-4 z-[160] flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/80 text-cream backdrop-blur-md transition hover:border-white hover:bg-black hover:scale-105 active:scale-95 md:right-6 md:top-6"
         onClick={onClose}
         aria-label="Close story"
       >
-        <X size={20} />
+        <X size={22} />
       </button>
 
       <motion.div
@@ -226,9 +236,21 @@ function StoryModal({
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.97, opacity: 0 }}
         transition={{ duration: 0.35, ease: EASE }}
-        className="max-h-full w-full max-w-2xl overflow-y-auto rounded-3xl border border-white/10 bg-[#171327] p-8 md:p-12"
+        className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-white/10 bg-[#171327] p-6 shadow-2xl sm:p-8 md:p-12"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Sticky close button inside card header */}
+        <div className="sticky top-0 z-20 -mr-2 -mt-2 flex justify-end pb-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-[#171327]/90 text-cream shadow-md backdrop-blur-md transition hover:border-white/50 hover:bg-white/10 hover:scale-105 active:scale-95"
+            aria-label="Close story"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
         <span
           className="font-display text-6xl font-black leading-none md:text-7xl"
           style={{ color: accent }}
@@ -255,6 +277,20 @@ function StoryModal({
             {entry.location}
           </div>
         )}
+
+        {/* Bottom exit button for readers who finish the full text */}
+        <div className="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
+          <span className="text-xs uppercase tracking-wider text-cream/40">
+            {entry.year} · The Story So Far
+          </span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-semibold text-cream transition hover:border-white/40 hover:bg-white/10 hover:scale-105 active:scale-95"
+          >
+            <X size={16} /> Close story
+          </button>
+        </div>
       </motion.div>
     </motion.div>
   );

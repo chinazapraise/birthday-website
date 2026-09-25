@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import type { SiteSettings, TimelineYear, MicroMemory } from "@/lib/types";
-import { useSettings } from "@/lib/hooks";
+import { useSettings, useCloudYearPhotos } from "@/lib/hooks";
 import Preloader from "@/components/home/Preloader";
 import HeroExperience from "@/components/home/HeroExperience";
 import PhotoFan from "@/components/home/PhotoFan";
@@ -26,6 +26,7 @@ interface Props {
 export default function HomeExperience({ settings: initialSettings, years, memories }: Props) {
   const { settings: liveSettings } = useSettings();
   const settings = liveSettings ?? initialSettings;
+  const { photos } = useCloudYearPhotos();
   const [ready, setReady] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
   const clickCount = useRef(0);
@@ -73,9 +74,7 @@ export default function HomeExperience({ settings: initialSettings, years, memor
         </div>
 
         <PresentDay />
-        {settings.people && settings.people.length > 0 && (
-          <PeopleMosaic people={settings.people} />
-        )}
+        <PeopleMosaic photos={photos["people"] ?? []} />
         <EndingChapter settings={settings} />
       </div>
     </>

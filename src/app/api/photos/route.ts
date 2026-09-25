@@ -83,16 +83,6 @@ export async function POST(request: Request) {
       ? body.contentType
       : "image/jpeg";
 
-  // Handle uploading a photo for a person in the story
-  if (yearId === "people" || body?.isPersonPhoto) {
-    if (!dataBase64) return badRequest("dataBase64 is required");
-    const url = await uploadPhoto(dataBase64, contentType);
-    if (!url) {
-      return NextResponse.json({ ok: false, error: "upload failed" }, { status: 500 });
-    }
-    return NextResponse.json({ ok: true, url }, { headers: noStore });
-  }
-
   if (!yearId) return badRequest("yearId is required");
   if (!dataBase64) return badRequest("dataBase64 is required");
 
