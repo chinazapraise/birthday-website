@@ -130,37 +130,18 @@ export default function PhotoFan({ photos = [] }: PhotoFanProps) {
             >
               <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/20 bg-ink/90 shadow-[0_20px_50px_rgba(0,0,0,0.65)] transition-shadow duration-300 hover:shadow-[0_25px_60px_rgba(244,63,158,0.35)]">
                 {photo?.url ? (
-                  <>
-                    <img
-                      src={photo.url}
-                      alt={photo.caption || slot.badge}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="eager"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
-                    <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between">
-                      <span className="rounded-full border border-white/15 bg-black/60 px-2 py-0.5 font-mono text-[0.55rem] font-semibold uppercase tracking-wider text-cream/90 backdrop-blur-md sm:text-[0.62rem]">
-                        {slot.badge}
-                      </span>
-                    </div>
-                  </>
+                  <img
+                    src={photo.url}
+                    alt="Photograph"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="eager"
+                  />
                 ) : (
                   <div
-                    className="flex h-full w-full flex-col items-center justify-center p-4 text-center"
+                    className="flex h-full w-full items-center justify-center border border-white/10"
                     style={{ backgroundColor: slot.tint }}
                   >
-                    <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-cream/70 sm:h-11 sm:w-11">
-                      <ImageSquare size={20} weight="light" />
-                    </div>
-                    <span className="font-mono text-[0.58rem] font-bold uppercase tracking-wider text-cream/85 sm:text-[0.68rem]">
-                      {slot.badge}
-                    </span>
-                    <span className="mt-1 line-clamp-1 text-[0.52rem] text-cream/45 sm:text-[0.58rem]">
-                      {slot.subline}
-                    </span>
-                    <span className="mt-2 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 font-mono text-[0.48rem] uppercase tracking-wider text-cream/35 sm:text-[0.54rem]">
-                      Add in admin
-                    </span>
+                    <ImageSquare size={26} weight="thin" className="text-white/25" />
                   </div>
                 )}
               </div>
