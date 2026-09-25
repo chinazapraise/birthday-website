@@ -38,6 +38,15 @@ export const metadata: Metadata = {
     title: "27: The Story So Far",
     description: "Eleven years. A lot happened before we got here.",
   },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "192x192", type: "image/png" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {

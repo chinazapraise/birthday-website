@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#151226"/>
+      <stop offset="100%" stop-color="#07060b"/>
+    </linearGradient>
+    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5c97b"/>
+      <stop offset="50%" stop-color="#ff7a3d"/>
+      <stop offset="100%" stop-color="#f43f9e"/>
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#fff8db"/>
+      <stop offset="35%" stop-color="#f5c97b"/>
+      <stop offset="70%" stop-color="#ff7a3d"/>
+      <stop offset="100%" stop-color="#f43f9e"/>
+    </linearGradient>
+    <linearGradient id="frostingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f43f9e"/>
+      <stop offset="50%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="cakeBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f7efdf"/>
+      <stop offset="100%" stop-color="#e8dcbf"/>
+    </linearGradient>
+    <filter id="flameGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base with Gold/Sunset Accent Border -->
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#bgGrad)"/>
+  <rect x="2" y="2" width="60" height="60" rx="16" stroke="url(#goldBorder)" stroke-width="2.5" stroke-opacity="0.85"/>
+
+  <!-- Candle Flame with Glow -->
+  <g filter="url(#flameGlow)">
+    <path d="M32 6 C29.5 11.5 27 15 27 17.5 C27 20.3 29.2 22.5 32 22.5 C34.8 22.5 37 20.3 37 17.5 C37 15 34.5 11.5 32 6 Z" fill="url(#flameGrad)"/>
+    <ellipse cx="32" cy="18" rx="2" ry="2.8" fill="#ffffff" fill-opacity="0.9"/>
+  </g>
+
+  <!-- Candle Stick with Cyan Stripes -->
+  <rect x="30" y="22" width="4" height="8" rx="1.5" fill="#22d3ee"/>
+  <path d="M30.2 24.5 L33.8 23.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M30.2 27.5 L33.8 26.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- Cake Top Layer (Frosting Drips) -->
+  <path d="M14 34 C14 31 16.5 29.5 19.5 29.5 L44.5 29.5 C47.5 29.5 50 31 50 34 C50 37 47.5 38 45.5 36.5 C43.5 35 41.5 37.5 39 37.5 C36.5 37.5 34.5 35.5 32 35.5 C29.5 35.5 27.5 37.5 25 37.5 C22.5 37.5 20.5 35 18.5 36.5 C16.5 38 14 37 14 34 Z" fill="url(#frostingGrad)"/>
+
+  <!-- Cake Base Body -->
+  <path d="M14 35.5 L14 49 C14 51.8 16.2 54 19 54 L45 54 C47.8 54 50 51.8 50 49 L50 35.5 Z" fill="url(#cakeBodyGrad)"/>
+
+  <!-- Strawberry/Berry Jam Layer in Middle of Cake -->
+  <path d="M14 43.5 C17 44.5 20 42.5 24 44 C28 42.5 32 44.5 36 43 C40 44.5 44 42.5 47 44 C48.5 44 49.5 43.8 50 43.5 L50 46 C49.5 46.2 48.5 46.5 47 46.5 C44 46.5 40 44.8 36 46 C32 44.8 28 46.8 24 45.5 C20 46.8 17 45 14 46 Z" fill="#f43f9e"/>
+
+  <!-- Sparkles & Confetti Stars -->
+  <path d="M13 18 L14.5 14 L16 18 L20 19.5 L16 21 L14.5 25 L13 21 L9 19.5 Z" fill="#f5c97b"/>
+  <path d="M49 14 L50 11.5 L51 14 L53.5 15 L51 16 L50 18.5 L49 16 L46.5 15 Z" fill="#ff7a3d"/>
+  <circle cx="11" cy="27" r="1.5" fill="#f43f9e"/>
+  <circle cx="53" cy="26" r="1.5" fill="#22d3ee"/>
+</svg>
