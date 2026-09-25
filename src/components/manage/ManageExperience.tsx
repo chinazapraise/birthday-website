@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import useStore, { emit, useSettings, useTimelineMedia } from "@/lib/hooks";
-import type { Wish, CommunityStory, WishlistItem, TimelineMedia } from "@/lib/types";
+import useStore, { emit, useSettings, useCloudYearPhotos } from "@/lib/hooks";
+import type { Wish, CommunityStory, WishlistItem } from "@/lib/types";
 import FloatingNav from "@/components/nav/FloatingNav";
 import MeshBackground from "@/components/ambient/MeshBackground";
 import CursorGlow from "@/components/ambient/CursorGlow";
@@ -11,7 +11,10 @@ import { EASE } from "@/lib/motion";
 import { formatDate, cn } from "@/lib/utils";
 import { giftStats } from "@/lib/giftStatus";
 import { timelineSeed } from "@/lib/content/timeline";
+import { homeFrameCount } from "@/lib/timelineMedia";
 import { fileToCompressedDataUrl } from "@/lib/image";
+import { getAdminPassword } from "@/lib/admin";
+import { notifyGiftAction } from "@/lib/notifyClient";
 
 /**
  * Owner area. Utilitarian on purpose — management, not showcase.
@@ -20,7 +23,24 @@ import { fileToCompressedDataUrl } from "@/lib/image";
 export default function ManageExperience() {
   const store = useStore();
   const { settings, updateSettings } = useSettings();
-  const { mediaUrls, setMedia, removeMedia } = useTimelineMedia();
+  const {
+    photos,
+    loading: photosLoading,
+    busy: photosBusy,
+    error: photosError,
+    upload,
+    setCaption,
+    replace,
+    remove,
+    reorder,
+  } = useCloudYearPhotos();
+  const [dragPhoto, setDragPhoto] = useState<{
+    yearId: string;
+    from: number;
+  } | null>(null);
+  const [dropTarget, setDropTarget] = useState<string | null>(null);
+  const [migrating, setMigrating] = useState(false);
+  const migrateRef = useRef(false);
 
   const wishes = store.allWishes();
   const stories = store.allStories();
@@ -30,6 +50,101 @@ export default function ManageExperience() {
   const [wishlistDraft, setWishlistDraft] = useState<WishlistItem[]>(
     () => store.getWishlist(),
   );
+
+  const [releasing, setReleasing] = useState(false);
+  const [releaseMessage, setReleaseMessage] = useState<string | null>(null);
+
+  const releaseGiftActivity = async () => {
+    if (
+      !window.confirm(
+        "Release ALL gift actions? Every claim, reserve and contribution (including the ones in the cloud) will be cleared. This cannot be undone.",
+      )
+    )
+      return;
+    setReleasing(true);
+    setReleaseMessage(null);
+    store.clearGiftActivity();
+    emit();
+    try {
+      const res = await fetch("/api/wishlist/clear", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-password": getAdminPassword(),
+        },
+      });
+      const data = await res.json();
+      setReleaseMessage(
+        data.ok
+          ? "Released. All test gift activity is cleared (cloud + this browser)."
+          : `Cloud clear reported an issue: ${data.error ?? "unknown"}. Local was cleared.`,
+      );
+    } catch {
+      setReleaseMessage(
+        "Local cleared, but the cloud clear didn't reach the server. Try again.",
+      );
+    } finally {
+      setReleasing(false);
+    }
+  };
+
+  const handlePhotoUpload = async (yearId: string, files: FileList | null) => {
+    if (!files?.length) return;
+    for (const file of Array.from(files)) {
+      const dataUrl = await fileToCompressedDataUrl(file);
+      if (dataUrl) await upload(yearId, dataUrl);
+    }
+  };
+
+  const handlePhotoReplace = async (
+    yearId: string,
+    photoId: string,
+    file: File,
+  ) => {
+    const dataUrl = await fileToCompressedDataUrl(file);
+    if (dataUrl) await replace(yearId, photoId, dataUrl);
+  };
+
+  const movePhoto = (yearId: string, from: number, to: number) => {
+    const list = photos[yearId] ?? [];
+    if (from === to || from < 0 || to < 0 || from >= list.length) return;
+    const ids = list.map((p) => p.id);
+    const [moved] = ids.splice(from, 1);
+    ids.splice(to, 0, moved);
+    void reorder(yearId, ids);
+  };
+
+  /*
+   * Photos used to live only in this browser. If the cloud list is empty
+   * but this browser still holds photos, push them up once so nothing is
+   * lost and they become visible to visitors.
+   */
+  useEffect(() => {
+    if (migrateRef.current || photosLoading) return;
+    migrateRef.current = true;
+
+    const local = store.getYearPhotos();
+    const localCount = Object.values(local).reduce((s, l) => s + l.length, 0);
+    const cloudCount = Object.values(photos).reduce((s, l) => s + l.length, 0);
+    if (!localCount || cloudCount) return;
+
+    const timer = setTimeout(() => {
+      setMigrating(true);
+      void (async () => {
+        try {
+          for (const [yearId, list] of Object.entries(local)) {
+            for (const photo of list) {
+              if (photo.url.startsWith("data:")) await upload(yearId, photo.url);
+              else await setCaption(yearId, photo.id, photo.caption ?? "");
+            }
+          }
+        } finally {
+          setMigrating(false);
+        }
+      })();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [photosLoading, photos, store, upload, setCaption]);
 
   // Editable copy fields (mapped directly to SiteSettings)
   const [copyDraft, setCopyDraft] = useState({
@@ -73,13 +188,18 @@ export default function ManageExperience() {
   const markGifted = (claimId: string, gifted: boolean) => {
     store.updateClaim(claimId, { gifted });
     emit();
-  };
-
-  const handleTimelineUpload = async (mediaId: string, file: File) => {
-    const dataUrl = await fileToCompressedDataUrl(file);
-    if (!dataUrl) return;
-    setMedia(mediaId, dataUrl);
-    emit();
+    if (gifted) {
+      const claim = claims.find((c) => c.id === claimId);
+      if (claim) {
+        void notifyGiftAction("gifted", {
+          itemName: store
+            .getWishlist()
+            .find((i) => i.id === claim.wishlistItemId)?.name ?? "gift",
+          name: claim.name,
+          note: claim.note,
+        });
+      }
+    }
   };
 
   const KIND_LABEL: Record<WishlistItem["kind"], string> = {
@@ -118,6 +238,46 @@ export default function ManageExperience() {
             backend. Hiding things here removes them from the public walls.
           </p>
         </header>
+
+        {/* Gift activity — quick actions */}
+        <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="font-display text-lg font-bold text-cream">
+                Gift activity{" "}
+                <span className="text-cream/50">
+                  ({claims.length + reserves.length + contributions.length})
+                </span>
+              </h2>
+              <p className="mt-1 text-xs text-cream/45">
+                Claims, reserves and contributions that came in from any
+                device.
+              </p>
+            </div>
+            <button
+              onClick={releaseGiftActivity}
+              disabled={releasing}
+              className="rounded-full border border-magenta/50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-magenta transition hover:border-magenta hover:text-magenta disabled:opacity-40"
+            >
+              {releasing ? "Releasing…" : "Release all test gift activity"}
+            </button>
+          </div>
+          {releaseMessage && (
+            <p className="mt-3 text-xs text-cream/60">{releaseMessage}</p>
+          )}
+          <div className="mt-4 flex flex-wrap gap-4 text-xs text-cream/55">
+            <span>
+              <span className="text-magenta">{claims.length}</span> claims
+            </span>
+            <span>
+              <span className="text-gold">{reserves.length}</span> reserves
+            </span>
+            <span>
+              <span className="text-acid">{contributions.length}</span>{" "}
+              contributions
+            </span>
+          </div>
+        </section>
 
         {/* Wishes */}
         <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
@@ -196,48 +356,160 @@ export default function ManageExperience() {
           </ul>
         </section>
 
-        {/* Timeline photos */}
+        {/* Year photos */}
         <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
           <h2 className="font-display text-lg font-bold text-cream">
-            Timeline photos <span className="text-violet">({timelineSeed.length} years)</span>
+            Year photos <span className="text-violet">({timelineSeed.length} years)</span>
           </h2>
           <p className="mt-1 text-xs text-cream/45">
-            Tap any blank image to upload the real photo for that story. Photos
-            are stored in this browser (localStorage) until a backend is added.
+            Add as many photos as you like to any year. Drag a photo to
+            reorder — the order decides what fills the homepage. The first N
+            photos go to the homepage (N = that year&apos;s existing frame
+            count). Every photo appears in the gallery. Uploads save to the
+            live site, so everyone sees them.
           </p>
+          {photosError ? (
+            <p className="mt-3 rounded-lg border border-magenta/40 bg-magenta/10 px-3 py-2 text-xs text-magenta">
+              {photosError}
+            </p>
+          ) : null}
+          {migrating || photosBusy ? (
+            <p className="mt-3 rounded-lg border border-violet/40 bg-violet/10 px-3 py-2 text-xs text-violet">
+              {migrating
+                ? "Publishing your existing photos to the live site…"
+                : "Saving…"}
+            </p>
+          ) : null}
           <div className="mt-5 space-y-6">
-            {timelineSeed.map((year) => (
-              <div
-                key={year.id}
-                className="rounded-2xl bg-white/[0.03] p-4"
-              >
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                  <p className="font-display text-sm font-bold text-cream">
-                    {year.year}
-                    <span className="ml-2 font-sans font-normal text-cream/50">
-                      {year.title}
+            {timelineSeed.map((year) => {
+              const list = photos[year.id] ?? [];
+              const frames = homeFrameCount(year);
+              const onHome = Math.min(list.length, frames);
+              return (
+                <div key={year.id} className="rounded-2xl bg-white/[0.03] p-4">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <p className="font-display text-sm font-bold text-cream">
+                      {year.year}
+                      <span className="ml-2 font-sans font-normal text-cream/50">
+                        {year.title}
+                      </span>
+                    </p>
+                    <span className="font-mono text-[0.6rem] uppercase tracking-wider text-cream/40">
+                      {list.length} photo{list.length === 1 ? "" : "s"} ·{" "}
+                      <span className="text-violet">
+                        {onHome} on homepage ({frames} frame
+                        {frames === 1 ? "" : "s"})
+                      </span>
                     </span>
-                  </p>
-                  <span className="font-mono text-[0.6rem] uppercase tracking-wider text-cream/40">
-                    {year.media.length} image{year.media.length === 1 ? "" : "s"}
-                  </span>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {list.map((photo, i) => (
+                      <div
+                        key={photo.id}
+                        draggable
+                        onDragStart={() =>
+                          setDragPhoto({ yearId: year.id, from: i })
+                        }
+                        onDragEnd={() => {
+                          setDragPhoto(null);
+                          setDropTarget(null);
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          setDropTarget(photo.id);
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          if (dragPhoto?.yearId === year.id) {
+                            movePhoto(year.id, dragPhoto.from, i);
+                          }
+                          setDragPhoto(null);
+                          setDropTarget(null);
+                        }}
+                        className={`w-40 cursor-grab rounded-xl border p-2 transition active:cursor-grabbing ${
+                          dropTarget === photo.id
+                            ? "border-violet bg-violet/10"
+                            : "border-white/10 bg-black/20"
+                        }`}
+                      >
+                        <div className="relative">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={photo.url}
+                            alt={photo.caption ?? `${year.year} photo ${i + 1}`}
+                            className="h-28 w-full rounded-lg object-cover"
+                            loading="lazy"
+                          />
+                          <span className="absolute left-1 top-1 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[0.55rem] text-cream">
+                            {i + 1}
+                          </span>
+                          {i < frames ? (
+                            <span className="absolute right-1 top-1 rounded bg-violet/90 px-1.5 py-0.5 font-mono text-[0.5rem] uppercase tracking-wider text-white">
+                              Home
+                            </span>
+                          ) : (
+                            <span className="absolute right-1 top-1 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[0.5rem] uppercase tracking-wider text-cream/60">
+                              Gallery
+                            </span>
+                          )}
+                        </div>
+                        <CaptionInput
+                          key={`${photo.id}:${photo.caption ?? ""}`}
+                          value={photo.caption ?? ""}
+                          onCommit={(value) =>
+                            void setCaption(year.id, photo.id, value)
+                          }
+                        />
+                        <div className="mt-1 flex gap-1">
+                          <label className="flex-1 cursor-pointer rounded-md border border-violet/40 px-2 py-1 text-center text-[0.6rem] font-semibold uppercase tracking-wider text-violet transition hover:border-violet">
+                            Replace
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  void handlePhotoReplace(
+                                    year.id,
+                                    photo.id,
+                                    file,
+                                  );
+                                }
+                                e.target.value = "";
+                              }}
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => void remove(year.id, photo.id)}
+                            className="flex-1 rounded-md border border-magenta/40 px-2 py-1 text-[0.6rem] font-semibold uppercase tracking-wider text-magenta transition hover:border-magenta"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <label className="flex h-36 w-40 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-white/20 text-center transition hover:border-violet/60">
+                      <span className="text-lg text-cream/40">+</span>
+                      <span className="max-w-[88%] font-mono text-[0.5rem] leading-tight uppercase tracking-wide text-cream/30">
+                        Add photos
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={(e) => {
+                          void handlePhotoUpload(year.id, e.target.files);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  {year.media.map((m) => (
-                    <MediaUploadTile
-                      key={m.id}
-                      media={m}
-                      url={mediaUrls[m.id]}
-                      onUpload={(file) => handleTimelineUpload(m.id, file)}
-                      onRemove={() => {
-                        removeMedia(m.id);
-                        emit();
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -299,6 +571,11 @@ export default function ManageExperience() {
                           </span>
                         )}
                         <span>· qty {c.quantity}</span>
+                        {c.note && (
+                          <span className="max-w-[26ch] truncate italic text-cream/50">
+                            “{c.note}”
+                          </span>
+                        )}
                           <button
                             onClick={() => markGifted(c.id, !c.gifted)}
                             className={cn(
@@ -330,7 +607,7 @@ export default function ManageExperience() {
                                 c.paymentStatus === "successful"
                                   ? " · paid"
                                   : " · pending"
-                              }`,
+                              }${c.note ? ` · “${c.note}”` : ""}`,
                             )
                             .join(", ")}
                         </p>
@@ -349,7 +626,7 @@ export default function ManageExperience() {
                                     }${
                                       r.phone ? ` · ${r.phone}` : ""
                                     }`
-                              }`,
+                              }${r.note ? ` · “${r.note}”` : ""}`,
                             )
                             .join(", ")}
                         </p>
@@ -426,78 +703,27 @@ export default function ManageExperience() {
   );
 }
 
-function MediaUploadTile({
-  media,
-  url,
-  onUpload,
-  onRemove,
+/** Edits locally, saves on blur — avoids a network write per keystroke. */
+function CaptionInput({
+  value,
+  onCommit,
 }: {
-  media: TimelineMedia;
-  url?: string;
-  onUpload: (file: File) => void;
-  onRemove: () => void;
+  value: string;
+  onCommit: (value: string) => void;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
+  const [draft, setDraft] = useState(value);
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
-        className={cn(
-          "group relative flex h-28 w-24 flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed text-center transition",
-          url ? "border-white/15" : "border-white/20 hover:border-violet/60",
-        )}
-        style={{
-          aspectRatio: media.aspect ?? "4:5",
-        }}
-        title={url ? "Replace photo" : "Add photo"}
-      >
-        {url ? (
-          <>
-            <img
-              src={url}
-              alt={media.alt}
-              loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <span className="absolute inset-0 flex items-center justify-center bg-black/50 font-mono text-[0.55rem] uppercase tracking-wider text-cream opacity-0 transition group-hover:opacity-100">
-              Replace
-            </span>
-          </>
-        ) : (
-          <>
-            <span className="text-lg text-cream/40 transition group-hover:text-violet">
-              +
-            </span>
-            <span className="max-w-[88%] font-mono text-[0.5rem] leading-tight text-cream/30 uppercase tracking-wide">
-              Add photo
-            </span>
-          </>
-        )}
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) onUpload(file);
-            e.target.value = "";
-          }}
-        />
-      </button>
-      {url && (
-        <button
-          type="button"
-          onClick={onRemove}
-          className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-white/20 bg-ink text-[0.6rem] text-cream/70 transition hover:border-magenta hover:text-magenta"
-          aria-label="Remove photo"
-          title="Remove photo"
-        >
-          ×
-        </button>
-      )}
-    </div>
+    <input
+      value={draft}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={() => {
+        if (draft !== value) onCommit(draft);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.currentTarget.blur();
+      }}
+      placeholder="Caption (optional)"
+      className="mt-2 w-full rounded-md border border-white/10 bg-transparent px-2 py-1 text-xs text-cream focus:border-violet focus:outline-none"
+    />
   );
 }

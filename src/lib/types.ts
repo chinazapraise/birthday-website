@@ -9,6 +9,16 @@ export interface TimelineMedia {
   aspect?: string;
 }
 
+/**
+ * One uploaded photo belonging to a year. The array order IS the priority
+ * order: the first N entries fill that year's homepage frames (N = the
+ * seed frame count), and every entry appears in the gallery.
+ */
+export interface YearPhoto {
+  id: string;
+  url: string;
+  caption?: string;
+}
 export type YearLayoutVariant =
   | "editorial"
   | "polaroid"
@@ -102,6 +112,18 @@ export interface CommunityStory {
 
 export type GiftKind = "single" | "multi" | "expensive" | "trip" | "cash";
 
+export type FundingMode = "none" | "open" | "fixed";
+
+export interface GiftFunding {
+  mode: FundingMode;
+  /** Total charged for "fixed", in NGN. */
+  amount?: number;
+  /** Per-unit NGN, informational + used to derive amount when covers is set. */
+  unitPrice?: number;
+  /** How many units the fixed amount covers, e.g. 27 licences. */
+  covers?: number;
+}
+
 export interface WishlistItem {
   id: string;
   name: string;
@@ -112,6 +134,11 @@ export interface WishlistItem {
   cashAmount?: number;
   /** per-claim quantity cap for multi gifts (e.g. wall frames = 3) */
   maxQuantity?: number;
+  /** Show the card-level Contribute button even when kind is not expensive/trip. */
+  contributeButton?: boolean;
+  /** Publicly show how many people claimed this ("N people claimed this"). */
+  showClaimCount?: boolean;
+  funding?: GiftFunding;
   sortOrder: number;
   status: "active" | "hidden";
   createdAt: string;
@@ -130,6 +157,7 @@ export interface GiftReserve {
   name: string;
   email?: string;
   phone?: string;
+  note?: string;
   quantity: number;
   anonymous: boolean;
   createdAt: string;
@@ -173,6 +201,7 @@ export interface Contribution {
   currency: string;
   kind: "contribution" | "gift";
   anonymous: boolean;
+  note?: string;
   paymentReference?: string;
   paymentStatus: "initiated" | "pending" | "successful" | "failed";
   createdAt: string;

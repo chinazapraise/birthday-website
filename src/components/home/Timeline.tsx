@@ -5,8 +5,8 @@ import { useMemo, useRef } from "react";
 import type { TimelineYear, MicroMemory } from "@/lib/types";
 import TimelineChapter from "@/components/home/TimelineChapter";
 import MicroMemoryCard from "@/components/home/MicroMemoryCard";
-import { mergeTimelineMedia } from "@/lib/timelineMedia";
-import { useTimelineMedia } from "@/lib/hooks";
+import { applyYearPhotosToFrames } from "@/lib/timelineMedia";
+import { useCloudYearPhotos } from "@/lib/hooks";
 
 /**
  * SECTION 2 — STORY TIMELINE 2016–2026.
@@ -30,10 +30,10 @@ export default function Timeline({
     damping: 25,
   });
 
-  const { mediaUrls } = useTimelineMedia();
+  const { photos } = useCloudYearPhotos();
   const mergedYears = useMemo(
-    () => mergeTimelineMedia(years, mediaUrls),
-    [years, mediaUrls],
+    () => applyYearPhotosToFrames(years, photos),
+    [years, photos],
   );
 
   const memoByYear = new Map<number, MicroMemory[]>();

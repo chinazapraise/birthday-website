@@ -66,7 +66,6 @@ export default function GiftCard({
   const view = giftStatusView(item, stats);
   const isCash = item.kind === "cash";
   const hasContribute = view.contributable || isCash;
-  const donatedCount = isCash ? stats.gifted : stats.contributorCount;
 
   return (
     <motion.article
@@ -128,12 +127,6 @@ export default function GiftCard({
       </div>
 
       <div className="mt-5">
-        {donatedCount > 0 && !isCash && !view.primary.includes("claimed") && (
-          <p className="mb-3 text-xs text-cream/45">
-            {`${donatedCount} ${donatedCount === 1 ? "person has" : "people have"} contributed`}
-          </p>
-        )}
-
         <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
           {item.kind !== "cash" && (
             <button

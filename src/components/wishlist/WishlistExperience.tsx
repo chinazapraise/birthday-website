@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   useSettings,
@@ -17,7 +17,9 @@ import MeshBackground from "@/components/ambient/MeshBackground";
 import CursorGlow from "@/components/ambient/CursorGlow";
 import ConfettiLayer from "@/components/effects/ConfettiLayer";
 import { EASE } from "@/lib/motion";
+import { preloadPaystack } from "@/lib/paystack";
 import type { WishlistItem } from "@/lib/types";
+import type { PrefillDetails } from "@/components/wishlist/ContributionModal";
 
 type ModalKind = "claim" | "contribute" | null;
 
@@ -39,10 +41,18 @@ export default function WishlistExperience() {
     addContribution,
     markSuccessful,
     markAttempted,
+    updateContribution,
   } = useContributions();
 
   const [modalItem, setModalItem] = useState<WishlistItem | null>(null);
   const [modalKind, setModalKind] = useState<ModalKind>(null);
+  const [prefill, setPrefill] = useState<PrefillDetails | null>(null);
+
+  // Warm up the Paystack popup the moment the wishlist loads, so by the time
+  // someone taps "Pay" the checkout script is already cached and loads fast.
+  useEffect(() => {
+    preloadPaystack();
+  }, []);
 
   const visible = items
     .filter((i) => i.status !== "hidden")
@@ -58,10 +68,30 @@ export default function WishlistExperience() {
   const openContribute = (item: WishlistItem) => {
     setModalItem(item);
     setModalKind("contribute");
+    setPrefill(null);
   };
   const closeModal = () => {
     setModalItem(null);
     setModalKind(null);
+    setPrefill(null);
+  };
+
+  const handleFund = (details: {
+    name: string;
+    email?: string;
+    phone?: string;
+    note?: string;
+    anonymous: boolean;
+  }) => {
+    if (!modalItem) return;
+    setPrefill({
+      name: details.name,
+      email: details.email,
+      phone: details.phone,
+      note: details.note,
+      anonymous: details.anonymous,
+    });
+    setModalKind("contribute");
   };
 
   const handleClaim = (data: {
@@ -87,6 +117,7 @@ export default function WishlistExperience() {
     name: string;
     email?: string;
     phone?: string;
+    note?: string;
     quantity: number;
     anonymous: boolean;
   }): boolean => {
@@ -106,6 +137,10 @@ export default function WishlistExperience() {
   }) => {
     if (!modalItem) return null;
     return addContribution({ wishlistItemId: modalItem.id, ...data });
+  };
+
+  const handleContributionNote = (id: string, note: string) => {
+    updateContribution(id, { note });
   };
 
   return (
@@ -202,15 +237,19 @@ export default function WishlistExperience() {
           })()}
           onClaim={handleClaim}
           onReserve={handleReserve}
+          onFund={handleFund}
           onClose={closeModal}
         />
       )}
       {modalItem && modalKind === "contribute" && (
         <ContributionModal
+          key={`${modalItem.id}-${prefill ? "prefilled" : "fresh"}`}
           item={modalItem}
+          prefill={prefill}
           onContribute={handleContribute}
           onMarkAttempted={markAttempted}
           onMarkSuccessful={markSuccessful}
+          onNote={handleContributionNote}
           onClose={closeModal}
         />
       )}

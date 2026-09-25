@@ -2,13 +2,29 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, ArrowRight, HandHeart, CheckCircle } from "@phosphor-icons/react";
+import {
+  X,
+  ArrowRight,
+  HandHeart,
+  CheckCircle,
+  Coin,
+  Gift,
+} from "@phosphor-icons/react";
 import type { WishlistItem } from "@/lib/types";
 import { fireConfetti } from "@/components/effects/ConfettiLayer";
 import { EASE } from "@/lib/motion";
 import { clamp } from "@/lib/utils";
+import { canFundGift } from "@/lib/giftFlow";
 
 type Mode = "claim" | "reserve";
+
+interface GifterDetails {
+  name: string;
+  email?: string;
+  phone?: string;
+  note?: string;
+  anonymous: boolean;
+}
 
 /**
  * "Get It For Me" — two-intent modal.
@@ -21,6 +37,7 @@ export default function GiftClaimModal({
   canClaim,
   onClaim,
   onReserve,
+  onFund,
   onClose,
 }: {
   item: WishlistItem;
@@ -37,9 +54,11 @@ export default function GiftClaimModal({
     name: string;
     email?: string;
     phone?: string;
+    note?: string;
     quantity: number;
     anonymous: boolean;
   }) => boolean;
+  onFund: (details: GifterDetails) => void;
   onClose: () => void;
 }) {
   const [mode, setMode] = useState<Mode>(canClaim ? "claim" : "reserve");
@@ -51,9 +70,13 @@ export default function GiftClaimModal({
   const [anonymous, setAnonymous] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<null | "claim" | "reserve">(null);
+  const [choosing, setChoosing] = useState(false);
 
   const isMulti = item.kind === "multi";
   const maxQ = clamp(item.maxQuantity ?? 1, 1, 99);
+
+  const fundable = canFundGift(item);
+  const showChoice = fundable && mode === "claim";
 
   const switchMode = (m: Mode) => {
     setMode(m);
@@ -68,6 +91,11 @@ export default function GiftClaimModal({
       return;
     }
     const q = isMulti ? clamp(quantity, 1, maxQ) : 1;
+
+    if (showChoice) {
+      setChoosing(true);
+      return;
+    }
 
     if (mode === "claim") {
       const ok = onClaim({
@@ -93,12 +121,46 @@ export default function GiftClaimModal({
         name: name.trim(),
         email: email.trim() || undefined,
         phone: phone.trim() || undefined,
+        note: note.trim() || undefined,
         quantity: q,
         anonymous,
       });
       setDone("reserve");
       fireConfetti("burst", { count: 26 });
     }
+  };
+
+  const claimIt = () => {
+    const ok = onClaim({
+      name: name.trim(),
+      email: email.trim() || undefined,
+      phone: phone.trim() || undefined,
+      note: note.trim() || undefined,
+      quantity: isMulti ? clamp(quantity, 1, maxQ) : 1,
+      anonymous,
+    });
+    if (ok) {
+      setChoosing(false);
+      setDone("claim");
+      fireConfetti("burst", { count: 70, balloons: 4 });
+    } else {
+      setChoosing(false);
+      setError(
+        item.kind === "trip"
+          ? "Someone already sponsored this one. Pick another or contribute instead."
+          : "Someone just claimed this before you. Pick another gift or contribute instead.",
+      );
+    }
+  };
+
+  const fundIt = () => {
+    onFund({
+      name: name.trim(),
+      email: email.trim() || undefined,
+      phone: phone.trim() || undefined,
+      note: note.trim() || undefined,
+      anonymous,
+    });
   };
 
   return (
@@ -160,6 +222,72 @@ export default function GiftClaimModal({
                 Done
               </button>
             </div>
+          ) : choosing ? (
+            <>
+              <h3 className="mt-2 font-display text-2xl font-bold text-cream">
+                How would you like to gift this? 🎁
+              </h3>
+              <p className="mt-2 text-sm text-cream/55">
+                {item.name}
+              </p>
+
+              <div className="mt-6 space-y-3">
+                <button
+                  type="button"
+                  onClick={claimIt}
+                  className="flex w-full items-center gap-4 rounded-2xl border border-white/15 bg-black/20 px-4 py-4 text-left transition hover:border-violet/60"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet to-magenta text-ink">
+                    <HandHeart size={20} weight="duotone" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-sm font-bold text-cream">
+                      I&apos;ll get it for him
+                    </span>
+                    <span className="mt-0.5 block text-xs text-cream/50">
+                      I&apos;ll buy the gift myself and make sure he gets it.
+                    </span>
+                  </span>
+                  <ArrowRight size={16} className="shrink-0 text-cream/40" weight="bold" />
+                </button>
+                <button
+                  type="button"
+                  onClick={fundIt}
+                  className="flex w-full items-center gap-4 rounded-2xl border border-white/15 bg-black/20 px-4 py-4 text-left transition hover:border-gold/60"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gold to-sunset text-ink">
+                    <Coin size={20} weight="duotone" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-sm font-bold text-cream">
+                      I&apos;ll send him cash 💛
+                    </span>
+                    <span className="mt-0.5 block text-xs text-cream/50">
+                      I&apos;d rather send some money towards the gift.
+                    </span>
+                  </span>
+                  <ArrowRight size={16} className="shrink-0 text-cream/40" weight="bold" />
+                </button>
+              </div>
+
+              {error && (
+                <p className="mt-4 text-sm font-medium text-magenta" role="alert">
+                  {error}
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setChoosing(false);
+                  setError(null);
+                }}
+                className="mt-5 w-full rounded-full border border-white/15 px-6 py-3 text-sm text-cream/60 transition hover:border-white/40"
+              >
+                <Gift size={15} className="mr-1.5 inline" weight="bold" />
+                Back
+              </button>
+            </>
           ) : (
             <>
               <p className="text-xs uppercase tracking-[0.2em] text-cream/40">
@@ -270,20 +398,18 @@ export default function GiftClaimModal({
                     className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-magenta focus:outline-none"
                   />
                 </div>
-                {mode === "claim" && (
-                  <div>
-                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
-                      Note (optional)
-                    </label>
-                    <textarea
-                      value={note}
-                      onChange={(e) => setNote(e.target.value)}
-                      rows={2}
-                      placeholder="Anything to say?"
-                      className="w-full resize-none rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-magenta focus:outline-none"
-                    />
-                  </div>
-                )}
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
+                    Note (optional)
+                  </label>
+                  <textarea
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    rows={2}
+                    placeholder="Anything to say?"
+                    className="w-full resize-none rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-magenta focus:outline-none"
+                  />
+                </div>
 
                 <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:border-white/25">
                   <input
@@ -313,9 +439,11 @@ export default function GiftClaimModal({
                 >
                   <ArrowRight size={16} weight="bold" />{" "}
                   {mode === "claim"
-                    ? item.kind === "trip"
-                      ? "Sponsor this trip"
-                      : "Claim gift"
+                    ? showChoice
+                      ? "Continue"
+                      : item.kind === "trip"
+                        ? "Sponsor this trip"
+                        : "Claim gift"
                     : "Reserve"}
                 </button>
               </form>

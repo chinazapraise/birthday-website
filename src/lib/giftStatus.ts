@@ -67,7 +67,7 @@ function plural(n: number, word: string, pluralWord?: string): string {
 }
 
 function people(n: number): string {
-  return plural(n, "person");
+  return plural(n, "person", "people");
 }
 
 function reservedPhrase(n: number): string {
@@ -78,8 +78,8 @@ function contributedPhrase(n: number): string {
   return n > 0 ? `${people(n)} contributed` : "";
 }
 
-function giftedPhrase(n: number): string {
-  return n > 0 ? `${n} ${n === 1 ? "person has" : "people have"} gifted this` : "";
+function claimedPhrase(n: number): string {
+  return n > 0 ? `${people(n)} claimed this` : "";
 }
 
 export function giftStatusView(
@@ -89,34 +89,36 @@ export function giftStatusView(
   const kind: GiftKind = item.kind;
 
   if (kind === "cash") {
-    const proof = giftedPhrase(stats.gifted);
     return {
-      primary: proof || "Available",
+      primary: "Available",
       secondary: "",
       tone: stats.gifted > 0 ? "gifted" : "available",
       claimable: false,
       contributable: true,
-      p1: proof,
+      p1: "",
       p2: "",
     };
   }
 
   if (kind === "multi") {
-    const gifted = giftedPhrase(stats.claims);
+    const claimed = item.showClaimCount ? claimedPhrase(stats.claims) : "";
     const reserved = reservedPhrase(stats.reserved);
     return {
-      primary: gifted || reserved || "Available",
-      secondary: gifted && reserved ? reserved : "",
+      primary: claimed || reserved || "Available",
+      secondary: claimed && reserved ? reserved : "",
       tone:
         stats.claims > 0 ? "gifted" : stats.reserved > 0 ? "reserved" : "available",
       claimable: true,
-      contributable: false,
-      p1: gifted,
+      contributable: item.contributeButton === true,
+      p1: claimed,
       p2: reserved,
     };
   }
 
   // single / expensive / trip
+  const canContribute =
+    kind === "expensive" || kind === "trip" || item.contributeButton === true;
+
   if (stats.claimed) {
     const gifted = stats.claim?.gifted;
     return {
@@ -129,19 +131,19 @@ export function giftStatusView(
             ? "Someone gifted this"
             : "Someone claimed this",
       secondary:
-        stats.contributed > 0
+        canContribute && stats.contributed > 0
           ? contributedPhrase(stats.contributed)
           : reservedPhrase(stats.reserved),
       tone: gifted ? "gifted" : "claimed",
       claimable: false,
-      contributable: false,
+      contributable: canContribute,
       p1: gifted ? "gifted" : "claimed",
       p2: contributedPhrase(stats.contributed),
     };
   }
 
   const reserved = reservedPhrase(stats.reserved);
-  const contributed = contributedPhrase(stats.contributed);
+  const contributed = canContribute ? contributedPhrase(stats.contributed) : "";
   return {
     primary: reserved || contributed || "Available",
     secondary: reserved && contributed ? contributed : "",
@@ -152,7 +154,7 @@ export function giftStatusView(
           ? "contributed"
           : "available",
     claimable: true,
-    contributable: kind === "expensive" || kind === "trip",
+    contributable: canContribute,
     p1: reserved,
     p2: contributed,
   };

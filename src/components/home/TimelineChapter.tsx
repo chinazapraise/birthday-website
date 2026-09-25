@@ -531,12 +531,6 @@ function ChapterMedia({
                   url={m.url}
                   alt={m.alt}
                 />
-                <span
-                  className="absolute left-2 top-2 rounded-full px-2.5 py-1 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-ink"
-                  style={{ background: accent }}
-                >
-                  {i === 0 ? "before" : "after"}
-                </span>
               </motion.div>
             ))}
           </div>

@@ -235,11 +235,11 @@ export const timelineSeed: TimelineYear[] = [
     quote: "Sometimes the answer to a prayer looks like one conversation.",
     location: "[LAGOS, NIGERIA]",
     media: [
-      M("2025-a", "PHOTO PLACEHOLDER · 2025 BEFORE · portrait 4:5"),
-      M("2025-b", "PHOTO PLACEHOLDER · 2025 AFTER · portrait 4:5"),
-      M("2025-c", "PHOTO PLACEHOLDER · 2025 IN-BETWEEN 01 · portrait 4:5"),
-      M("2025-d", "PHOTO PLACEHOLDER · 2025 IN-BETWEEN 02 · portrait 4:5"),
-      M("2025-e", "PHOTO PLACEHOLDER · 2025 IN-BETWEEN 03 · portrait 4:5"),
+      M("2025-a", "PHOTO PLACEHOLDER · 2025 01 · portrait 4:5"),
+      M("2025-b", "PHOTO PLACEHOLDER · 2025 02 · portrait 4:5"),
+      M("2025-c", "PHOTO PLACEHOLDER · 2025 03 · portrait 4:5"),
+      M("2025-d", "PHOTO PLACEHOLDER · 2025 04 · portrait 4:5"),
+      M("2025-e", "PHOTO PLACEHOLDER · 2025 05 · portrait 4:5"),
     ],
     layoutVariant: "beforeafter",
     theme: {

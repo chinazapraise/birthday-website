@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { store } from "@/lib/store";
 import type { Store } from "@/lib/store";
-import type { GiftClaim } from "@/lib/types";
+import { getAdminPassword } from "@/lib/admin";
+import type { Contribution, GiftClaim, YearPhoto } from "@/lib/types";
+
+export type CloudPhotoMap = Record<string, YearPhoto[]>;
 
 /*
  * useStore: react state hooked to the store.
@@ -143,6 +146,14 @@ export function useContributions() {
     store.markPaymentAttempted(id);
     emit();
   }, []);
+  const updateContribution = useCallback(
+    (id: string, patch: Partial<Contribution>) => {
+      const next = store.updateContribution(id, patch);
+      emit();
+      return next;
+    },
+    [],
+  );
   const [, force] = useState(0);
   useEffect(() => {
     const l = () => force((n) => n + 1);
@@ -156,6 +167,7 @@ export function useContributions() {
     addContribution,
     markSuccessful,
     markAttempted,
+    updateContribution,
   };
 }
 
@@ -178,7 +190,13 @@ export function useSettings() {
   };
 }
 
-export function useTimelineMedia() {
+function newPhotoId(): string {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+export function useYearPhotos() {
   const [, force] = useState(0);
   useEffect(() => {
     const l = () => force((n) => n + 1);
@@ -188,17 +206,35 @@ export function useTimelineMedia() {
     };
   }, []);
   return {
-    mediaUrls: store.getTimelineMedia(),
-    setMedia: (id: string, url: string) => {
-      const next = store.setTimelineMedia(id, url);
+    photos: store.getYearPhotos(),
+    addPhotos: (
+      yearId: string,
+      items: Array<{ id: string; url: string; caption?: string }>,
+    ) => {
+      const next = store.addYearPhotos(yearId, items);
       emit();
       return next;
     },
-    removeMedia: (id: string) => {
-      const next = store.removeTimelineMedia(id);
+    updatePhoto: (
+      yearId: string,
+      photoId: string,
+      patch: { url?: string; caption?: string },
+    ) => {
+      const next = store.updateYearPhoto(yearId, photoId, patch);
       emit();
       return next;
     },
+    removePhoto: (yearId: string, photoId: string) => {
+      const next = store.removeYearPhoto(yearId, photoId);
+      emit();
+      return next;
+    },
+    reorderPhotos: (yearId: string, orderedIds: string[]) => {
+      const next = store.reorderYearPhotos(yearId, orderedIds);
+      emit();
+      return next;
+    },
+    newPhotoId,
   };
 }
 
@@ -218,6 +254,122 @@ export function useWishlist() {
       emit();
     },
   };
+}
+
+type PhotoResponse = { ok: boolean; photos?: CloudPhotoMap; error?: string };
+
+async function photoRequest(
+  method: "POST" | "PATCH" | "DELETE",
+  body: unknown,
+): Promise<PhotoResponse> {
+  try {
+    const res = await fetch("/api/photos", {
+      method,
+      headers: {
+        "content-type": "application/json",
+        "x-admin-password": getAdminPassword(),
+      },
+      body: JSON.stringify(body),
+      cache: "no-store",
+    });
+    return (await res.json().catch(() => null)) as PhotoResponse;
+  } catch {
+    return { ok: false, error: "network error" };
+  }
+}
+
+/**
+ * Year photos, read from and written to Supabase Storage so an admin
+ * upload becomes visible to every visitor. Falls back to an empty map
+ * when storage is unreachable, which renders the seed placeholders.
+ */
+export function useCloudYearPhotos() {
+  const [photos, setPhotos] = useState<CloudPhotoMap>({});
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    try {
+      const res = await fetch("/api/photos", { cache: "no-store" });
+      const json = (await res.json().catch(() => null)) as PhotoResponse | null;
+      if (json?.ok && json.photos) setPhotos(json.photos);
+    } catch {
+      /* leave whatever we already have */
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => void refresh(), 0);
+    return () => clearTimeout(timer);
+  }, [refresh]);
+
+  const run = useCallback(
+    async (method: "POST" | "PATCH" | "DELETE", body: unknown) => {
+      setBusy(true);
+      setError(null);
+      const json = await photoRequest(method, body);
+      if (json.ok && json.photos) setPhotos(json.photos);
+      else setError(json.error ?? "could not save photos");
+      setBusy(false);
+      return json;
+    },
+    [],
+  );
+
+  /** Upload one already-compressed dataUrl and append it to the year. */
+  const upload = useCallback(
+    async (yearId: string, dataUrl: string) => {
+      const comma = dataUrl.indexOf(",");
+      if (comma === -1) return { ok: false, error: "bad image" };
+      const header = dataUrl.slice(0, comma);
+      const contentType = header.slice(5).split(";")[0] || "image/jpeg";
+      return run("POST", {
+        yearId,
+        dataBase64: dataUrl.slice(comma + 1),
+        contentType,
+      });
+    },
+    [run],
+  );
+
+  const setCaption = useCallback(
+    (yearId: string, photoId: string, caption: string) =>
+      run("PATCH", { yearId, photoId, caption }),
+    [run],
+  );
+
+  /** Swap a photo's file, keeping its id and position. */
+  const replace = useCallback(
+    (yearId: string, photoId: string, dataUrl: string) => {
+      const comma = dataUrl.indexOf(",");
+      if (comma === -1) return Promise.resolve({ ok: false, error: "bad image" });
+      const header = dataUrl.slice(0, comma);
+      const contentType = header.slice(5).split(";")[0] || "image/jpeg";
+      return run("POST", {
+        yearId,
+        photoId,
+        dataBase64: dataUrl.slice(comma + 1),
+        contentType,
+      });
+    },
+    [run],
+  );
+
+  const remove = useCallback(
+    (yearId: string, photoId: string) => run("DELETE", { yearId, photoId }),
+    [run],
+  );
+
+  const reorder = useCallback(
+    (yearId: string, orderedIds: string[]) =>
+      run("PATCH", { yearId, orderedIds }),
+    [run],
+  );
+
+  return { photos, loading, busy, error, refresh, upload, setCaption, replace, remove, reorder };
 }
 
 export default useStore;

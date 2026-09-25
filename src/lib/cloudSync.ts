@@ -38,6 +38,7 @@ type ReserveRow = {
   phone: string;
   anonymous: boolean;
   quantity: number;
+  note: string;
   created_at: string;
 };
 
@@ -79,6 +80,7 @@ function reserveFromRow(r: ReserveRow): GiftReserve {
     name: r.name || "Anonymous",
     email: r.email || undefined,
     phone: r.phone || undefined,
+    note: r.note || undefined,
     quantity: r.quantity,
     anonymous: r.anonymous,
     createdAt: r.created_at,
@@ -96,36 +98,37 @@ function contributionFromRow(r: ContributionRow): Contribution {
     currency: r.currency || "NGN",
     kind: r.kind === "gift" ? "gift" : "contribution",
     anonymous: r.anonymous,
+    note: r.note || undefined,
     paymentReference: r.reference || undefined,
     paymentStatus: r.paid ? "successful" : "pending",
     createdAt: r.created_at,
   };
 }
 
-export async function pullClaims(): Promise<GiftClaim[]> {
+export async function pullClaims(): Promise<GiftClaim[] | null> {
   const { data, error } = await supabase!
     .from("wishlist_claims")
     .select("*")
     .order("created_at", { ascending: true });
-  if (error || !data) return [];
+  if (error || !data) return null;
   return (data as ClaimRow[]).map(claimFromRow);
 }
 
-export async function pullReserves(): Promise<GiftReserve[]> {
+export async function pullReserves(): Promise<GiftReserve[] | null> {
   const { data, error } = await supabase!
     .from("wishlist_reserves")
     .select("*")
     .order("created_at", { ascending: true });
-  if (error || !data) return [];
+  if (error || !data) return null;
   return (data as ReserveRow[]).map(reserveFromRow);
 }
 
-export async function pullContributions(): Promise<Contribution[]> {
+export async function pullContributions(): Promise<Contribution[] | null> {
   const { data, error } = await supabase!
     .from("wishlist_contributions")
     .select("*")
     .order("created_at", { ascending: true });
-  if (error || !data) return [];
+  if (error || !data) return null;
   return (data as ContributionRow[]).map(contributionFromRow);
 }
 
@@ -167,6 +170,7 @@ export async function pushReserve(reserve: GiftReserve): Promise<void> {
     phone: reserve.phone ?? "",
     anonymous: reserve.anonymous,
     quantity: reserve.quantity,
+    note: reserve.note ?? "",
   });
   if (error) console.warn("reserve push failed", error.message);
 }
@@ -184,6 +188,7 @@ export async function pushContribution(
     amount: contribution.amount,
     currency: contribution.currency ?? "NGN",
     kind: contribution.kind,
+    note: contribution.note ?? "",
     paid: contribution.paymentStatus === "successful",
     reference: contribution.paymentReference ?? "",
   });
@@ -197,6 +202,16 @@ export async function pushContributionPaid(
   await supabase!
     .from("wishlist_contributions")
     .update({ paid: true, reference })
+    .eq("id", id);
+}
+
+export async function pushContributionPatch(
+  id: string,
+  patch: { note?: string; paid?: boolean },
+): Promise<void> {
+  await supabase!
+    .from("wishlist_contributions")
+    .update(patch)
     .eq("id", id);
 }
 

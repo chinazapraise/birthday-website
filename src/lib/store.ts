@@ -6,6 +6,7 @@ import {
   wishlistSeed,
   siteSettingsSeed,
 } from "@/lib/content/site";
+import { timelineSeed } from "@/lib/content/timeline";
 import {
   pullClaims,
   pullReserves,
@@ -15,6 +16,7 @@ import {
   pushReserve,
   pushContribution,
   pushContributionPaid,
+  pushContributionPatch,
   isExclusiveItem,
 } from "@/lib/cloudSync";
 import type {
@@ -25,9 +27,17 @@ import type {
   GiftReserve,
   Contribution,
   SiteSettings,
+  YearPhoto,
   WishSubmission,
   StorySubmission,
 } from "@/lib/types";
+import { notifyGiftAction } from "@/lib/notifyClient";
+
+/** Fire the owner email notification, silently, only from the browser. */
+function notify(action: Parameters<typeof notifyGiftAction>[0], data: Parameters<typeof notifyGiftAction>[1]) {
+  if (typeof window === "undefined") return;
+  void notifyGiftAction(action, data);
+}
 
 /*
  * STORE
@@ -44,7 +54,8 @@ const K = {
   stories: "birthday.stories.v2",
   // v2: seed gained per-gift funny one-liners; bumps force everyone to
   // the fresh seed and release every gift (no stale local snapshots).
-  wishlist: "birthday.wishlist.v2",
+  // v3: Apple Watch changed to exclusive single claim (no contributions).
+  wishlist: "birthday.wishlist.v3",
   claims: "birthday.claims.v2",
   reserves: "birthday.reserves.v2",
   contributions: "birthday.contributions.v2",
@@ -52,6 +63,12 @@ const K = {
   // Uploaded photos for the timeline — mediaId -> dataUrl. Seed media
   // structure is untouched; this map overlays onto timelineSeed.
   timelineMedia: "birthday.timeline.media",
+  // Extra gallery images added per year from admin: yearId -> GalleryExtra[].
+  timelineExtras: "birthday.timeline.extras.v1",
+  // v1: unified ordered per-year photo list. Array order is homepage
+  // priority; the first (seed frame count) entries fill the home frames
+  // and every entry shows in the gallery. No per-year cap.
+  timelinePhotos: "birthday.timeline.photos.v1",
 } as const;
 
 function read<T>(key: string, fallback: T): T {
@@ -207,6 +224,7 @@ export const store = {
     claims.push(full);
     write(K.claims, claims);
     void pushClaim(full, isExclusiveItem(item));
+    notify("claim", { itemName: item.name, name: full.name, note: full.note });
     return full;
   },
 
@@ -229,6 +247,14 @@ export const store = {
     reserves.push(full);
     write(K.reserves, reserves);
     void pushReserve(full);
+    const reservedItem = loadWishlist().find(
+      (i) => i.id === full.wishlistItemId,
+    );
+    notify("reserve", {
+      itemName: reservedItem?.name,
+      name: full.name,
+      note: full.note,
+    });
     return full;
   },
 
@@ -288,6 +314,35 @@ export const store = {
     );
     write(K.contributions, all);
     void pushContributionPaid(id, reference);
+    const paid = all.find((c) => c.id === id);
+    if (paid) {
+      const item = loadWishlist().find((i) => i.id === paid.wishlistItemId);
+      notify("contribution", {
+        itemName: item?.name,
+        name: paid.name,
+        note: paid.note,
+        amount: `₦${Number(paid.amount || 0).toLocaleString()}`,
+      });
+    }
+  },
+
+  updateContribution(
+    id: string,
+    patch: Partial<Contribution>,
+  ): Contribution[] {
+    const all = read<Contribution[]>(K.contributions, []).map((c) =>
+      c.id === id ? { ...c, ...patch } : c,
+    );
+    write(K.contributions, all);
+    if (patch.note !== undefined) void pushContributionPatch(id, { note: patch.note });
+    return all;
+  },
+
+  /** Clear all gift activity locally (claims, reserves, contributions). */
+  clearGiftActivity(): void {
+    [K.claims, K.reserves, K.contributions].forEach((k) =>
+      localStorage.removeItem(k),
+    );
   },
 
   getSettings(): SiteSettings {
@@ -296,8 +351,10 @@ export const store = {
 
   /**
    * Pull the cloud rows into the local cache once at startup so wishlist
-   * numbers reflect every device. Best-effort — on any failure the local
-   * cache stays as-is and the app keeps working.
+   * numbers reflect every device. Cloud is the source of truth: on success
+   * the local cache is replaced with whatever the cloud returned (even an
+   * empty list, so released/cleared test data disappears everywhere).
+   * Only when the pull itself fails does the local cache stay as-is.
    */
   async hydrateFromCloud(): Promise<void> {
     const [cloudClaims, cloudReserves, cloudContribs] = await Promise.all([
@@ -305,9 +362,9 @@ export const store = {
       pullReserves(),
       pullContributions(),
     ]);
-    if (cloudClaims.length) write(K.claims, cloudClaims);
-    if (cloudReserves.length) write(K.reserves, cloudReserves);
-    if (cloudContribs.length) write(K.contributions, cloudContribs);
+    if (cloudClaims) write(K.claims, cloudClaims);
+    if (cloudReserves) write(K.reserves, cloudReserves);
+    if (cloudContribs) write(K.contributions, cloudContribs);
   },
 
   updateSettings(patch: Partial<SiteSettings>): SiteSettings {
@@ -316,21 +373,96 @@ export const store = {
     return next;
   },
 
-  getTimelineMedia(): Record<string, string> {
-    return read<Record<string, string>>(K.timelineMedia, {});
+  /*
+   * UNIFIED YEAR PHOTOS
+   *
+   * One ordered list per year, no cap. On first read the two legacy stores
+   * (frame uploads + gallery-only extras) are folded into this list so
+   * nothing already uploaded is lost, then the result is persisted and
+   * becomes the single source of truth from that point on.
+   */
+
+  getYearPhotos(): Record<string, YearPhoto[]> {
+    const stored = read<Record<string, YearPhoto[]> | null>(K.timelinePhotos, null);
+    if (stored) return stored;
+
+    const mediaUrls = read<Record<string, string>>(K.timelineMedia, {});
+    const extras = read<Record<string, Array<{ id: string; url: string; caption?: string }>>>(
+      K.timelineExtras,
+      {},
+    );
+    const migrated: Record<string, YearPhoto[]> = {};
+
+    for (const year of timelineSeed) {
+      const fromFrames: YearPhoto[] = year.media
+        .filter((m) => Boolean(mediaUrls[m.id]))
+        .map((m) => ({
+          id: `frame-${m.id}`,
+          url: mediaUrls[m.id],
+          caption: m.caption,
+        }));
+      const fromExtras: YearPhoto[] = (extras[year.id] ?? []).map((e) => ({
+        id: e.id,
+        url: e.url,
+        caption: e.caption,
+      }));
+      const merged = [...fromFrames, ...fromExtras];
+      if (merged.length) migrated[year.id] = merged;
+    }
+
+    write(K.timelinePhotos, migrated);
+    return migrated;
   },
 
-  setTimelineMedia(id: string, url: string): Record<string, string> {
-    const map = read<Record<string, string>>(K.timelineMedia, {});
-    map[id] = url;
-    write(K.timelineMedia, map);
+  addYearPhotos(
+    yearId: string,
+    photos: Array<{ id: string; url: string; caption?: string }>,
+  ): Record<string, YearPhoto[]> {
+    const map = this.getYearPhotos();
+    map[yearId] = [...(map[yearId] ?? []), ...photos];
+    write(K.timelinePhotos, map);
     return map;
   },
 
-  removeTimelineMedia(id: string): Record<string, string> {
-    const map = read<Record<string, string>>(K.timelineMedia, {});
-    delete map[id];
-    write(K.timelineMedia, map);
+  updateYearPhoto(
+    yearId: string,
+    photoId: string,
+    patch: Partial<YearPhoto>,
+  ): Record<string, YearPhoto[]> {
+    const map = this.getYearPhotos();
+    map[yearId] = (map[yearId] ?? []).map((p) =>
+      p.id === photoId ? { ...p, ...patch } : p,
+    );
+    write(K.timelinePhotos, map);
+    return map;
+  },
+
+  removeYearPhoto(yearId: string, photoId: string): Record<string, YearPhoto[]> {
+    const map = this.getYearPhotos();
+    map[yearId] = (map[yearId] ?? []).filter((p) => p.id !== photoId);
+    write(K.timelinePhotos, map);
+    return map;
+  },
+
+  /** Persist a drag-and-drop reorder. Ids absent from `orderedIds` keep their tail order. */
+  reorderYearPhotos(
+    yearId: string,
+    orderedIds: string[],
+  ): Record<string, YearPhoto[]> {
+    const map = this.getYearPhotos();
+    const current = map[yearId] ?? [];
+    const byId = new Map(current.map((p) => [p.id, p]));
+    const next: YearPhoto[] = [];
+    for (const id of orderedIds) {
+      const photo = byId.get(id);
+      if (photo) {
+        next.push(photo);
+        byId.delete(id);
+      }
+    }
+    next.push(...byId.values());
+    map[yearId] = next;
+    write(K.timelinePhotos, map);
     return map;
   },
 

@@ -8,8 +8,8 @@ import MemoryLightbox from "@/components/shared/MemoryLightbox";
 import FloatingNav from "@/components/nav/FloatingNav";
 import ConfettiLayer from "@/components/effects/ConfettiLayer";
 import { EASE } from "@/lib/motion";
-import { mergeTimelineMedia } from "@/lib/timelineMedia";
-import { useTimelineMedia } from "@/lib/hooks";
+import { yearGalleryMedia } from "@/lib/timelineMedia";
+import { useCloudYearPhotos } from "@/lib/hooks";
 
 interface GalleryItem {
   id: string;
@@ -22,10 +22,10 @@ export default function GalleryExperience({
 }: {
   years: TimelineYear[];
 }) {
-  const { mediaUrls } = useTimelineMedia();
+  const { photos } = useCloudYearPhotos();
   const mergedYears = useMemo(
-    () => mergeTimelineMedia(years, mediaUrls),
-    [years, mediaUrls],
+    () => yearGalleryMedia(years, photos),
+    [years, photos],
   );
 
   const items = useMemo<GalleryItem[]>(

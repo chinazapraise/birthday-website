@@ -16,18 +16,31 @@ export async function markContributionPaid(
   amountKobo: number,
 ): Promise<boolean> {
   if (!supabaseServer) return false;
+  const amountNgn = Math.round(amountKobo / 100);
   const { error } = await supabaseServer
     .from("wishlist_contributions")
-    .update({ paid: true, reference })
+    .update({ paid: true, reference, amount: amountNgn })
     .eq("id", id);
-  if (error) return false;
+  return !error;
+}
 
-  const amountNgn = Math.round(amountKobo / 100);
-  const { error: amtError } = await supabaseServer
-    .from("wishlist_contributions")
-    .update({ amount: amountNgn })
-    .eq("id", id);
-  return !amtError;
+/** Release every gift action: claims, reserves and contributions. */
+export async function clearAllGiftActivity(): Promise<boolean> {
+  if (!supabaseServer) return false;
+  const tables = [
+    "wishlist_claims",
+    "wishlist_reserves",
+    "wishlist_contributions",
+  ] as const;
+  let ok = true;
+  for (const table of tables) {
+    const { error } = await supabaseServer.from(table).delete().neq("id", "");
+    if (error) {
+      console.error(`clear ${table} failed`, error.message);
+      ok = false;
+    }
+  }
+  return ok;
 }
 
 export async function updateClaimGifted(
