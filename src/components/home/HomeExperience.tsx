@@ -67,7 +67,7 @@ export default function HomeExperience({ settings: initialSettings, years, memor
           timelineRef={timelineRef as React.RefObject<HTMLElement | null>}
         />
 
-        <PhotoFan />
+        <PhotoFan photos={photos["fan"] ?? []} />
 
         <div ref={timelineRef} onClick={handle27Click}>
           <Timeline years={years} memories={memories} />

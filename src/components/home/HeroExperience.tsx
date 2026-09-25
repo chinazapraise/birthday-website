@@ -35,7 +35,7 @@ export default function HeroExperience({
   };
 
   return (
-    <section className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 text-center">
+    <section className="relative flex flex-col items-center justify-start overflow-hidden px-6 pt-16 pb-4 text-center md:pt-24 md:pb-6">
       <motion.p
         className="font-hand text-xl text-cream/60"
         initial={{ opacity: 0, y: 12 }}
@@ -54,7 +54,7 @@ export default function HeroExperience({
             transition={{ duration: 0.55, ease: EASE }}
           >
             <motion.h1
-              className="hero-27 my-4 font-display text-[32vw] font-black leading-[0.9] tracking-tight md:text-[14rem]"
+              className="hero-27 my-2 font-display text-[28vw] font-black leading-[0.9] tracking-tight md:my-3 md:text-[13rem]"
               initial={{ opacity: 0, scale: 1.08 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: DUR.cinematic, ease: EASE }}
@@ -81,7 +81,7 @@ export default function HeroExperience({
             </motion.p>
 
             <motion.div
-              className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
+              className="mt-6 flex flex-col items-center gap-4 sm:flex-row md:mt-8"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}

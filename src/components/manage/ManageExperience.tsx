@@ -513,6 +513,158 @@ export default function ManageExperience() {
           </div>
         </section>
 
+        {/* Hero Fan Photos (3 Cards) */}
+        <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+          <div className="mb-4">
+            <h2 className="font-display text-lg font-bold text-cream">
+              Hero Fan Photos{" "}
+              <span className="text-gold">
+                ({(photos["fan"] ?? []).length} / 3 photos)
+              </span>
+            </h2>
+            <p className="mt-1 text-xs text-cream/45">
+              The 3 cards that fan out on the homepage as visitors scroll past the hero.
+              Card 1 is Left (The Early Days), Card 2 is Center (The Journey), Card 3 is Right (The Now).
+              Upload, replace, remove, or drag to reorder.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            {[
+              { index: 0, label: "Card 1 · Left", subline: "2016 · Early Days" },
+              { index: 1, label: "Card 2 · Center", subline: "The Journey" },
+              { index: 2, label: "Card 3 · Right", subline: "2026 · The Now" },
+            ].map(({ index, label, subline }) => {
+              const photo = (photos["fan"] ?? [])[index];
+
+              if (photo) {
+                return (
+                  <div
+                    key={photo.id}
+                    draggable
+                    onDragStart={() =>
+                      setDragPhoto({ yearId: "fan", from: index })
+                    }
+                    onDragEnd={() => {
+                      setDragPhoto(null);
+                      setDropTarget(null);
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDropTarget(`fan-${photo.id}`);
+                    }}
+                    onDrop={() => {
+                      if (dragPhoto && dragPhoto.yearId === "fan") {
+                        movePhoto("fan", dragPhoto.from, index);
+                      }
+                      setDragPhoto(null);
+                      setDropTarget(null);
+                    }}
+                    className={cn(
+                      "group relative flex w-44 flex-col rounded-xl border border-white/10 bg-white/[0.04] p-3 transition",
+                      dropTarget === `fan-${photo.id}` &&
+                        "border-gold scale-105",
+                    )}
+                  >
+                    <div className="relative overflow-hidden rounded-lg">
+                      <img
+                        src={photo.url}
+                        alt={`${label} photo`}
+                        className="h-44 w-full rounded-lg object-cover"
+                        loading="lazy"
+                      />
+                      <span className="absolute left-1.5 top-1.5 rounded bg-black/75 px-1.5 py-0.5 font-mono text-[0.6rem] font-semibold text-gold">
+                        {label}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 font-mono text-[0.65rem] font-semibold text-cream/70 truncate">
+                      {subline}
+                    </p>
+                    <div className="mt-2 flex gap-1.5">
+                      <label className="flex-1 cursor-pointer rounded-md border border-violet/40 px-2 py-1 text-center font-mono text-[0.6rem] font-semibold uppercase tracking-wider text-violet transition hover:border-violet hover:bg-violet/10">
+                        Replace
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              void handlePhotoReplace(
+                                "fan",
+                                photo.id,
+                                file,
+                              );
+                            }
+                            e.target.value = "";
+                          }}
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => void remove("fan", photo.id)}
+                        className="flex-1 rounded-md border border-magenta/40 px-2 py-1 font-mono text-[0.6rem] font-semibold uppercase tracking-wider text-magenta transition hover:border-magenta hover:bg-magenta/10"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <label
+                  key={index}
+                  className="flex h-56 w-44 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 bg-white/[0.02] p-3 text-center transition hover:border-gold hover:bg-gold/5"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-2xl text-cream/70 transition group-hover:border-gold group-hover:text-gold">
+                    +
+                  </span>
+                  <span className="font-mono text-[0.68rem] font-bold uppercase tracking-wider text-cream/75">
+                    {label}
+                  </span>
+                  <span className="font-mono text-[0.58rem] text-cream/40">
+                    {subline}
+                  </span>
+                  <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[0.52rem] uppercase tracking-wider text-gold/80">
+                    Click to upload
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      void handlePhotoUpload("fan", e.target.files);
+                      e.target.value = "";
+                    }}
+                  />
+                </label>
+              );
+            })}
+
+            {(photos["fan"] ?? []).length < 3 && (
+              <label className="flex h-56 w-40 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 bg-white/[0.01] p-3 text-center transition hover:border-white/30 hover:bg-white/[0.03]">
+                <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-wider text-cream/50">
+                  Bulk upload
+                </span>
+                <span className="font-mono text-[0.55rem] text-cream/30">
+                  Select 1–3 photos
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    void handlePhotoUpload("fan", e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            )}
+          </div>
+        </section>
+
         {/* Those who made the story possible */}
         <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
           <div className="mb-4">
