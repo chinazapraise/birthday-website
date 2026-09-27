@@ -2,7 +2,7 @@
 
 import { useWishes } from "@/lib/hooks";
 import WishCard from "@/components/wishes/WishCard";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type Filter = "All" | "Friends" | "Family" | "Work" | "Community";
@@ -15,11 +15,33 @@ const FILTERS: Filter[] = ["All", "Friends", "Family", "Work", "Community"];
 export default function WishWall() {
   const { wishes } = useWishes();
   const [filter, setFilter] = useState<Filter>("All");
+  const [current, setCurrent] = useState(0);
+  const [open, setOpen] = useState(false);
+  const stageRef = useRef<HTMLDivElement>(null);
 
   const visible =
     filter === "All"
       ? wishes
       : wishes.filter((w) => w.relationship === filter.toLowerCase());
+
+  const safeCurrent = Math.min(current, Math.max(visible.length - 1, 0));
+  const currentWish = visible[safeCurrent];
+
+  useEffect(() => {
+    stageRef.current?.scrollIntoView({ block: "start" });
+  }, [current]);
+
+  const goNext = () => {
+    if (!visible.length) return;
+    setOpen(false);
+    setCurrent((value) => (value + 1) % visible.length);
+  };
+
+  const chooseFilter = (next: Filter) => {
+    setFilter(next);
+    setCurrent(0);
+    setOpen(false);
+  };
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-20">
@@ -31,7 +53,7 @@ export default function WishWall() {
           {FILTERS.map((f) => (
             <button
               key={f}
-              onClick={() => setFilter(f)}
+              onClick={() => chooseFilter(f)}
               className={cn(
                 "rounded-full border px-4 py-1.5 text-xs font-medium transition",
                 filter === f
@@ -50,10 +72,36 @@ export default function WishWall() {
           Be the first to leave something for 27.
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {visible.map((w, i) => (
-            <WishCard key={w.id} wish={w} index={i} />
-          ))}
+        <div ref={stageRef} className="scroll-mt-28">
+          <div className="mb-7 flex flex-col items-center justify-between gap-3 rounded-3xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center sm:flex-row sm:text-left">
+            <div>
+              <p className="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-cream/35">
+                Wish {safeCurrent + 1} of {visible.length}
+              </p>
+              <p className="mt-1 font-hand text-xl text-cream/65">
+                Open this one, read it fully, then move to the next pumpkin.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={goNext}
+              className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-cream/60 transition hover:border-magenta/45 hover:text-cream"
+            >
+              Skip
+            </button>
+          </div>
+
+          {currentWish && (
+            <WishCard
+              key={currentWish.id}
+              wish={currentWish}
+              index={safeCurrent}
+              open={open}
+              onOpen={() => setOpen(true)}
+              onNext={goNext}
+              hasNext={safeCurrent < visible.length - 1}
+            />
+          )}
         </div>
       )}
     </section>

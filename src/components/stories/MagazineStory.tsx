@@ -47,9 +47,9 @@ export default function MagazineStory({
     <Card
       onClick={onOpen}
       className={cn(
-        "relative h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-[#100d1c] p-6 text-left",
+        "relative w-full rounded-2xl border border-white/10 bg-[#100d1c] p-6 text-left",
         isCard &&
-          "group flex flex-col shadow-lg transition hover:border-white/25 hover:shadow-[0_0_45px_rgba(139,92,246,0.15)] md:p-7",
+          "group flex h-full flex-col overflow-hidden shadow-lg transition hover:border-white/25 hover:shadow-[0_0_45px_rgba(139,92,246,0.15)] md:p-7",
       )}
       initial={isCard ? { opacity: 0, y: 26 } : undefined}
       whileInView={isCard ? { opacity: 1, y: 0 } : undefined}

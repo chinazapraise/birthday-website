@@ -47,7 +47,7 @@ export default function StoryGallery() {
   const [page, setPage] = useState(0);
   const [dir, setDir] = useState<1 | -1>(1);
   const total = stories.length;
-  const pageRef = useRef<HTMLDivElement>(null);
+  const readerRef = useRef<HTMLDivElement>(null);
   const touchX = useRef(0);
 
   const turn = useCallback(
@@ -79,7 +79,7 @@ export default function StoryGallery() {
   }, [open, turn]);
 
   useEffect(() => {
-    pageRef.current?.scrollTo({ top: 0 });
+    readerRef.current?.scrollIntoView({ block: "start" });
   }, [page]);
 
   if (total === 0) {
@@ -209,9 +209,21 @@ export default function StoryGallery() {
                 </button>
               </div>
 
-              <div className="relative h-[62dvh] min-h-[420px] max-h-[680px] w-full sm:min-h-[480px]">
+              <div
+                ref={readerRef}
+                className="relative w-full scroll-mt-28"
+                onTouchStart={(e) => {
+                  touchX.current = e.touches[0]?.clientX ?? 0;
+                }}
+                onTouchEnd={(e) => {
+                  const dx =
+                    (e.changedTouches[0]?.clientX ?? 0) - touchX.current;
+                  if (Math.abs(dx) < 50) return;
+                  turn(dx < 0 ? 1 : -1);
+                }}
+              >
                 <div className="absolute inset-0 rounded-3xl bg-black/40 blur-2xl" />
-                <div className="absolute inset-0 [perspective:1600px]">
+                <div className="relative [perspective:1600px]">
                   <AnimatePresence custom={dir} initial={false} mode="popLayout">
                     {story && (
                       <motion.div
@@ -221,24 +233,11 @@ export default function StoryGallery() {
                         initial="enter"
                         animate="center"
                         exit="exit"
-                        className="absolute inset-0"
+                        className="relative"
                         style={{ transformOrigin: "center" }}
                       >
-                        <div className="absolute inset-x-2 top-3 bottom-3 sm:inset-x-3 md:inset-x-8 md:top-8 md:bottom-8">
-                          <div
-                            ref={pageRef}
-                            onTouchStart={(e) => {
-                              touchX.current = e.touches[0]?.clientX ?? 0;
-                            }}
-                            onTouchEnd={(e) => {
-                              const dx =
-                                (e.changedTouches[0]?.clientX ?? 0) -
-                                touchX.current;
-                              if (Math.abs(dx) < 50) return;
-                              turn(dx < 0 ? 1 : -1);
-                            }}
-                            className="h-full touch-pan-y overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-[#100d1c] shadow-[0_20px_60px_rgba(0,0,0,0.5)] [scrollbar-width:thin]"
-                          >
+                        <div className="px-0 sm:px-3 md:px-8 md:py-8">
+                          <div className="touch-pan-y rounded-2xl border border-white/10 bg-[#100d1c] shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
                             <MagazineStory
                               story={story}
                               number={pad(page + 1)}
@@ -259,7 +258,7 @@ export default function StoryGallery() {
                   disabled={page === 0}
                   aria-label="Previous story"
                   className={cn(
-                    "absolute left-1 top-1/2 z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-ink/80 text-cream shadow-lg backdrop-blur transition sm:-left-2 md:-left-5",
+                    "absolute -bottom-16 left-0 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-ink/80 text-cream shadow-lg backdrop-blur transition md:left-1 md:top-1/2 md:-translate-y-1/2",
                     page === 0
                       ? "cursor-not-allowed opacity-30"
                       : "hover:border-acid/50 hover:text-acid",
@@ -274,7 +273,7 @@ export default function StoryGallery() {
                   disabled={page >= total - 1}
                   aria-label="Next story"
                   className={cn(
-                    "absolute right-1 top-1/2 z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-ink/80 text-cream shadow-lg backdrop-blur transition sm:-right-2 md:-right-5",
+                    "absolute -bottom-16 right-0 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-ink/80 text-cream shadow-lg backdrop-blur transition md:right-1 md:top-1/2 md:-translate-y-1/2",
                     page >= total - 1
                       ? "cursor-not-allowed opacity-30"
                       : "hover:border-magenta/50 hover:text-magenta",
@@ -284,7 +283,7 @@ export default function StoryGallery() {
                 </button>
               </div>
 
-              <div className="mt-6 flex items-center justify-center gap-2">
+              <div className="mt-20 flex items-center justify-center gap-2 md:mt-6">
                 {stories.map((s, i) => (
                   <span
                     key={s.id}
