@@ -1,4 +1,4 @@
-const DEFAULT_PASSWORD = "tomide27";
+const DEFAULT_PASSWORD = "birthdayadmin";
 
 function expectedPassword(): string {
   const v = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;

@@ -50,7 +50,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 PAYSTACK_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-# Admin Dashboard Password (optional, default: tomide27)
+# Admin Dashboard Password (optional, default: birthdayadmin)
 NEXT_PUBLIC_ADMIN_PASSWORD=your_custom_admin_password
 ```
 

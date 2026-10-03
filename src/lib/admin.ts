@@ -7,7 +7,7 @@
  * with NEXT_PUBLIC_ADMIN_PASSWORD.
  */
 
-const DEFAULT_PASSWORD = "tomide27";
+const DEFAULT_PASSWORD = "birthdayadmin";
 const SESSION_KEY = "bday.admin";
 
 function envPassword(): string | null {
