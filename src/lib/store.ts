@@ -59,7 +59,7 @@ const K = {
   claims: "birthday.claims.v2",
   reserves: "birthday.reserves.v2",
   contributions: "birthday.contributions.v2",
-  settings: "birthday.settings",
+  settings: "birthday.settings.v2",
   // Uploaded photos for the timeline — mediaId -> dataUrl. Seed media
   // structure is untouched; this map overlays onto timelineSeed.
   timelineMedia: "birthday.timeline.media",
@@ -121,8 +121,13 @@ function loadWishlist(): WishlistItem[] {
   });
 }
 function loadSettings(): SiteSettings {
-  const stored = read<SiteSettings>(K.settings, siteSettingsSeed);
-  return { ...siteSettingsSeed, ...stored };
+  const stored = read<Partial<SiteSettings>>(K.settings, {});
+  return {
+    ...siteSettingsSeed,
+    ...stored,
+    birthdayDate: siteSettingsSeed.birthdayDate,
+    countdownMode: siteSettingsSeed.countdownMode,
+  };
 }
 
 export const store = {

@@ -35,28 +35,23 @@ export default function Countdown({
     }
   }, [state]);
 
-  if (state === "after") {
-    return (
-      <div className="text-center">
-        <p className="font-hand text-2xl text-cream/70">
-          27 is officially underway.
-        </p>
-      </div>
-    );
-  }
-
-  if (state === "today") {
+  if (state === "today" || state === "after") {
     return (
       <motion.div
-        className="flex flex-wrap items-center justify-center gap-2 md:gap-3"
+        className="flex flex-col items-center justify-center gap-3 text-center"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
       >
-        <Cake size={24} className="hidden text-magenta sm:block md:block" />
-        <p className="font-display text-2xl font-black tracking-tight text-gold md:text-5xl">
-          IT’S MY BIRTHDAY
+        <div className="flex items-center justify-center gap-2 md:gap-3">
+          <Cake size={28} className="text-magenta" />
+          <p className="font-display text-2xl font-black tracking-tight text-gold md:text-5xl">
+            IT’S MY BIRTHDAY
+          </p>
+          <Cake size={28} className="text-magenta" />
+        </div>
+        <p className="font-hand text-2xl text-cream/80 md:text-3xl">
+          27 is officially underway.
         </p>
-        <Cake size={24} className="hidden text-magenta sm:block md:block" />
       </motion.div>
     );
   }
