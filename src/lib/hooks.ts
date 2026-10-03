@@ -53,6 +53,15 @@ export function useWishes() {
   useEffect(() => {
     const l = () => force((n) => n + 1);
     listeners.add(l);
+    fetch("/api/wishes", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.ok && Array.isArray(d.wishes)) {
+          localStorage.setItem("birthday.wishes", JSON.stringify(d.wishes));
+          emit();
+        }
+      })
+      .catch(() => null);
     return () => {
       listeners.delete(l);
     };
@@ -72,6 +81,15 @@ export function useStories() {
   useEffect(() => {
     const l = () => force((n) => n + 1);
     listeners.add(l);
+    fetch("/api/stories", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.ok && Array.isArray(d.stories)) {
+          localStorage.setItem("birthday.stories.v2", JSON.stringify(d.stories));
+          emit();
+        }
+      })
+      .catch(() => null);
     return () => {
       listeners.delete(l);
     };

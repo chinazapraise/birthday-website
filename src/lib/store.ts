@@ -149,6 +149,13 @@ export const store = {
     };
     wishes.unshift(wish);
     write(K.wishes, wishes);
+    if (typeof window !== "undefined") {
+      fetch("/api/wishes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(wish),
+      }).catch(() => null);
+    }
     return wish;
   },
 
@@ -157,6 +164,14 @@ export const store = {
       w.id === id ? { ...w, ...patch } : w,
     );
     write(K.wishes, wishes);
+    if (typeof window !== "undefined" && patch.status) {
+      const pwd = typeof localStorage !== "undefined" ? localStorage.getItem("birthday.admin.pass") || "" : "";
+      fetch("/api/wishes", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "x-admin-password": pwd },
+        body: JSON.stringify({ id, status: patch.status }),
+      }).catch(() => null);
+    }
     return wishes;
   },
 
@@ -179,6 +194,13 @@ export const store = {
     };
     stories.unshift(story);
     write(K.stories, stories);
+    if (typeof window !== "undefined") {
+      fetch("/api/stories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(story),
+      }).catch(() => null);
+    }
     return story;
   },
 
@@ -187,6 +209,14 @@ export const store = {
       s.id === id ? { ...s, ...patch } : s,
     );
     write(K.stories, stories);
+    if (typeof window !== "undefined") {
+      const pwd = typeof localStorage !== "undefined" ? localStorage.getItem("birthday.admin.pass") || "" : "";
+      fetch("/api/stories", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "x-admin-password": pwd },
+        body: JSON.stringify({ id, patch }),
+      }).catch(() => null);
+    }
     return stories;
   },
 
@@ -370,14 +400,31 @@ export const store = {
    * Only when the pull itself fails does the local cache stay as-is.
    */
   async hydrateFromCloud(): Promise<void> {
-    const [cloudClaims, cloudReserves, cloudContribs] = await Promise.all([
-      pullClaims(),
-      pullReserves(),
-      pullContributions(),
-    ]);
+    const [cloudClaims, cloudReserves, cloudContribs, cloudWishesRes, cloudStoriesRes] =
+      await Promise.all([
+        pullClaims(),
+        pullReserves(),
+        pullContributions(),
+        typeof window !== "undefined"
+          ? fetch("/api/wishes", { cache: "no-store" })
+              .then((r) => r.json())
+              .catch(() => null)
+          : null,
+        typeof window !== "undefined"
+          ? fetch("/api/stories", { cache: "no-store" })
+              .then((r) => r.json())
+              .catch(() => null)
+          : null,
+      ]);
     if (cloudClaims) write(K.claims, cloudClaims);
     if (cloudReserves) write(K.reserves, cloudReserves);
     if (cloudContribs) write(K.contributions, cloudContribs);
+    if (cloudWishesRes?.ok && Array.isArray(cloudWishesRes.wishes)) {
+      write(K.wishes, cloudWishesRes.wishes);
+    }
+    if (cloudStoriesRes?.ok && Array.isArray(cloudStoriesRes.stories)) {
+      write(K.stories, cloudStoriesRes.stories);
+    }
   },
 
   updateSettings(patch: Partial<SiteSettings>): SiteSettings {
