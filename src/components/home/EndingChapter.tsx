@@ -59,6 +59,7 @@ export default function EndingChapter({ settings }: { settings: SiteSettings }) 
           <Countdown
             birthdayISO={settings.birthdayDate}
             timezone={settings.birthdayTimezone}
+            mode={settings.countdownMode}
           />
         </motion.div>
 

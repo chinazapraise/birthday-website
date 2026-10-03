@@ -15,23 +15,27 @@ import { fireConfetti } from "@/components/effects/ConfettiLayer";
 export default function Countdown({
   birthdayISO,
   timezone,
+  mode,
   compact = false,
 }: {
   birthdayISO: string;
   timezone: string;
+  mode?: "countdown" | "birthday" | "after";
   compact?: boolean;
 }) {
   const cd = useCountdown(birthdayISO, timezone);
   const celebratedRef = useRef(false);
 
+  const state = mode && mode !== "countdown" ? mode : cd.state;
+
   useEffect(() => {
-    if (cd.state === "today" && !celebratedRef.current) {
+    if (state === "today" && !celebratedRef.current) {
       celebratedRef.current = true;
       fireConfetti("rain", { balloons: 3 });
     }
-  }, [cd.state]);
+  }, [state]);
 
-  if (cd.state === "after") {
+  if (state === "after") {
     return (
       <div className="text-center">
         <p className="font-hand text-2xl text-cream/70">
@@ -41,7 +45,7 @@ export default function Countdown({
     );
   }
 
-  if (cd.state === "today") {
+  if (state === "today") {
     return (
       <motion.div
         className="flex flex-wrap items-center justify-center gap-2 md:gap-3"

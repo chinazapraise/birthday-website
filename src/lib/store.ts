@@ -54,8 +54,8 @@ const K = {
   stories: "birthday.stories.v2",
   // v2: seed gained per-gift funny one-liners; bumps force everyone to
   // the fresh seed and release every gift (no stale local snapshots).
-  // v3: Apple Watch changed to exclusive single claim (no contributions).
-  wishlist: "birthday.wishlist.v3",
+  // v4: Replace flowers with ₦2.7m cash gift and group cash gifts.
+  wishlist: "birthday.wishlist.v4",
   claims: "birthday.claims.v2",
   reserves: "birthday.reserves.v2",
   contributions: "birthday.contributions.v2",
