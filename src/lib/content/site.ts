@@ -1,12 +1,12 @@
 import type { SiteSettings, WishlistItem, Wish, CommunityStory } from "@/lib/types";
 
 export const siteSettingsSeed: SiteSettings = {
-  siteTitle: "TOMIDE / 27",
+  siteTitle: "CHINAZA / 21",
   heroCopy: {
-    headline: "27",
-    subline: "A lot happened before we got here.",
-    supporting: "2016-2026. The story so far.",
-    cta: "Start my story",
+    headline: "21",
+    subline: "The story of who I have been, what I have learned, and who I am becoming.",
+    supporting: "2005-2026. A lifetime in chapters, and the story is still unfolding.",
+    cta: "Enter my story",
     skip: "Skip to the birthday",
   },
   birthdayDate: "2026-10-03T00:00:00",
