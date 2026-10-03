@@ -912,6 +912,164 @@ export default function ManageExperience() {
           </ul>
         </section>
 
+        {/* Incoming Wishes & Stories */}
+        <section className="grid gap-6 lg:grid-cols-2">
+          {/* Wishes */}
+          <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-display text-lg font-bold text-cream">
+                  Birthday Wishes{" "}
+                  <span className="text-magenta">({wishes.length})</span>
+                </h2>
+                <p className="mt-1 text-xs text-cream/45">
+                  Messages submitted by visitors via the Wish Wall.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  void store.hydrateFromCloud().then(() => emit());
+                }}
+                className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-cream/70 hover:border-white/30 hover:text-cream"
+              >
+                Refresh
+              </button>
+            </div>
+
+            <div className="mt-5 space-y-3 max-h-[500px] overflow-y-auto pr-1">
+              {wishes.length === 0 ? (
+                <p className="py-8 text-center text-xs text-cream/40">No wishes recorded yet.</p>
+              ) : (
+                wishes.map((w) => (
+                  <div
+                    key={w.id}
+                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-xs transition hover:border-white/20"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-cream">{w.name}</span>
+                        {w.relationship && (
+                          <span className="rounded-full border border-magenta/30 bg-magenta/10 px-2 py-0.5 text-[10px] capitalize text-magenta">
+                            {w.relationship}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-cream/40">
+                        {w.createdAt ? formatDate(w.createdAt) : ""}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-cream/80 whitespace-pre-wrap leading-relaxed">
+                      &ldquo;{w.message}&rdquo;
+                    </p>
+                    <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2">
+                      <span
+                        className={cn(
+                          "text-[10px] font-semibold uppercase tracking-wider",
+                          w.status === "published" ? "text-acid" : "text-cream/40",
+                        )}
+                      >
+                        {w.status}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = w.status === "published" ? "hidden" : "published";
+                          store.updateWish(w.id, { status: next });
+                          emit();
+                        }}
+                        className="rounded-full border border-white/15 px-2.5 py-0.5 text-[10px] text-cream/60 hover:border-white/30 hover:text-cream"
+                      >
+                        {w.status === "published" ? "Hide" : "Publish"}
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Community Stories */}
+          <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-display text-lg font-bold text-cream">
+                  Community Stories{" "}
+                  <span className="text-gold">({stories.length})</span>
+                </h2>
+                <p className="mt-1 text-xs text-cream/45">
+                  Shared memories submitted by friends and community.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  void store.hydrateFromCloud().then(() => emit());
+                }}
+                className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-cream/70 hover:border-white/30 hover:text-cream"
+              >
+                Refresh
+              </button>
+            </div>
+
+            <div className="mt-5 space-y-3 max-h-[500px] overflow-y-auto pr-1">
+              {stories.length === 0 ? (
+                <p className="py-8 text-center text-xs text-cream/40">No stories recorded yet.</p>
+              ) : (
+                stories.map((s) => (
+                  <div
+                    key={s.id}
+                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-xs transition hover:border-white/20"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-cream">{s.author}</span>
+                        {s.yearMet && (
+                          <span className="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[10px] text-gold">
+                            Met in {s.yearMet}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-cream/40">
+                        {s.createdAt ? formatDate(s.createdAt) : ""}
+                      </span>
+                    </div>
+                    {s.prompt && (
+                      <p className="mt-1 text-[11px] font-medium text-cream/50">
+                        Prompt: {s.prompt}
+                      </p>
+                    )}
+                    <p className="mt-2 text-cream/80 whitespace-pre-wrap leading-relaxed">
+                      &ldquo;{s.story}&rdquo;
+                    </p>
+                    <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2">
+                      <span
+                        className={cn(
+                          "text-[10px] font-semibold uppercase tracking-wider",
+                          s.status === "published" ? "text-acid" : "text-cream/40",
+                        )}
+                      >
+                        {s.status}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = s.status === "published" ? "hidden" : "published";
+                          store.updateStory(s.id, { status: next });
+                          emit();
+                        }}
+                        className="rounded-full border border-white/15 px-2.5 py-0.5 text-[10px] text-cream/60 hover:border-white/30 hover:text-cream"
+                      >
+                        {s.status === "published" ? "Hide" : "Publish"}
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* Settings */}
         <section className="rounded-3xl border border-white/10 bg-white/[0.02] p-6">
           <div className="flex items-center justify-between">
