@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Birthday Website & Story Milestone Experience
+
+An interactive personal birthday and milestone celebration web application built with **Next.js 16**, **React 19**, **Tailwind CSS v4**, **Framer Motion**, and **GSAP**.
+
+Includes a chronological life timeline, interactive wish wall, community story gallery, curated gift registry with Paystack payment integration, celebratory countdown with confetti, and an owner administration dashboard.
+
+---
+
+## Features
+
+- **Interactive Life Timeline**: Visual year-by-year cards with photo carousels, key moments, and audio/video highlights.
+- **Birthday Countdown & Celebration Mode**: Real-time ticker counting down to your birthday date with confetti, celebratory soundscapes, and balloon animations.
+- **Wishes Wall**: Interactive card wall where friends and family can write heartfelt birthday wishes filtered by category (Friends, Family, Work, Community).
+- **Community Stories**: Story gallery where visitors share personal memories and anecdotes.
+- **Curated Wishlist & Cash Gifting**: Gift registry supporting item claims, reservations, and multi-tier cash gifts integrated directly with Paystack.
+- **Owner Admin Dashboard (`/admin`)**: Upload and reorder gallery photos, moderate incoming wishes/stories, customize copywriting, and manage gift statuses.
+- **Zero-DDL Cloud Sync**: Photo manifests, birthday wishes, and community stories sync cleanly via Supabase Storage.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the repository
+```bash
+git clone https://github.com/WilliamsBRAND/birthday-website.git
+cd birthday-website
+```
 
+### 2. Install dependencies
+```bash
+npm install
+# or
+bun install
+```
+
+### 3. Configure environment variables
+Copy the example environment file:
+```bash
+cp .env.example .env.local
+```
+
+Fill in your configuration details inside `.env.local`:
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+
+# Paystack Payment Gateway (for cash gifts)
+NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+PAYSTACK_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Admin Dashboard Password (optional, default: tomide27)
+NEXT_PUBLIC_ADMIN_PASSWORD=your_custom_admin_password
+```
+
+#### Supabase Setup (Storage)
+1. Create a free project at [supabase.com](https://supabase.com).
+2. Go to **Storage** and create a public bucket named:
+   ```text
+   timeline-photos
+   ```
+3. Copy your project URL, Anon Key, and Service Role Key from **Project Settings > API** into `.env.local`.
+
+#### Paystack Setup (Optional for cash gifts)
+1. Register for an account at [paystack.com](https://paystack.com).
+2. Copy your Test or Live API keys from **Settings > API Keys & Webhooks** into `.env.local`.
+
+---
+
+### 4. Run the development server
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 # or
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Customization
 
-## Learn More
+- **Site Settings & Milestone Date**: Update `src/lib/content/site.ts` to adjust your name, headline, birthday date, timezone, and social media handles.
+- **Timeline Milestones**: Customize your milestone stories and photos in `src/lib/content/timeline.ts`.
+- **Wishlist Items**: Modify items and cash tiers in `src/lib/content/site.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment (Vercel)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The easiest way to deploy this website is via Vercel:
 
-## Deploy on Vercel
+1. Push your repository to GitHub.
+2. Import the project into [Vercel](https://vercel.com/new).
+3. Add the environment variables specified in `.env.example` under **Project Settings > Environment Variables**.
+4. Click **Deploy**.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT License. Open for personal and community use.
