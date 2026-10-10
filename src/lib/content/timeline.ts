@@ -20,28 +20,26 @@ const M = (
 });
 
 export const timelineSeed: TimelineYear[] = [
-  {
-    id: "y2016",
-    year: 2016,
-    title: "University of Abuja, Faculty of Agriculture",
-    story:
-      "This is where the story starts.\n\nI finished secondary school in 2015 and spent almost one year trying to get admission to study Medicine and Surgery. I tried different universities, but nothing worked out.\n\nIf you asked me what I wanted to study at the time, my answer was always Medicine.\n\nWhile waiting, I started teaching at a secondary school just to keep myself busy. I was earning around ₦7,000 monthly. It wasn't much, but at the time, it was something.\n\nEventually, I applied to the University of Abuja and got admission to study Agricultural Science.\n\nAgricultural Science was definitely not the plan. 😂\n\nBut I had another plan. I had heard that if you did really well in your first year, you could switch courses. So in my head, the plan was simple. That was exactly what I wanted to do.\n\nEnter with Agricultural Science, get a very good result, then switch to Medicine and Surgery.\n\nI was young, innocent, very naive, and I really believed I had everything figured out.\n\nOf course, things didn't exactly go according to plan.\n\nAnd oh, I got my first kiss that year too.\n\nSo maybe Agricultural Science wasn't a completely bad decision after all.",
-    quote: "The journey of a thousand miles begins with one step.",
-    location: "[ABUJA, NIGERIA]",
-    media: [
-      M("2016-1", "PHOTO PLACEHOLDER · 2016 HERO · portrait 4:5"),
-      M("2016-2", "PHOTO PLACEHOLDER · 2016 MEMORY 01 · portrait 4:5"),
-      M("2016-3", "PHOTO PLACEHOLDER · 2016 MEMORY 02 · portrait 4:5"),
-      M("2016-4", "PHOTO PLACEHOLDER · 2016 MEMORY 03 · landscape 16:9", "16:9"),
-      M("2016-5", "PHOTO PLACEHOLDER · 2016 MEMORY 04 · portrait 4:5"),
-    ],
-    layoutVariant: "editorial",
-    theme: {
-      accent: "#a78bfa",
-      accent2: "#7c3aed",
-      glow: "#a78bfa",
-    },
-  },
+ {
+id: "y2010",
+year: 2010,
+title: "The Little Girl With a Dream",
+story:
+"I started primary school in 2010. At that age, I was just a little girl learning about the world and imagining who I might become.\n\nFor as long as I can remember, the dream I carried was to become a medical doctor. I did not yet know what life would ask of me or how much growing up would involve. I only knew that this was what I wanted.\n\nChildhood was also made up of little memories that have stayed with me. One that still makes me smile is the time I came first in Primary 3 and a family friend bought a whole chicken to celebrate. I shared it with my siblings, but I got to choose first. 😂\n\nLooking back, those years were the beginning of a story I am still living. I did not know then that the road ahead would take turns I could not predict. For now, I was a little girl with a dream, and that was enough.",
+quote: "Every long journey begins somewhere. Mine began with a little girl and a dream.",
+location: "[WHERE IT ALL BEGAN]",
+media: [
+M("2010-1", "PHOTO PLACEHOLDER · CHILDHOOD HERO · portrait 4:5"),
+M("2010-2", "PHOTO PLACEHOLDER · PRIMARY SCHOOL MEMORY · portrait 4:5"),
+M("2010-3", "PHOTO PLACEHOLDER · CHILDHOOD MEMORY · portrait 4:5"),
+],
+layoutVariant: "editorial",
+theme: {
+accent: "#a78bfa",
+accent2: "#7c3aed",
+glow: "#a78bfa",
+},
+},
   {
     id: "y2017",
     year: 2017,
