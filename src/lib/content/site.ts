@@ -16,9 +16,9 @@ export const siteSettingsSeed: SiteSettings = {
   subscriptionsPaused: false,
   social: {
     instagram: "",
-    linkedin: "https://www.linkedin.com/in/tomidewill/",
-    twitter: "https://x.com",
-    whatsapp: "https://wa.me/",
+    linkedin: "",
+    twitter: "",
+    whatsapp: "https://wa.me/2349160631930",
   },
   wishlistTitle: "27 things I'd love.",
   wishlistCopy: "No pressure. But since you asked… 😌",
