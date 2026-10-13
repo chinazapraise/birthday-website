@@ -43,8 +43,28 @@ glow: "#a78bfa",
     id: "y2017",
     year: 2017,
     title: "The Years That Shaped Me",
-    story:
-      "When I think about my secondary school years, I remember a girl who was serious about her academics, consistently among the best students in her class, and entrusted with leadership responsibilities.\n\nI served as a class prefect and chapel prefect, and I was someone people could count on. I could show up for others and help them through things, even while I was still trying to understand myself.\n\nBut secondary school was not all academics and responsibilities. 😂 There were funny moments with my classmates, friendships, and experiences that made those years memorable in their own way.\n\nI was also learning about my relationship with God. Sometimes I was consistent, and sometimes I struggled. I wanted to grow closer to Him, but I was still learning what it meant to be intentional about my faith.\n\nLooking back, I realise that those years were shaping me in ways I could not fully understand at the time. I was learning, making memories, discovering parts of myself, and preparing for a future I had not yet experienced.\n\nI did not have everything figured out, but I was growing. And sometimes, that is what a season of life is meant to be about.",
+   story:
+  "When I look back at my secondary school years, I see a girl who was loved by many but was still trying to find herself.\n\n" +
+
+  "I was serious about my academics and consistently among the best students in my class. I also had opportunities to serve in different leadership positions, including as a class prefect and chapel prefect.\n\n" +
+
+  "I could be there for other people, help them out, and be someone they could count on. But somehow, even with all of that, I sometimes felt lost when it came to myself. I was still learning to understand myself, and I did not always have the answers to the things I felt or experienced.\n\n" +
+
+  "But secondary school was not all serious business. 😂\n\n" +
+
+  "One memory that comes to mind is the day we wrote our last WAEC paper. We all went to a big field to play football, and of course, I was there to cheer because playing football was definitely not my ministry, though I love watching it. 😂⚽️ I spent quite a number of funny moments with my classmates, and those memories are still part of what makes me smile when I think about those years.\n\n" +
+
+  "Of course, there were other experiences, too. I was learning about friendships, navigating different situations, and figuring out where I belonged. Some experiences were beautiful, while others taught me lessons I would only understand more clearly with time.\n\n" +
+
+  "My relationship with God was also part of this journey. Sometimes, I was serious about my walk with Him, and sometimes, I was not. I wanted to grow closer to Him, but I was still learning what consistency meant in my relationship with God.\n\n" +
+
+  "Looking back, I realise that I was growing in more ways than I could recognise at the time. I was not just preparing for examinations or working towards the next stage of my education. I was also having experiences that would shape how I understood myself, other people, and my faith.\n\n" +
+
+  "In 2022, I completed secondary school. I cannot quite put a name to how I felt then. I had achieved that milestone, and my attention was already on the next one: getting into the university.\n\n" +
+
+  "I did not know exactly what awaited me, but I was ready to move forward.\n\n" +
+
+  "And so, one chapter ended, making room for another.",
     quote: "Not every season will make sense while you are living it. Sometimes, you have to grow a little older before you understand what an experience came to teach you.",
     location: "[SECONDARY SCHOOL YEARS]",
     media: [
