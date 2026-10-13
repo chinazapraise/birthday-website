@@ -39,19 +39,18 @@ accent: "#a78bfa",
 accent2: "#7c3aed",
 glow: "#a78bfa",
 },
-},
-  {
+},{
     id: "y2017",
     year: 2017,
-    title: "Academics, Politics & Girls",
+    title: "The Years That Shaped Me",
     story:
-      "When I entered university, I was just this very young boy who still thought he was going to find his way into Medicine somehow.\n\nThen first semester results came out.\n\nI remember being very scared to check mine. I genuinely didn't want to see it. Then someone checked it for me and I found out I was at the top of my department.\n\nThat changed a lot of things.\n\nPeople started noticing me. Attention came. Girls came too. 😂\n\nAnd that was when I started realizing that maybe university had more to offer than just reading books and going to class.\n\nI started meeting more people and getting involved in things outside academics. Somehow, that attention eventually pushed me towards school politics.\n\nI wanted to contest for Treasurer, but I was still too young in the system. I had to wait until at least 300 level before I could really contest for anything serious.\n\nSo I stayed around, watched how things worked, met people and kept building relationships.\n\nAnd somewhere in the middle of academics, politics and girls, something funny happened.\n\nI stopped thinking so much about switching to Medicine.\n\nThe Agricultural Science I thought I was just going to manage for a while was slowly becoming my thing.",
-    quote: "It is our choices that show what we truly are, far more than our abilities.",
-    location: "[ABUJA, NIGERIA]",
+      "When I think about my secondary school years, I remember a girl who was serious about her academics, consistently among the best students in her class, and entrusted with leadership responsibilities.\n\nI served as a class prefect and chapel prefect, and I was someone people could count on. I could show up for others and help them through things, even while I was still trying to understand myself.\n\nBut secondary school was not all academics and responsibilities. 😂 There were funny moments with my classmates, friendships, and experiences that made those years memorable in their own way.\n\nI was also learning about my relationship with God. Sometimes I was consistent, and sometimes I struggled. I wanted to grow closer to Him, but I was still learning what it meant to be intentional about my faith.\n\nLooking back, I realise that those years were shaping me in ways I could not fully understand at the time. I was learning, making memories, discovering parts of myself, and preparing for a future I had not yet experienced.\n\nI did not have everything figured out, but I was growing. And sometimes, that is what a season of life is meant to be about.",
+    quote: "Not every season will make sense while you are living it. Sometimes, you have to grow a little older before you understand what an experience came to teach you.",
+    location: "[SECONDARY SCHOOL YEARS]",
     media: [
-      M("2017-1", "PHOTO PLACEHOLDER · 2017 01 · portrait 4:5"),
-      M("2017-2", "PHOTO PLACEHOLDER · 2017 02 · portrait 4:5"),
-      M("2017-3", "PHOTO PLACEHOLDER · 2017 03 · portrait 4:5"),
+      M("2017-1", "PHOTO PLACEHOLDER · SECONDARY SCHOOL · portrait 4:5"),
+      M("2017-2", "PHOTO PLACEHOLDER · SECONDARY SCHOOL · portrait 4:5"),
+      M("2017-3", "PHOTO PLACEHOLDER · SECONDARY SCHOOL · portrait 4:5"),
     ],
     layoutVariant: "polaroid",
     theme: {
