@@ -42,7 +42,7 @@ export default function TimelineChapter({
   const textFirst = index % 2 === 0;
 
   const storyPreview = truncateStory(entry.story, 220);
-  const hasMore = storyPreview !== entry.story;
+  const hasMore = entry.story.length > 220;
 
   useEffect(() => {
     if (!storyOpen) return;
