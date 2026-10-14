@@ -18,278 +18,310 @@ const M = (
   alt: placeholderLabel.toLowerCase(),
   aspect,
 });
-
 export const timelineSeed: TimelineYear[] = [
- {
-id: "y2010",
-year: 2010,
-title: "The Little Girl With a Dream",
-story:
-"I started primary school in 2010. At that age, I was just a little girl learning about the world and imagining who I might become.\n\nFor as long as I can remember, the dream I carried was to become a medical doctor. I did not yet know what life would ask of me or how much growing up would involve. I only knew that this was what I wanted.\n\nChildhood was also made up of little memories that have stayed with me. One that still makes me smile is the time I came first in Primary 3 and a family friend bought a whole chicken to celebrate. I shared it with my siblings, but I got to choose first. 😂\n\nLooking back, those years were the beginning of a story I am still living. I did not know then that the road ahead would take turns I could not predict. For now, I was a little girl with a dream, and that was enough.",
-quote: "Every long journey begins somewhere. Mine began with a little girl and a dream.",
-location: "[WHERE IT ALL BEGAN]",
-media: [
-M("2010-1", "PHOTO PLACEHOLDER · CHILDHOOD HERO · portrait 4:5"),
-M("2010-2", "PHOTO PLACEHOLDER · PRIMARY SCHOOL MEMORY · portrait 4:5"),
-M("2010-3", "PHOTO PLACEHOLDER · CHILDHOOD MEMORY · portrait 4:5"),
-],
-layoutVariant: "editorial",
-theme: {
-accent: "#a78bfa",
-accent2: "#7c3aed",
-glow: "#a78bfa",
-},
-},{
-    id: "y2017",
-    year: 2017,
-    title: "The Years That Shaped Me",
-   story:
-  "When I look back at my secondary school years, I see a girl who was loved by many but was still trying to find herself.\n\n" +
-
-  "I was serious about my academics and consistently among the best students in my class. I also had opportunities to serve in different leadership positions, including as a class prefect and chapel prefect.\n\n" +
-
-  "I could be there for other people, help them out, and be someone they could count on. But somehow, even with all of that, I sometimes felt lost when it came to myself. I was still learning to understand myself, and I did not always have the answers to the things I felt or experienced.\n\n" +
-
-  "But secondary school was not all serious business. 😂\n\n" +
-
-  "One memory that comes to mind is the day we wrote our last WAEC paper. We all went to a big field to play football, and of course, I was there to cheer because playing football was definitely not my ministry, though I love watching it. 😂⚽️ I spent quite a number of funny moments with my classmates, and those memories are still part of what makes me smile when I think about those years.\n\n" +
-
-  "Of course, there were other experiences, too. I was learning about friendships, navigating different situations, and figuring out where I belonged. Some experiences were beautiful, while others taught me lessons I would only understand more clearly with time.\n\n" +
-
-  "My relationship with God was also part of this journey. Sometimes, I was serious about my walk with Him, and sometimes, I was not. I wanted to grow closer to Him, but I was still learning what consistency meant in my relationship with God.\n\n" +
-
-  "Looking back, I realise that I was growing in more ways than I could recognise at the time. I was not just preparing for examinations or working towards the next stage of my education. I was also having experiences that would shape how I understood myself, other people, and my faith.\n\n" +
-
-  "In 2022, I completed secondary school. I cannot quite put a name to how I felt then. I had achieved that milestone, and my attention was already on the next one: getting into the university.\n\n" +
-
-  "I did not know exactly what awaited me, but I was ready to move forward.\n\n" +
-
-  "And so, one chapter ended, making room for another.",
-    quote: "Not every season will make sense while you are living it. Sometimes, you have to grow a little older before you understand what an experience came to teach you.",
-    location: "[SECONDARY SCHOOL YEARS]",
-    media: [
-      M("2017-1", "PHOTO PLACEHOLDER · SECONDARY SCHOOL · portrait 4:5"),
-      M("2017-2", "PHOTO PLACEHOLDER · SECONDARY SCHOOL · portrait 4:5"),
-      M("2017-3", "PHOTO PLACEHOLDER · SECONDARY SCHOOL · portrait 4:5"),
-    ],
-    layoutVariant: "polaroid",
-    theme: {
-      accent: "#22d3ee",
-      accent2: "#0e7490",
-      glow: "#22d3ee",
-    },
-  },
   {
-    id: "y2018",
-    year: 2018,
-    title: "Popular, Broke & Handsome",
-    story:
-      "By 2018, I was already deep into school politics.\n\nDepartment politics, faculty politics, everything.\n\nAt this point, I was already the Auditor General of the faculty. I knew people, people knew me, and I had started building a lot of influence around school.\n\nI was especially popular among the 100 and 200 level students.\n\nBy this time I was already in 300 level, enjoying the attention, enjoying the politics, enjoying the whole frenzy around it.\n\nI was popular.\n\nI was also very broke. 😂\n\nAcademically, I had dropped from being at the very top to somewhere around the top five in my department. Politics was definitely taking some of my attention, but I was still doing well.\n\nMore importantly to me at the time, I was building influence.\n\nA lot of it.\n\nI knew I wanted to contest for bigger positions eventually, so I was meeting people, building relationships and making sure my name was known.\n\nAt this point, the whole dream of switching to Medicine had basically disappeared.\n\nSomehow, I was enjoying Agricultural Science now.\n\nSo there I was.\n\nYoung, passionate, popular, broke and enjoying every bit of it.\n\nAnd handsome too, obviously. 😂",
-    quote: "Success is stumbling from failure to failure with no loss of enthusiasm.",
-    location: "[ABUJA, NIGERIA]",
-    media: [
-      M("2018-1", "PHOTO PLACEHOLDER · 2018 HERO · portrait 4:5"),
-      M("2018-2", "PHOTO PLACEHOLDER · 2018 MEMORY 01 · portrait 4:5"),
-      M("2018-3", "PHOTO PLACEHOLDER · 2018 MEMORY 02 · portrait 4:5"),
-      M("2018-4", "PHOTO PLACEHOLDER · 2018 MEMORY 03 · landscape 16:9", "16:9"),
-      M("2018-5", "PHOTO PLACEHOLDER · 2018 MEMORY 04 · portrait 4:5"),
-    ],
+    id: "y2010",
+    year: 2010,
+    title: "The Little Girl With a Dream",
+    story: `CHAPTER ONE: THE LITTLE GIRL WITH A DREAM (2010–2015)
+
+[THE BEGINNING]
+
+I started primary school in 2010. At that age, I was just a little girl learning about the world and imagining who I might become.
+
+Like many children, I had dreams of my own. I wanted to become a medical doctor, and that dream was part of how I imagined my future.
+
+My childhood also came with its own little victories. One memory that stands out is coming first in Primary Three. A family friend celebrated my achievement by buying a whole chicken! 😂 Of course, I shared it with my siblings, but I got to choose my portion first. Small girl, big achievement, and a whole chicken to celebrate it!
+
+Looking back, those moments remind me that my journey began long before I understood what life would eventually look like. I was simply a little girl growing, learning, dreaming, and taking life one experience at a time.
+
+I had no idea what the future held or how much my plans might change. I only knew that I had dreams, and I was beginning my journey.
+
+For now, I was a little girl with a dream, and that was enough.
+
+CLOSING QUOTE
+
+"Every journey begins somewhere. Sometimes, it begins with a little girl, a dream, and a future she has not yet learned to imagine."`,
+    media: [],
     layoutVariant: "editorial",
     theme: {
-      accent: "#8b5cf6",
-      accent2: "#6d28d9",
-      glow: "#8b5cf6",
+      accent: "#fca5a5",
+      accent2: "#e11d48",
+      glow: "#fca5a5",
     },
   },
+
   {
-    id: "y2019",
-    year: 2019,
-    title: "The Year I Almost Did Fraud",
-    story:
-      "I mean that quite literally.\n\nAt the time, almost everyone around me was doing it.\n\nClose friends, school friends, people I grew up with. It was everywhere around me, and this was around the period when internet fraud was really becoming a big thing in Nigeria.\n\nSo yes, I considered it.\n\nI actually almost did it.\n\nI had a friend who was supposed to teach me how everything worked. For some reason, he kept delaying it.\n\nBy the time he eventually reached out to me again, the zeal had already disappeared.\n\nI just didn't want to do it anymore.\n\nAnd looking back now, I'm very glad it happened that way because my life could have taken a completely different direction.\n\nInstead, I focused more on academics and politics. At the time, I genuinely thought I was going to become a politician someday. 😂\n\n2019 was also the first time I really stayed away from my parents for a long period since I got admission.\n\nI moved to Nasarawa State for my six-month internship.\n\nI lived on my own, picked up a teaching job on the side and experienced a different kind of independence for the first time.\n\nI was a little wild around this period too, I won't lie.\n\nBut I was growing up.\n\nLooking back, there were so many directions my life could have gone that year.\n\nI made some good decisions, almost made some terrible ones, and somehow kept moving.\n\nNo regrets.",
-    quote: "In matters of conscience, the law of the majority has no place.",
-    location: "[NASARAWA, NIGERIA]",
-    media: [
-      M("2019-1", "PHOTO PLACEHOLDER · 2019 01 · portrait 4:5"),
-      M("2019-2", "PHOTO PLACEHOLDER · 2019 02 · portrait 4:5"),
-      M("2019-3", "PHOTO PLACEHOLDER · 2019 03 · portrait 4:5"),
-    ],
-    layoutVariant: "polaroid",
+    id: "y2016",
+    year: 2016,
+    title: "The Years That Shaped Me",
+    story: `CHAPTER TWO: THE YEARS THAT SHAPED ME (2016–2022)
+
+[GROWING UP]
+
+When I look back at my secondary school years, I see a girl who was loved by many but was still trying to find herself.
+
+I was serious about my academics and consistently among the best students in my class. I also had opportunities to serve in different leadership positions, including as a class prefect and chapel prefect.
+
+I could be there for other people, help them out, and be someone they could count on. But somehow, even with all of that, I sometimes felt lost when it came to myself. I was still learning to understand myself, and I did not always have the answers to the things I felt or experienced.
+
+But secondary school was not all serious business. 😂
+
+One memory that comes to mind is the day we wrote our last WAEC paper. We all went to a big field to play football, and of course, I was there to cheer because playing football was definitely not my ministry, though I love watching it. 😂⚽️ I spent quite a number of funny moments with my classmates, and those memories are still part of what makes me smile when I think about those years.
+
+Of course, there were other experiences, too. I was learning about friendships, navigating different situations, and figuring out where I belonged. Some experiences were beautiful, while others taught me lessons I would only understand more clearly with time.
+
+My relationship with God was also part of this journey. Sometimes, I was serious about my walk with Him, and sometimes, I was not. I wanted to grow closer to Him, but I was still learning what consistency meant in my relationship with God.
+
+Looking back, I realise that I was growing in more ways than I could recognise at the time. I was not just preparing for examinations or working towards the next stage of my education. I was also having experiences that would shape how I understood myself, other people, and my faith.
+
+In 2022, I completed secondary school. I cannot quite put a name to how I felt then. I had achieved that milestone, and my attention was already on the next one: getting into the university.
+
+I did not know exactly what awaited me, but I was ready to move forward.
+
+And so, one chapter ended, making room for another.
+
+CLOSING QUOTE
+
+"Not every season will make sense while you are living it. Sometimes, you have to grow a little older before you understand what an experience came to teach you."`,
+    media: [],
+    layoutVariant: "editorial",
     theme: {
-      accent: "#f43f9e",
-      accent2: "#ec4899",
-      glow: "#f43f9e",
+      accent: "#f0abfc",
+      accent2: "#c026d3",
+      glow: "#f0abfc",
     },
   },
-  {
-    id: "y2020",
-    year: 2020,
-    title: "The Year Everything Paused",
-    story:
-      "Then COVID happened.\n\nWork stopped. School stopped. My internship stopped. Everything just stopped.\n\nI remember having to travel back home from Nasarawa to Abuja around 5 a.m. during that whole lockdown period.\n\nIt was honestly depressing.\n\nEverything I was used to doing suddenly disappeared and I was just home trying to figure out what to do with myself.\n\nAt some point, I started doing home lessons just to make some money.\n\nThere was this particular family where I had already been having difficult experiences. Then one day, I felt like the way I was treated was very condescending and disrespectful.\n\nI just walked out.\n\nI didn't collect a single naira.\n\nMind you, I didn't even have much money at the time.\n\nBut apparently, pride was one thing I had plenty of. 😂\n\nWith everything on pause, I started finding random things to do with myself.\n\nI learned how to play the guitar.\n\nI learned how to play the keyboard.\n\nIt was a very strange year. Quiet, difficult and honestly confusing.\n\nBut somehow, like I had always done, I found my way around it.\n\nThere wasn't much movement that year.\n\nLife just forced everybody to sit down.\n\nAnd for once, I did too.",
-    quote: "Rock bottom became the solid foundation on which I rebuilt my life.",
-    location: "[NASARAWA, NIGERIA]",
-    media: [
-      M("2020-1", "PHOTO PLACEHOLDER · 2020 01 · landscape 16:9", "16:9"),
-      M("2020-2", "PHOTO PLACEHOLDER · 2020 02 · landscape 16:9", "16:9"),
-      M("2020-3", "PHOTO PLACEHOLDER · 2020 03 · landscape 16:9", "16:9"),
-      M("2020-4", "PHOTO PLACEHOLDER · 2020 04 · landscape 16:9", "16:9"),
-    ],
-    layoutVariant: "filmstrip",
-    theme: {
-      accent: "#22d3ee",
-      accent2: "#0891b2",
-      glow: "#22d3ee",
-    },
-  },
-  {
-    id: "y2021",
-    year: 2021,
-    title: "What's the Plan After School?",
-    story:
-      "By 2021, I was in my finals.\n\nAt this point, I was already the Treasurer of my faculty and very close to the president. I had become quite influential in school.\n\nThe funny thing was, I barely showed up in class anymore.\n\nSome lecturers barely knew me, and even some of my classmates barely saw me. We had an office in school, and I probably spent more time there than I did in class.\n\nThis was also the year I started trying my hands at business.\n\nMy first attempt was a fashion business called Williams Brand.\n\nIt died very fast. 😂\n\nAfter that came a cyber cafe business and then POS. I was actually one of the early people around me to get an OPay POS.\n\nThere was just one small problem.\n\nI had managed to get the POS, but I didn't really have enough money to run a POS business. 😂\n\nSo that was that.\n\nStill, 2021 was a beautiful year for me.\n\nWilliams Brand won Creative Brand of the Year. I also won Most Proactive, Most Active and Most Influential Male in my faculty.\n\nI had spent years building relationships and influence around school, and by this time, all of that was obvious.\n\nAcademically though, I was struggling.\n\nI wasn't the same boy who entered university and topped his department in first year. Politics, business and everything else I was doing had taken a lot of my attention.\n\nBut somehow, I was still doing well.\n\nI was still among the top students in my class, and eventually graduated with a strong 2:1.\n\nNot bad for the naive boy who entered university years earlier just wanting to study Medicine.\n\nThe funny thing was, I was almost done with university and I still had no idea what I wanted to do with my life.\n\nAround this time, Prosper, someone very close to me, introduced me to affiliate marketing.\n\nI didn't know what that introduction would eventually mean.\n\nAt the time, I was just waiting to finish school.\n\nI figured I would find out what came next when I got there.",
-    quote: "It does not matter how slowly you go as long as you do not stop.",
-    location: "[ABUJA, NIGERIA]",
-    media: [
-      M("2021-1", "PHOTO PLACEHOLDER · 2021 HERO · full-bleed 16:9", "16:9"),
-      M("2021-2", "PHOTO PLACEHOLDER · 2021 MEMORY 01 · portrait 4:5"),
-      M("2021-3", "PHOTO PLACEHOLDER · 2021 MEMORY 02 · portrait 4:5"),
-      M("2021-4", "PHOTO PLACEHOLDER · 2021 MEMORY 03 · portrait 4:5"),
-    ],
-    layoutVariant: "fullbleed",
-    theme: {
-      accent: "#ff7a3d",
-      accent2: "#fb923c",
-      glow: "#ff7a3d",
-    },
-  },
+
   {
     id: "y2022",
     year: 2022,
-    title: "Depression, A Light Bulb Moment & NYSC Camp",
-    story:
-      "2022 was a strange year.\n\nSchool was supposed to be over, but then ASUU happened and everything got delayed again.\n\nAfter spending so many years believing my life would follow a certain timeline, suddenly I was stuck.\n\nAnd I became depressed again.\n\nSomewhere in the middle of all that waiting, I went back to teaching. I wasn't making much, but at least it kept me doing something.\n\nThen I started reading.\n\nSeriously.\n\nOne of the books I came across was No Excuses! by Brian Tracy, and for some reason, that book really got to me.\n\nI started thinking differently.\n\nI started writing on Facebook.\n\nI started thinking about my life beyond just finishing school, getting a job and figuring things out as they came.\n\nFor the first time, I think I started finding some sense of purpose.\n\nEventually, school ended.\n\nAnd then NYSC came.\n\nThe first time, I got posted to Bayelsa State.\n\nI didn't go. 😂\n\nI wanted Lagos.\n\nThen I got posted again, and this time it was Jos.\n\nStill not Lagos.\n\nBut I was tired of waiting again, so I decided to go.\n\nI thought I would get to Jos, do what I needed to do and probably find my way out eventually.\n\nBut for some reason, I fell in love with Jos almost immediately.\n\nThe weather was different. The environment was different. Everything just felt different.\n\nThen inside of NYSC camp, I found myself getting involved again.\n\nI became the OBS Head.\n\nLooking back, 2022 was one of those years that didn't look like much while I was living through it.\n\nThere was depression. There was waiting. There was ASUU. There was uncertainty.\n\nBut there was also that light bulb moment.\n\nI started reading. I started writing. I started seeing possibilities I hadn't really considered before.\n\nAnd somewhere between all of that, I packed my bags and entered a city I knew almost nothing about.\n\nI didn't know it yet, but Jos was about to become a very important part of my story.",
-    quote: "New beginnings are often disguised as painful endings.",
-    location: "[ABUJA, NIGERIA]",
-    media: [
-      {
-        id: "2022-1",
-        type: "artifact",
-        placeholderLabel:
-          "PHOTO PLACEHOLDER · WhatsApp screenshot / artifact 01",
-        alt: "whatsapp screenshot placeholder",
-        aspect: "4:5",
-      },
-      {
-        id: "2022-2",
-        type: "artifact",
-        placeholderLabel: "PHOTO PLACEHOLDER · artifact 02",
-        alt: "artifact placeholder",
-        aspect: "4:5",
-      },
-      {
-        id: "2022-3",
-        type: "artifact",
-        placeholderLabel: "PHOTO PLACEHOLDER · artifact 03",
-        alt: "artifact placeholder",
-        aspect: "4:5",
-      },
-    ],
-    layoutVariant: "archive",
+    title: "The Years in Between",
+    story: `CHAPTER THREE: THE YEARS IN BETWEEN (2022–2024)
+
+[THE UNEXPECTED JOURNEY]
+
+When I finished secondary school in 2022, my next plan was simple: I wanted to get into the university and study Medicine and Surgery.
+
+I knew JAMB was not something to take lightly, so I studied. I really did. But when my result came out and I saw 195, my first reaction was, "How? Is this actually my result?" 😂
+
+That year, JAMB had its own issues, and my English examination was one experience I still remember. There was no comprehension passage, yet there were comprehension questions. I was confused, and seeing my result afterward left me feeling really disappointed.
+
+But I was not ready to give up on my dream.
+
+The second time, I gave it everything I had. I stretched myself, studied hard, and put my all into that examination. When the result came out, I scored 235.
+
+I had improved, and I knew I had put in the work. But even with that result, Medicine and Surgery was still out of reach.
+
+That one pained me.
+
+At that point, my mind was no longer fixed on one particular course. I just wanted to get into school and begin my university journey. I was eventually offered admission to study Microbiology, and I started the programme. However, my dad was concerned about my future employment prospects and requested that I withdraw. Eventually, I did.
+
+And just like that, another plan changed.
+
+But the years in between were not only about JAMB and admission.
+
+At some point, I tried learning a skill. I ventured into hairstyling, but I was not serious enough about it, and that attempt did not work out.
+
+Then came one of the funniest phases of those years. 😂😭
+
+I was broke and tired of staying at home. I wanted to make money, and when a friend introduced me to a health networking company, I jumped at the opportunity.
+
+Omo, I channelled my energy into that thing! 😂😂 School plans seemed to take a back seat, and I was so invested that my mum began wondering whether I had been bewitched. 😭😭
+
+Looking back, I can laugh about it now. I was simply tired of staying at home and wanted to find a way to make money. I was trying things out, exploring possibilities, and hoping something would work.
+
+Not everything I attempted worked out, and not every decision was the wisest one, but those experiences were still part of my journey.
+
+Eventually, my path led me towards midwifery. It was not the course I had originally imagined myself studying, but over time, I developed a genuine love for it.
+
+And I mean, I LOVE midwifery. ❤️
+
+Of course, it can be stressful. Sometimes, the workload alone can make you wonder what you signed up for. 😂 But beneath the stress, I have found something I genuinely enjoy and care about.
+
+When I think about those years now, I see a period filled with changing plans, disappointments, attempts that did not work out, and unexpected directions.
+
+I had started with one dream, but life did not follow the exact route I had planned. I had to adjust, try again, and keep moving.
+
+And somewhere along the way, I found myself on a path I had not originally pictured, but one I have grown to love.
+
+The story was still unfolding, and the next chapter would teach me even more about myself.
+
+CLOSING QUOTE
+
+"Sometimes, the journey does not follow the plan you made for yourself. You take different turns, try things that do not work out, and find yourself in places you never imagined. And somewhere along the way, life begins to look different from the picture you started with."`,
+    media: [],
+    layoutVariant: "editorial",
     theme: {
-      accent: "#f5c97b",
-      accent2: "#d4a34f",
-      glow: "#f5c97b",
-    },
-  },
-  {
-    id: "y2023",
-    year: 2023,
-    title: "LinkedIn, Jos & LinkedIn Local Jos",
-    story:
-      "January 1st, 2023, I went viral on LinkedIn.\n\nThe next day, I packed my bags and fully moved to Jos for NYSC.\n\nThis was going to be the longest I had ever stayed away from my family.\n\nNew city. I knew practically nobody there.\n\nBut somehow, Jos became home.\n\nMy PPA was the University of Jos, and a few months into service, I became the CDS President for Editorial CDS.\n\nBy this time, LinkedIn was also beginning to work for me.\n\nI was growing.\n\nPeople were starting to know me.\n\nAnd with the little influence and connections I had built online, I decided to do something that, looking back now, was actually quite crazy.\n\nI decided to host LinkedIn Local Jos.\n\nI wasn't from Jos. I didn't have family there. I didn't come into the city knowing powerful people.\n\nI was literally just a corper.\n\nBut we did it.\n\nOver 500 people showed up.\n\nWe brought some of the biggest names around the University of Jos and beyond into one room, and till today, it remains one of the largest LinkedIn Local events held in Northern Nigeria.\n\nThat event changed a lot for me.\n\nIt showed me that what I was building on the internet had real, tangible substance in the physical world.\n\nI also co-hosted the JPI Youth Assembly in Plateau State from Jos, and later got elected as Vice President of JPI (Plateau State Chapter). I found myself getting more speaking invitations, meeting leaders, and expanding my horizons.\n\nAround this same period, I made my first $1,000 as a marketing copywriter.\n\nThat one was sweet. 😂\n\nI was making money, growing on LinkedIn and becoming pretty comfortable with the life I had built in Jos.\n\nAnd yes, somewhere along the way, I fell in love with Jos.\n\nI also fell in love in Jos.\n\nThree times apparently. 😂\n\nBy October, NYSC was over.\n\nThen came another problem.\n\nWhere was I going next?\n\nI could stay in Jos. I could go back to Abuja. Or I could finally make that move to Lagos.\n\nI actually tried staying in Jos.\n\nThen I got scammed.\n\nSo, plans changed. 😂\n\nOnce again, I had to figure out what was next.",
-    quote: "Man cannot discover new oceans unless he has the courage to lose sight of the shore.",
-    location: "[JOS, NIGERIA]",
-    media: [
-      M("2023-1", "PHOTO PLACEHOLDER · 2023 01 · portrait 4:5"),
-      M("2023-2", "PHOTO PLACEHOLDER · 2023 02 · portrait 4:5"),
-      M("2023-3", "PHOTO PLACEHOLDER · 2023 03 · landscape 16:9", "16:9"),
-    ],
-    layoutVariant: "scrapbook",
-    theme: {
-      accent: "#a78bfa",
-      accent2: "#8b5cf6",
-      glow: "#a78bfa",
-    },
-  },
-  {
-    id: "y2024",
-    year: 2024,
-    title: "And Then God Said Lagos",
-    story:
-      "After NYSC, I found myself at another crossroad.\n\nI could go back to Abuja where my family was.\n\nI could stay in Jos, a city I had grown to love.\n\nOr I could move to Lagos, where I believed there were bigger opportunities for me.\n\nHonestly, things weren't going badly for me.\n\nI didn't need some dramatic escape or fresh start.\n\nI just needed to know where I was supposed to go next.\n\nSo I prayed about it.\n\nAnd God said Lagos.\n\nI packed my bags again, booked a flight and moved.\n\nI'm not going to romanticize it.\n\nI cried for days.\n\nI missed my family terribly. I missed Abuja. I missed Jos.\n\nAnd Lagos was chaotic.\n\nI kept wondering how I had moved from somewhere as calm as Abuja and somewhere as lovely as Jos to all of this. 😂\n\nBut Lagos opened my world.\n\nLinkedIn had already given me influence on the internet, but now that influence started taking me places.\n\nLiterally.\n\nI travelled a lot that year.\n\nFrom Lagos to Oyo, Ife, Osun, Akure, Kaduna, Niger and different parts of Nigeria.\n\nI was speaking at events, visiting universities and meeting people who had previously only known me from the internet.\n\nThis thing I had built mostly from my phone was now taking me into actual rooms.\n\nI co-hosted events, found myself getting more speaking invitations, and met incredible people across different states.\n\nI also had a proper job at this point.\n\nAnd because apparently I like learning things the hard way, I tried building two businesses that year.\n\nBoth failed woefully. 😂\n\nMany of you probably know those businesses.\n\nAt the time, those failures hurt.\n\nLooking back now, I'm glad I tried them because a lot of what I know today came from things that didn't work.\n\nBy the end of 2024, I had done a lot.\n\nI had travelled. I had spoken on different stages. I had built influence and met incredible people.\n\nBut I was also tired.\n\nI was tired of flying up and down and jumping from one speaking engagement to another.\n\nMore importantly, I realized I didn't really have a clear career path.\n\nI knew I could do things.\n\nI just didn't know what exactly I wanted to become very good at.\n\nAnd that became the question I carried into 2025.",
-    quote: "Everything you’ve ever wanted is on the other side of fear.",
-    location: "[LAGOS, NIGERIA]",
-    media: [
-      M("2024-1", "PHOTO PLACEHOLDER · 2024 01"),
-      M("2024-2", "PHOTO PLACEHOLDER · 2024 02"),
-      M("2024-3", "PHOTO PLACEHOLDER · 2024 03"),
-      M("2024-4", "PHOTO PLACEHOLDER · 2024 04"),
-      M("2024-5", "PHOTO PLACEHOLDER · 2024 05"),
-      M("2024-6", "PHOTO PLACEHOLDER · 2024 06"),
-    ],
-    layoutVariant: "mosaic",
-    theme: {
-      accent: "#f43f9e",
-      accent2: "#8b5cf6",
-      glow: "#a855f7",
-    },
-  },
-  {
-    id: "y2025",
-    year: 2025,
-    title: "The Year I Locked In and TEDxes",
-    story:
-      "2025 was the year I disappeared.\n\nWell, not completely.\n\nBut after posting almost every day on LinkedIn for about two years, I became extremely inconsistent.\n\nI also stopped accepting speaking invitations.\n\nI declined almost every single one that came my way.\n\nI was tired, but more than that, I needed clarity.\n\nI had built a brand. I had made money. I had spoken at events. I had travelled. People knew me.\n\nBut I knew I was made for more, and I didn't want to become too comfortable with the little success I had already found.\n\nI wanted a real career path.\n\nSo I prayed about it.\n\nI remember spending a long time talking to God about what exactly I was supposed to do with my life.\n\nEventually, I got clarity.\n\nProduct Marketing.\n\nI spoke to someone about it, followed that direction, and that was how I got into product marketing.\n\nThen I got my first proper role.\n\nIt was a hybrid role, so I actually had to show up at the office on certain days.\n\nAnd honestly, that company changed me.\n\nIt opened my eyes to marketing in a completely different way.\n\nI became better at what I did. I understood products better. I understood customers better. I started seeing marketing beyond just content and social media.\n\nFor the first time in a while, I wasn't trying to be everywhere.\n\nI was just learning.\n\nAnd I loved it.\n\nThe funny thing was that even though I had become very inconsistent online and was turning down invitations, people were still finding me.\n\nOpportunities came in fast. TEDx came in too. I had two TEDx talks that year despite not being so active.\n\nBesides product marketing, I had worked with a couple of international clients, doing a lot more around marketing and sales.\n\nApparently, disappearing for a while didn't erase everything I had spent years building.\n\n2025 wasn't a very loud year for me.\n\nBut I needed it.\n\nI needed to stop moving around long enough to actually decide where I was going.",
-    quote: "We delight in the beauty of the butterfly, but rarely admit the changes it has gone through.",
-    location: "[LAGOS, NIGERIA]",
-    media: [
-      M("2025-a", "PHOTO PLACEHOLDER · 2025 01 · portrait 4:5"),
-      M("2025-b", "PHOTO PLACEHOLDER · 2025 02 · portrait 4:5"),
-      M("2025-c", "PHOTO PLACEHOLDER · 2025 03 · portrait 4:5"),
-      M("2025-d", "PHOTO PLACEHOLDER · 2025 04 · portrait 4:5"),
-      M("2025-e", "PHOTO PLACEHOLDER · 2025 05 · portrait 4:5"),
-    ],
-    layoutVariant: "beforeafter",
-    theme: {
-      accent: "#ff9a5d",
-      accent2: "#f43f9e",
+      accent: "#fdba74",
+      accent2: "#ea580c",
       glow: "#fdba74",
     },
   },
+
+  {
+    id: "y2024",
+    year: 2024,
+    title: "A New Chapter Begins",
+    story: `CHAPTER FOUR: A NEW CHAPTER BEGINS (2024)
+
+[THE BEGINNING OF SOMETHING NEW]
+
+In 2024, I gained admission into the College of Nursing Sciences, Bishop Shanahan Specialist Hospital, Nsukka, to study midwifery. I was super excited. I had always wanted to know what being away from home felt like, and now I was about to experience it for myself. I was expectant, curious, and ready to see what this new place had in store for me.
+
+I had my expectations, too. I wanted to be a good girl, make my parents proud, do well academically, take my relationship with God seriously, and generally get things right. I did not know exactly what the coming years would look like, but I was determined to make the most of them.
+
+Then came my first hostel experience. 😂
+
+On the first day, a classmate had chosen a particular bunk but later changed her mind. I eventually chose that same bunk, only for her to come back and want it again! And me? I kwechiri immediately! 😭😂 I called my sister, who was already in the school, and the matter was eventually resolved by the hostel matron.
+
+That was one way to begin my new life away from home. Omor, we had barely arrived! 😂
+
+Another memorable moment was my first experience in the refectory. I volunteered to dish out food, not knowing that this little act would lead to something more. When it was time for my classmates to vote, I was elected as the Food Representative.
+
+And just like that, I began taking on responsibilities in my new environment.
+
+I was jovial, made friends easily, and became quite popular among my classmates. I enjoyed the interactions, the shared experiences, and especially our group reading sessions. There was something about sitting together to read, learning alongside one another, and making memories in the process that I genuinely loved.
+
+At that point, I was still figuring out what life in this new environment would mean for me. I had come with plans for my academics, my faith, and my personal life. I wanted to do well, make my parents proud, and become the person I believed I should be.
+
+I did not know that this new chapter would challenge some of my expectations, introduce me to different sides of myself, and teach me lessons I would carry long after leaving school.
+
+I had come expecting to experience life away from home.
+
+Little did I know that I would also begin learning more about myself.
+
+CLOSING QUOTE
+
+"Sometimes, a new environment introduces you to more than a different place or a different set of people. It introduces you to parts of yourself you have not yet had the opportunity to discover."`,
+    media: [],
+    layoutVariant: "editorial",
+    theme: {
+      accent: "#86efac",
+      accent2: "#16a34a",
+      glow: "#86efac",
+    },
+  },
+
   {
     id: "y2026",
     year: 2026,
-    title: "Becoming the AI Person",
-    story:
-      "By 2026, I finally had some clarity.\n\nI had a proper career in product marketing. I had a solid personal brand, years of speaking engagements, a portfolio, results and enough experience to know that I was actually good at what I did.\n\nI was also working with international companies and doing a lot more around marketing and sales.\n\nThen I got really deep into AI.\n\nFor the first three months of the year, I locked in.\n\nI took courses. I learned. I built things. I experimented with different tools and started seeing just how much was possible.\n\nAnd somehow, people started associating me with AI.\n\nWhich was funny.\n\nA few years ago, I was the LinkedIn guy.\n\nThen I became the Product Marketing guy.\n\nNow, for some reason, I was becoming the AI person. 😂\n\nI also started getting speaking invitations again.\n\nRemember that I had spent most of the previous year declining them?\n\nWell, apparently that didn't last.\n\nOne invitation became another, and before I knew it, I was back in rooms speaking again.\n\nI did quite a number of speaking engagements this year, even though that wasn't really the plan.\n\nSometimes, even when you're trying to hide, the light will still find you.\n\nAnd somewhere in the middle of all of this, I made a shitload of money too. 😂\n\nBut I think one of the things 2026 made me realize was that maybe I've been looking at my life the wrong way.\n\nI've spent years becoming different things.\n\nI wanted to be a doctor.\n\nThen I got into Agricultural Science.\n\nThen politics.\n\nThen business.\n\nThen copywriting.\n\nThen LinkedIn.\n\nThen product marketing.\n\nNow AI.\n\nAnd maybe that's actually the story.\n\nI keep learning. I keep building. I keep changing.\n\nI evolve.\n\nAt 27, I still don't think I've arrived.\n\nNot even close.\n\nIf anything, I think I'm just getting started.\n\nAnd if you come back tomorrow and I'm doing something completely different, don't be surprised.\n\nApparently, that's what I do. I move. I am a man in motion.",
-    quote: "The only person you are destined to become is the person you decide to be.",
-    location: "[LAGOS, NIGERIA]",
-    media: [
-      M("2026-1", "PHOTO PLACEHOLDER · 2026 CURRENT · portrait 4:5"),
-      M("2026-2", "PHOTO PLACEHOLDER · 2026 02 · portrait 4:5"),
-      M("2026-3", "PHOTO PLACEHOLDER · 2026 03 · portrait 4:5"),
-      M("2026-4", "PHOTO PLACEHOLDER · 2026 04 · portrait 4:5"),
-      M("2026-5", "PHOTO PLACEHOLDER · 2026 05 · portrait 4:5"),
-    ],
+    title: "The Becoming",
+    story: `CHAPTER FIVE: THE BECOMING (2024–2026)
+
+[THE LESSONS THAT CHANGED ME]
+
+My years at Shanahan have taught me far more than what I came here to study. They have challenged me spiritually, emotionally, socially, and through the responsibilities I have carried. Looking back, I realise that some of the most important lessons I have learned have not come from textbooks or lectures, but from the experiences that have shaped the person I am becoming.
+
+FRIENDSHIPS AND BELONGING
+
+My years at Shanahan have given me beautiful friendships and meaningful memories. From our group reading sessions to the laughter we shared, there have been moments of genuine connection that I will always appreciate. I have met people who have made this journey better, and I am grateful for the friendships that have brought joy, support, and a sense of belonging into my life.
+
+But I have also learned some important lessons about friendship.
+
+I have always been someone who makes friends easily, but my experiences have taught me that being friendly with someone and allowing them into your inner circle are two different things.
+
+Sometimes, the desire to belong can make us ignore our discomfort, compromise our values, or remain in situations we should reconsider. I learned that trying to maintain peace with everyone can come at the expense of our own peace.
+
+Friendships can significantly influence the direction our lives take. Choose your friends carefully, and look for people whose values and vision align with yours.
+
+If a friendship makes you uncomfortable, do not ignore your feelings just to keep the peace. Speak up when necessary, reassess the relationship, and know when you need to step away.
+
+You can love people without giving everyone access to your inner circle. Being friendly with everyone does not mean everyone must have a place in your personal life.
+
+MY WALK WITH GOD
+
+My relationship with God has been one of the most personal parts of my journey at Shanahan.
+
+I came into this institution with a genuine desire to grow in my walk with Him. I had plans, intentions, and a picture of the kind of Christian I wanted to become. But somewhere along the way, I began to understand that wanting to get things right and actually walking in obedience are not always the same thing.
+
+Like many young people navigating a new season of life, I discovered that growing in faith requires more than good intentions. It requires consistency, humility, and a willingness to keep returning to God, even when the journey does not go as planned.
+
+First Corinthians 10:12 became especially meaningful to me: "Wherefore let him that thinketh he standeth take heed lest he fall."
+
+I began to understand that none of us is beyond the possibility of losing our footing. Sometimes, we become so sure of ourselves that we forget how much we need God's grace and guidance. We can think we have things figured out without realising how easily our decisions can take us away from the things that matter most.
+
+But what stays with me most is the faithfulness and mercy of God, and the reminder that whenever we recognise we have gone off course, we can always turn back to Him.
+
+Through this journey, I have come to understand something deeply personal about God: He sees me. Even when I do not fully understand myself, I am never hidden from Him. His correction is not rejection, and His instructions are not intended to deprive me of good things. Sometimes, His "no" is protection from something I cannot yet see.
+
+Today, my relationship with God feels more personal. I am learning to trust Him even when I do not understand His instructions, to pay closer attention to His leading, and to return to Him whenever I recognise that I am going off course.
+
+If there is one thing I want another young person to understand from my journey, it is this: do not allow your mistakes, your struggles, or the distance you feel between yourself and God to convince you that you cannot return to Him.
+
+Perhaps you once felt closer to God than you do now. Perhaps life has taken you through experiences that have left you uncertain about where you stand with Him. Whatever your situation may be, do not let shame keep you away from the very One you need.
+
+You can be honest about your struggles, humble enough to receive correction, and courageous enough to begin again.
+
+We are all capable of losing our footing, but being wounded does not mean being defeated. Recognising that you have gone off course is an opportunity to turn back.
+
+When you realise you have gone off course, return. Do not allow shame to keep you away from God.
+
+I am still growing and still learning, but I am grateful for the mercy of God and the opportunity to keep becoming who He wants me to be. And I hope that someone reading this remembers that no matter what season of life they are in, they can keep growing in their relationship with Him.
+
+LEADERSHIP AND SELF-DISCOVERY
+
+My leadership journey has shaped me in ways I did not expect.
+
+I started as my class's Food Representative, later became Assistant Refectorian, and now serve as the school's Refectorian. I am also the President of the non-Catholic fellowship in my school.
+
+Through these responsibilities, I have learned that good intentions are not enough; how you carry them out matters. Leadership requires wisdom, good communication, and the ability to handle responsibility without allowing personal emotions to interfere.
+
+It has also revealed parts of myself that I needed to confront and work on. I have discovered that leadership is not simply about having a position or making decisions. It is also about being willing to learn, listen, adjust, and take responsibility for the impact of those decisions.
+
+I have learned that power can be intoxicating, so we must be careful with how we handle it. When you want to make things right, do so with wisdom rather than rigidity.
+
+Leadership has given me confidence, exposure, and opportunities to grow, but it has also taught me that becoming a better leader begins with being willing to work on yourself.
+
+LEARNING TO CHOOSE MYSELF
+
+For a long time, I struggled with boundaries. I wanted to maintain peace with everyone and found it difficult to say no without feeling guilty. I sometimes worried too much about disappointing people, even when saying yes meant neglecting things that mattered to me.
+
+But I have grown.
+
+I am learning that I cannot always control what people think of me, and I do not have to make everyone understand or agree with my decisions. I can say no without feeling guilty, establish boundaries, and maintain them without constantly questioning myself.
+
+Disappointments can still hurt, but I am learning to look for the lessons and keep moving. I am also becoming more comfortable with my own company. I no longer feel the same need to always have someone looking out for me, because I am learning to stand more confidently on my own.
+
+One of the things I am most grateful for is that I genuinely love the person I am becoming.
+
+I know I have put effort into my growth through books, leadership, self-development, and the willingness to examine myself honestly. I am proud of the progress I have made, even though I know there is still room to grow.
+
+Shanahan has taught me that growth is not only about what you achieve. It is also about the things you learn, the habits you unlearn, the boundaries you establish, and the person you become along the way.
+
+BECOMING REQUIRES ACTION
+
+One thing I want young people to understand is that becoming a better version of yourself requires intentional effort.
+
+Do not settle for less simply because growth feels uncomfortable. Challenge yourself. Stretch beyond what you already know. Pursue the things you want, even when you cannot yet see exactly how you will achieve them.
+
+For instance, I had always wanted to learn coding. If someone had told me that I would one day be building my own website, I probably would not have believed them.
+
+Yet, here I am, building this website for my twenty-first birthday.
+
+I am still learning, figuring things out, and making mistakes along the way. I do not know everything, but I started.
+
+And that is the point.
+
+You do not have to wait until you feel completely ready before you begin. You do not need to know everything before taking the first step. Start with what you have, learn as you go, and give yourself the opportunity to discover what you are capable of.
+
+You may surprise yourself.
+
+I am still becoming, and I hope you give yourself permission to do the same. Keep learning, keep growing, and keep challenging yourself to become better than you were yesterday.
+
+CLOSING QUOTE
+
+"You can lose your way without losing the possibility of finding it again. Be humble enough to learn, brave enough to change, and courageous enough to begin becoming the person you know you can be."`,
+    media: [],
     layoutVariant: "editorial",
     theme: {
-      accent: "#f5c97b",
-      accent2: "#fbbf24",
-      glow: "#fbbf24",
+      accent: "#f9a8d4",
+      accent2: "#db2777",
+      glow: "#f9a8d4",
     },
   },
 ];
+
 
 export const microMemoriesSeed: MicroMemory[] = [
   {
