@@ -22,6 +22,7 @@ export const timelineSeed: TimelineYear[] = [
   {
     id: "y2010",
     year: 2010,
+    yearRange: "2010-2015",
     title: "The Little Girl With a Dream",
     story: `CHAPTER ONE: THE LITTLE GIRL WITH A DREAM (2010–2015)
 
@@ -54,6 +55,7 @@ CLOSING QUOTE
   {
     id: "y2016",
     year: 2016,
+    yearRange: "2016-2022",
     title: "The Years That Shaped Me",
     story: `CHAPTER TWO: THE YEARS THAT SHAPED ME (2016–2022)
 
@@ -96,6 +98,7 @@ CLOSING QUOTE
   {
     id: "y2022",
     year: 2022,
+    yearRange: "2022-2024",
     title: "The Years in Between",
     story: `CHAPTER THREE: THE YEARS IN BETWEEN (2022–2024)
 
@@ -162,6 +165,7 @@ CLOSING QUOTE
   {
     id: "y2024",
     year: 2024,
+    yearRange: "2024",
     title: "A New Chapter Begins",
     story: `CHAPTER FOUR: A NEW CHAPTER BEGINS (2024)
 
@@ -206,6 +210,7 @@ CLOSING QUOTE
   {
     id: "y2026",
     year: 2026,
+    yearRange: "2024-2026",
     title: "The Becoming",
     story: `CHAPTER FIVE: THE BECOMING (2024–2026)
 
