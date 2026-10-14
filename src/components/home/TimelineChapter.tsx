@@ -77,7 +77,7 @@ export default function TimelineChapter({
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: EASE }}
           >
-            {entry.year}
+            {entry.yearRange ?? entry.year}.
           </motion.span>
 
           <motion.h3
@@ -255,7 +255,7 @@ function StoryModal({
           className="font-display text-6xl font-black leading-none md:text-7xl"
           style={{ color: accent }}
         >
-          {entry.year}
+          {entry.yearRange ?? entry.year}
         </span>
         <h3 className="mt-2 font-display text-2xl font-bold text-cream md:text-3xl">
           {entry.title}
