@@ -33,6 +33,7 @@ export type YearLayoutVariant =
 export interface TimelineYear {
   id: string;
   year: number;
+  yearRange?: string;
   title: string;
   story: string;
   whatIThought?: string;
