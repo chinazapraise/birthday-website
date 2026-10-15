@@ -7,7 +7,7 @@ import { EASE } from "@/lib/motion";
 import Countdown from "@/components/home/Countdown";
 
 /**
- * Final chapter: "Here's to 27." + gratitude + footer.
+ * Final chapter: "Here's to 21." + gratitude + footer.
  * Contains the birthday countdown anchor for skip-to-birthday.
  */
 export default function EndingChapter({ settings }: { settings: SiteSettings }) {
@@ -35,7 +35,7 @@ export default function EndingChapter({ settings }: { settings: SiteSettings }) 
         >
           Here’s to
           <br />
-          27.
+          21.
         </motion.h2>
 
         <motion.p
@@ -79,8 +79,8 @@ export default function EndingChapter({ settings }: { settings: SiteSettings }) 
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="font-display text-sm font-bold tracking-[0.18em] text-cream">
-              TOMIDE<span className="text-magenta"> / </span>
-              <span className="text-violet">27</span>
+              CHINAZA<span className="text-magenta"> / </span>
+              <span className="text-violet">21</span>
             </p>
             <p className="mt-1 text-xs uppercase tracking-[0.2em] text-cream/40">
               The Story So Far
@@ -103,23 +103,8 @@ export default function EndingChapter({ settings }: { settings: SiteSettings }) 
           </nav>
 
           <div className="flex flex-wrap items-center gap-4 text-xs text-cream/35">
-            <span>2016–2026</span>
-            <a
-              href={settings.social?.linkedin || "https://www.linkedin.com/in/tomidewill/"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-cream/70"
-            >
-              LinkedIn
-            </a>
-            <a
-              href={settings.social?.instagram || "https://www.instagram.com/tomidewilliams.ai/"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-cream/70"
-            >
-              Instagram
-            </a>
+            <span>2005–2006</span>
+           
           </div>
         </div>
         <p className="mt-10 pb-2 text-center font-hand text-2xl text-cream/40">
