@@ -125,6 +125,8 @@ function loadSettings(): SiteSettings {
   return {
     ...siteSettingsSeed,
     ...stored,
+    siteTitle:
+      siteSettingSeed.siteTitle
     birthdayDate: siteSettingsSeed.birthdayDate,
     countdownMode: siteSettingsSeed.countdownMode,
   };
