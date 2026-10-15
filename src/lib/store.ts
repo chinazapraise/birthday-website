@@ -126,7 +126,7 @@ function loadSettings(): SiteSettings {
     ...siteSettingsSeed,
     ...stored,
     siteTitle:
-      siteSettingSeed.siteTitle
+      siteSettingsSeed.siteTitle,
     birthdayDate: siteSettingsSeed.birthdayDate,
     countdownMode: siteSettingsSeed.countdownMode,
   };
