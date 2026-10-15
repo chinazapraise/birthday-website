@@ -948,7 +948,7 @@ export default function ManageExperience() {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-cream">{w.name}</span>
+                        <span className="font-semibold text-cream">{w.senderName}</span>
                         {w.relationship && (
                           <span className="rounded-full border border-magenta/30 bg-magenta/10 px-2 py-0.5 text-[10px] capitalize text-magenta">
                             {w.relationship}
@@ -1023,10 +1023,10 @@ export default function ManageExperience() {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-cream">{s.author}</span>
-                        {s.yearMet && (
+                        <span className="font-semibold text-cream">{s.senderName}</span>
+                        {s.year && (
                           <span className="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[10px] text-gold">
-                            Met in {s.yearMet}
+                            Met in {s.year}
                           </span>
                         )}
                       </div>
@@ -1034,13 +1034,13 @@ export default function ManageExperience() {
                         {s.createdAt ? formatDate(s.createdAt) : ""}
                       </span>
                     </div>
-                    {s.prompt && (
+                    {s.funnyPromptAnswer && (
                       <p className="mt-1 text-[11px] font-medium text-cream/50">
-                        Prompt: {s.prompt}
+                        Prompt: {s.funnyPromptAnswer}
                       </p>
                     )}
                     <p className="mt-2 text-cream/80 whitespace-pre-wrap leading-relaxed">
-                      &ldquo;{s.story}&rdquo;
+                      &ldquo;{s.body}&rdquo;
                     </p>
                     <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2">
                       <span
