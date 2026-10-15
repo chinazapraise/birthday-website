@@ -63,7 +63,7 @@ export default function Preloader({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: EASE }}
           >
-            27
+            21
           </motion.span>
 
           <motion.p
