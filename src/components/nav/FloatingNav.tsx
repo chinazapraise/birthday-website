@@ -44,8 +44,8 @@ export default function FloatingNav() {
           onClick={close}
           className="font-display text-sm font-bold tracking-[0.18em] text-cream"
         >
-          TOMIDE<span className="text-magenta"> / </span>
-          <span className="text-violet">27</span>
+          CHINAZA<span className="text-magenta"> / </span>
+          <span className="text-violet">21</span>
         </Link>
 
         <div className="hidden items-center gap-7 md:flex">
