@@ -16,7 +16,7 @@ interface HeroProps {
 
 /**
  * SECTION 1 — HERO. Restrained until "Start my story".
- * Large 27, subline reveal, cinematic fade into the timeline.
+ * Large 21, subline reveal, cinematic fade into the timeline.
  */
 export default function HeroExperience({
   settings,
@@ -42,7 +42,7 @@ export default function HeroExperience({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.05 }}
       >
-        Wandering into something golden…
+        Growing into something beautiful…
       </motion.p>
 
       <AnimatePresence mode="wait">
@@ -59,7 +59,7 @@ export default function HeroExperience({
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: DUR.cinematic, ease: EASE }}
             >
-              27
+              21
             </motion.h1>
 
             <motion.p
