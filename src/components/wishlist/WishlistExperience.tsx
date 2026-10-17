@@ -123,38 +123,84 @@ export default function WishlistExperience() {
     });
     setModalKind("contribute");
   };
-
   const handleClaim = (data: {
-    name: string;
-    email?: string;
-    phone?: string;
-    note?: string;
-    quantity: number;
-    anonymous: boolean;
-  }): boolean => {
-    if (!modalItem) return false;
-    const current = claims.filter((c) => c.wishlistItemId === modalItem.id);
-    const exclusive =
-      modalItem.kind === "single" ||
-      modalItem.kind === "expensive" ||
-      modalItem.kind === "trip";
-    if (exclusive && current.length > 0) return false;
-    const created = addClaim({ wishlistItemId: modalItem.id, ...data });
-    return created !== null;
-  };
+  name: string;
+  email?: string;
+  phone?: string;
+  note?: string;
+  quantity: number;
+  anonymous: boolean;
+}): boolean => {
+  if (!modalItem) return false;
 
-  const handleReserve = (data: {
-    name: string;
-    email?: string;
-    phone?: string;
-    note?: string;
-    quantity: number;
-    anonymous: boolean;
-  }): boolean => {
-    if (!modalItem) return false;
-    addReserve({ wishlistItemId: modalItem.id, ...data });
-    return true;
-  };
+  const current = claims.filter(
+    (c) => c.wishlistItemId === modalItem.id,
+  );
+
+  const exclusive =
+    modalItem.kind === "single" ||
+    modalItem.kind === "expensive" ||
+    modalItem.kind === "trip";
+
+  if (exclusive && current.length > 0) return false;
+
+  const created = addClaim({
+    wishlistItemId: modalItem.id,
+    ...data,
+  });
+
+  if (created === null) return false;
+
+  void fetch("/api/Notify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      action: "claim",
+      itemName: modalItem.name,
+      name: data.name,
+      note: data.note,
+    }),
+  }).catch((error) => {
+    console.warn("Gift claim email notification failed:", error);
+  });
+
+  return true;
+};
+
+const handleReserve = (data: {
+  name: string;
+  email?: string;
+  phone?: string;
+  note?: string;
+  quantity: number;
+  anonymous: boolean;
+}): boolean => {
+  if (!modalItem) return false;
+
+  addReserve({
+    wishlistItemId: modalItem.id,
+    ...data,
+  });
+
+  void fetch("/api/Notify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      action: "reserve",
+      itemName: modalItem.name,
+      name: data.name,
+      note: data.note,
+    }),
+  }).catch((error) => {
+    console.warn("Gift reservation email notification failed:", error);
+  });
+
+  return true;
+};
 
   const handleContribute = (data: {
     name: string;
