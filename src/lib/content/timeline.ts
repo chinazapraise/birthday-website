@@ -319,7 +319,7 @@ I am still becoming, and I hope you give yourself permission to do the same. Kee
 
 CLOSING QUOTE
 
-"Become someone your past can teach, your present can be proud of, and your future will thank you for becoming.",`
+"Become someone your past can teach, your present can be proud of, and your future will thank you for becoming."`,
     media: [],
     layoutVariant: "editorial",
     theme: {
