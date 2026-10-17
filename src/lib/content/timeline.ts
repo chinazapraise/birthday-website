@@ -1,11 +1,14 @@
 import type { TimelineYear, MicroMemory } from "@/lib/types";
 
-/*
- * SEED CONTENT — TOMIDE'S REAL STORY, 2016–2026.
- * Each year is Tomide's own copy. Do not rewrite or embellish the facts.
- * Media ids, placeholder labels, aspects and themes are the stable
- * structure — uploaded photos (admin) overlay via url on those ids.
- */
+/**
+* SEED CONTENT — CHINAZA'S STORY, STILL UNFOLDING, 2010-2026.
+* These are fragments of a life being shaped by faith, experience,
+* and the grace to keep becoming.
+* Every memory carries its own truth; preserve the experiences and
+* approved wording without rewriting or embellishing the facts.
+* Media ids, placeholder labels, aspects and themes remain stable;
+* uploaded photos may overlay via url on those ids.
+  */
 
 const M = (
   id: string,
@@ -316,7 +319,7 @@ I am still becoming, and I hope you give yourself permission to do the same. Kee
 
 CLOSING QUOTE
 
-"You can lose your way without losing the possibility of finding it again. Be humble enough to learn, brave enough to change, and courageous enough to begin becoming the person you know you can be."`,
+"Become someone your past can teach, your present can be proud of, and your future will thank you for becoming.",`
     media: [],
     layoutVariant: "editorial",
     theme: {
@@ -331,47 +334,47 @@ CLOSING QUOTE
 export const microMemoriesSeed: MicroMemory[] = [
   {
     id: "mm-1",
-    type: "Plot twist",
-    label: "2020.",
-    note: "Not every detour is a mistake, not every delay is a denial, and not every unanswered question needs an immediate explanation. I'm learning to trust God with the story I cannot yet understand",
+    type: "Beyond the familiar",
+    label: "A Faith of My Own",
+    note: "I grew up knowing about God, but with time, that knowledge became a desire to know Him for myself. It has been a gradual journey of growing closer to Him and learning what it means to walk with Him personally.",
     year: 2019,
     accent: "#f43f9e",
   },
   {
     id: "mm-2",
-    type: "Core memory",
-    label: "2021.",
-    note: "I'm learning that becoming a midwife is about more than earning a qualification; it's about becoming someone who can care for others with compassion, humility, and purpose.",
-    year: 2021,
+    type: "A Language of My Own",
+    label: "An Instrument of My Own",
+    note: "Drumming has always been a part of me. It brings me joy, gives expression to what's within me, and allows me to serve God by offering Him something that is uniquely mine, while helping others connect with Him through worship.",
+    year: 2023,
     accent: "#22d3ee",
   },
   {
     id: "mm-3",
-    type: "The unseen work.",
-    label: "2023.",
-    note: "Some of God's deepest work happens where nobody sees—in the lessons, the corrections, and the quiet transformation of who we're becoming.",
-    year: 2023,
+    type: "Plans and Providence",
+    label: "Plot twist",
+    note: "I never planned to become a midwife. I had imagined my NYSC year, even dreaming of the states I'd love to serve in, but life took a different direction. Now, I am learning that becoming a midwife is about more than earning a qualification; it is about compassion, humility, and purpose. It is about understanding that God has entrusted me with the privilege of caring for women and helping bring their babies safely into the world. And through this unexpected journey, I have remained certain that He is with me.",
+    year: 2024,
     accent: "#f5c97b",
   },
   {
     id: "mm-4",
-    type: "Core memory",
-    label: "2024.",
-    note: "I had three choices. Somehow, God chose the one that scared me most.",
-    year: 2024,
+    type: "Lessons in connection",
+    label: "The People Along the Way",
+    note: "I've learned that people aren't always who we imagine them to be, and even the friendships that change us teach us something about ourselves. Some connections leave us with beautiful memories; others leave us wiser.",
+    year: 2025,
     accent: "#f43f9e",
   },
   {
     id: "mm-5",
-    type: "This aged badly",
-    label: "2025.",
-    note: "I'm learning that growth means having the courage to confront myself, the humility to change, and the wisdom to choose peace without abandoning who I am.",
-    year: 2025,
+    type: "The Unseen Work",
+    label: "Becoming in Silence",
+    note: "Some of God's deepest work happens where nobody sees—in the lessons, the corrections, and the quiet transformation of who we're becoming.",
+    year: 2026,
     accent: "#ff7a3d",
   },
   {
     id: "mm-6",
-    type: "Core memory",
+    type: "The Chapters Still Unfolding",
     label: "To be continued…",
     note: "There's probably another version of me I haven't met yet. And that's the exciting part.",
     year: 2026,
