@@ -110,12 +110,10 @@ export default function GiftClaimModal({
         setDone("claim");
         fireConfetti("burst", { count: 70, balloons: 4 });
       } else {
-        setError(
-          item.kind === "trip"
-            ? "Someone already sponsored this one. Pick another or contribute instead."
-            : "Someone just claimed this before you. Pick another gift or contribute instead.",
-        );
-      }
+  setError(
+    "Someone just claimed this before you. Pick another gift or contribute instead.",
+  );
+}
     } else {
       onReserve({
         name: name.trim(),
@@ -144,13 +142,11 @@ export default function GiftClaimModal({
       setDone("claim");
       fireConfetti("burst", { count: 70, balloons: 4 });
     } else {
-      setChoosing(false);
-      setError(
-        item.kind === "trip"
-          ? "Someone already sponsored this one. Pick another or contribute instead."
-          : "Someone just claimed this before you. Pick another gift or contribute instead.",
-      );
-    }
+  setChoosing(false);
+  setError(
+    "Someone just claimed this before you. Pick another gift or contribute instead.",
+  );
+}
   };
 
   const fundIt = () => {
@@ -205,12 +201,10 @@ export default function GiftClaimModal({
               </p>
               <p className="mt-2 text-sm text-cream/60">
                 {done === "claim"
-                  ? item.kind === "trip"
-                    ? "That's the trip covered. I'll be packing my bags soon."
-                    : item.kind === "multi"
-                      ? "You're getting this for Tomide. It stays open so others can gift it too."
-                      : "You're getting this for Tomide. It'll show up as claimed on the board."
-                  : "You're interested, noted. It doesn't block anyone else. You can claim it properly anytime."}
+  ? item.kind === "multi"
+    ? "You're getting this for Chinaza. It stays open so others can gift it too."
+    : "You're getting this for Chinaza. It'll show up as claimed on the board."
+  : "You're interested, noted. It doesn't block anyone else. You can claim it properly anytime."}
                 {isMulti && quantity > 1 && (
                   <span> You reserved {quantity} of this one.</span>
                 )}
@@ -242,10 +236,10 @@ export default function GiftClaimModal({
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-display text-sm font-bold text-cream">
-                      I&apos;ll get it for him
+                      I&apos;ll get it for her
                     </span>
                     <span className="mt-0.5 block text-xs text-cream/50">
-                      I&apos;ll buy the gift myself and make sure he gets it.
+                      I&apos;ll buy the gift myself and make sure she gets it.
                     </span>
                   </span>
                   <ArrowRight size={16} className="shrink-0 text-cream/40" weight="bold" />
@@ -260,7 +254,7 @@ export default function GiftClaimModal({
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-display text-sm font-bold text-cream">
-                      I&apos;ll send him cash 💛
+                      I&apos;ll send her cash 💛
                     </span>
                     <span className="mt-0.5 block text-xs text-cream/50">
                       I&apos;d rather send some money towards the gift.
@@ -291,8 +285,8 @@ export default function GiftClaimModal({
           ) : (
             <>
               <p className="text-xs uppercase tracking-[0.2em] text-cream/40">
-                {item.kind === "trip" ? "Sponsoring for Tomide" : "Getting for Tomide"}
-              </p>
+  Getting for Chinaza
+</p>
               <h3 className="mt-2 font-display text-2xl font-bold text-cream">
                 {item.name}
               </h3>
@@ -439,12 +433,10 @@ export default function GiftClaimModal({
                 >
                   <ArrowRight size={16} weight="bold" />{" "}
                   {mode === "claim"
-                    ? showChoice
-                      ? "Continue"
-                      : item.kind === "trip"
-                        ? "Sponsor this trip"
-                        : "Claim gift"
-                    : "Reserve"}
+  ? showChoice
+    ? "Continue"
+    : "Claim gift"
+  : "Reserve"}
                 </button>
               </form>
             </>
