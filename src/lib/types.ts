@@ -56,19 +56,12 @@ export interface TimelineYear {
 
 export interface MicroMemory {
   id: string;
-  type:
-    | "Plot twist"
-    | "I can explain…"
-    | "This aged badly"
-    | "Core memory"
-    | "God did."
-    | "Meanwhile…";
+  type: string;
   label: string;
   note: string;
   year: number;
   accent: string;
 }
-
 export interface Wish {
   id: string;
   senderName: string;
