@@ -36,15 +36,22 @@ export default function Timeline({
     [years, photos],
   );
 
- const memoByYear = new Map<number, MicroMemory[]>();
+const memoByYear = new Map<number, MicroMemory[]>();
 
   memories.forEach((m) => {
     const matchingYear = mergedYears.find((entry) => {
+      if (!entry.yearRange) {
+        return false;
+      }
+
       const [startYear, endYear] = entry.yearRange
         .split("-")
         .map(Number);
 
-      return m.year >= startYear && m.year <= (endYear || startYear);
+      return (
+        m.year >= startYear &&
+        m.year <= (endYear || startYear)
+      );
     });
 
     if (matchingYear) {
