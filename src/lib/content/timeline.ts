@@ -1,6 +1,6 @@
 import type { TimelineYear, MicroMemory } from "@/lib/types";
 
-/**
+/*
 * SEED CONTENT — CHINAZA'S STORY, STILL UNFOLDING, 2010-2026.
 * These are fragments of a life being shaped by faith, experience,
 * and the grace to keep becoming.
