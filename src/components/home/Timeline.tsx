@@ -36,11 +36,22 @@ export default function Timeline({
     [years, photos],
   );
 
-  const memoByYear = new Map<number, MicroMemory[]>();
+ const memoByYear = new Map<number, MicroMemory[]>();
+
   memories.forEach((m) => {
-    const list = memoByYear.get(m.year) ?? [];
-    list.push(m);
-    memoByYear.set(m.year, list);
+    const matchingYear = mergedYears.find((entry) => {
+      const [startYear, endYear] = entry.yearRange
+        .split("-")
+        .map(Number);
+
+      return m.year >= startYear && m.year <= (endYear || startYear);
+    });
+
+    if (matchingYear) {
+      const list = memoByYear.get(matchingYear.year) ?? [];
+      list.push(m);
+      memoByYear.set(matchingYear.year, list);
+    }
   });
 
   return (
