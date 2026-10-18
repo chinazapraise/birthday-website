@@ -513,9 +513,8 @@ export default function ContributionModal({
                 className="mt-6 rounded-full border border-white/20 px-6 py-3 text-sm text-cream transition hover:border-white/40"
              >
                 Back to the wishlist
-              </button>
+             </button>
             </form>
-            </div>
           )}
         </motion.div>
       </motion.div>
