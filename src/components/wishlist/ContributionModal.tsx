@@ -1,20 +1,25 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, LockKey, Coin, Minus, Plus } from "@phosphor-icons/react";
+import {
+  X,
+  Coin,
+  Minus,
+  Plus,
+  Copy,
+  CheckCircle,
+} from "@phosphor-icons/react";
 import type { WishlistItem, Contribution } from "@/lib/types";
 import { formatNaira } from "@/lib/utils";
 import { EASE } from "@/lib/motion";
-import { fireConfetti } from "@/components/effects/ConfettiLayer";
-import {
-  openPaystackCheckout,
-  redirectToPaystackCheckout,
-  preloadPaystack,
-} from "@/lib/paystack";
 import { fundingPlanFor, fixedFundingAmount, unitPriceFor } from "@/lib/giftFlow";
 
-type Step = "amount" | "pay" | "done" | "note";
+type Step = "amount" | "transfer" | "note" | "done";
+
+const OPAY_ACCOUNT_NAME = "Onyebuchi Chinaza Praise";
+const OPAY_ACCOUNT_NUMBER = "9160631930";
+const OPAY_BANK_NAME = "OPay";
 
 export interface PrefillDetails {
   name?: string;
@@ -24,21 +29,7 @@ export interface PrefillDetails {
   anonymous?: boolean;
 }
 
-/**
- * Contribution flow for expensive/trip gifts ("Contribute"),
- * and cash gifts ("Gift now"). Paystack-style steps:
- * amount → pay (opens real Paystack popup) → "Gift sent!" → optional note.
- * No public amounts, no progress bars, no totals shown elsewhere.
- */
-export default function ContributionModal({
-  item,
-  prefill,
-  onContribute,
-  onMarkAttempted,
-  onMarkSuccessful,
-  onNote,
-  onClose,
-}: {
+interface ContributionModalProps {
   item: WishlistItem;
   prefill?: PrefillDetails | null;
   onContribute: (data: {
@@ -51,16 +42,31 @@ export default function ContributionModal({
     anonymous: boolean;
   }) => Contribution | null;
   onMarkAttempted: (id: string) => void;
+
+  // Kept for compatibility with the existing parent component.
+  // Manual transfer confirmation must never call this function.
   onMarkSuccessful: (id: string, reference: string) => void;
+
   onNote: (id: string, note: string) => void;
   onClose: () => void;
-}) {
+}
+
+export default function ContributionModal({
+  item,
+  prefill,
+  onContribute,
+  onMarkAttempted,
+  onNote,
+  onClose,
+}: ContributionModalProps) {
   const plan = fundingPlanFor(item);
   const lockedAmount = fixedFundingAmount(plan);
   const unitPrice = unitPriceFor(item);
+
   const isFixed = lockedAmount !== null;
   const isUnits = unitPrice !== null;
   const isGift = isFixed || item.kind === "cash";
+
   const [step, setStep] = useState<Step>("amount");
   const [name, setName] = useState(prefill?.name ?? "");
   const [email, setEmail] = useState(prefill?.email ?? "");
@@ -71,52 +77,8 @@ export default function ContributionModal({
   const [anonymous, setAnonymous] = useState(prefill?.anonymous ?? false);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [verifying, setVerifying] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [contribId, setContribId] = useState<string | null>(null);
-  const [contribution, setContribution] = useState<Contribution | null>(null);
-  const verifyRef = useRef(0);
-
-  const verifyPayment = async (created: Contribution, reference: string, attempts = 0) => {
-    verifyRef.current += 1;
-    const run = verifyRef.current;
-    try {
-      const res = await fetch("/api/paystack/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reference, contributionId: created.id }),
-      });
-      const data = await res.json();
-      if (run !== verifyRef.current) return;
-      if (data.ok) {
-        onMarkSuccessful(created.id, reference);
-        setProcessing(false);
-        setVerifying(false);
-        setStep("note");
-        fireConfetti("burst", { count: 60, balloons: 4 });
-        return;
-      }
-      // Paystack says "pending" — the bank is still settling. Retry a couple
-      // of times before surfacing a refresh affordance.
-      if (res.status === 202 && attempts < 3) {
-        window.setTimeout(() => {
-          void verifyPayment(created, reference, attempts + 1);
-        }, 2000);
-        return;
-      }
-      setProcessing(false);
-      setVerifying(false);
-      setError(
-        res.status === 202
-          ? "The bank is still confirming this payment. Check again in a moment."
-          : "Payment wasn't confirmed yet. Check your email and try again.",
-      );
-    } catch {
-      if (run !== verifyRef.current) return;
-      setProcessing(false);
-      setVerifying(false);
-      setError("Couldn't reach the payment check. Check again below.");
-    }
-  };
 
   const parsed = isFixed
     ? lockedAmount
@@ -124,26 +86,23 @@ export default function ContributionModal({
       ? units * unitPrice
       : Math.round(Number(amount));
 
-  // Warm up the Paystack script the moment the modal opens so the
-  // checkout popup is instant by the time the user taps "Pay".
-  useEffect(() => {
-    preloadPaystack();
-  }, []);
-
-  const submitAmount = async (e: React.FormEvent) => {
+  const submitAmount = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
     if (!name.trim()) {
       setError("Add your name so I know who to thank.");
       return;
     }
+
     if (!email.trim()) {
       setError("Add your email so I can thank you properly.");
       return;
     }
+
     if (isFixed) {
-      if (lockedAmount === null) {
-        setError("This gift needs an amount configured.");
+      if (lockedAmount === null || lockedAmount <= 0) {
+        setError("This gift needs a valid amount configured.");
         return;
       }
     } else if (isUnits) {
@@ -158,73 +117,62 @@ export default function ContributionModal({
 
     setProcessing(true);
 
-    const created = onContribute({
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim() || undefined,
-      amount: parsed,
-      currency: "NGN",
-      kind: isGift ? "gift" : "contribution",
-      anonymous,
-    });
-    if (!created) {
-      setProcessing(false);
-      setError("Something went wrong starting the payment.");
-      return;
-    }
-    setContribution(created);
-    setContribId(created.id);
-    onMarkAttempted(created.id);
-
-    const reference = `TW${created.id.replace(/-/g, "").slice(0, 16)}`;
-    const callbackUrl = `${window.location.origin}/wishlist?reference=${reference}&item=${encodeURIComponent(item.name)}`;
-
-    const res = await redirectToPaystackCheckout({
-      email: email.trim(),
-      amount: parsed,
-      name: name.trim(),
-      phone: phone.trim() || undefined,
-      itemId: item.id,
-      itemName: item.name,
-      kind: isGift ? "gift" : "contribution",
-      anonymous,
-      contributionId: created.id,
-      callbackUrl,
-    });
-
-    if (!res.ok) {
-      // Fallback: try opening inline checkout if server init returns an error
-      await openPaystackCheckout({
+    try {
+      const created = onContribute({
+        name: name.trim(),
         email: email.trim(),
-        amountKobo: parsed * 100,
+        phone: phone.trim() || undefined,
+        amount: parsed,
         currency: "NGN",
-        reference,
-        onSuccess: async (ref) => {
-          await verifyPayment(created, ref);
-        },
-        onClose: () => {
-          setProcessing(false);
-          setVerifying(false);
-          setError("Payment window closed. Nothing was charged.");
-        },
+        kind: isGift ? "gift" : "contribution",
+        anonymous,
       });
+
+      if (!created) {
+        setError("Something went wrong recording your contribution. Please try again.");
+        return;
+      }
+
+      setContribId(created.id);
+
+      // Records the contribution as pending, not successful.
+      onMarkAttempted(created.id);
+
+      setStep("transfer");
+    } catch (err) {
+      console.error("Could not create contribution:", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setProcessing(false);
     }
   };
 
-  const submitPay = submitAmount;
-
-  const recheckPayment = () => {
-    setError(null);
-    setVerifying(true);
-    if (contribution) {
-      const reference = `TW${contribution.id.replace(/-/g, "").slice(0, 16)}`;
-      void verifyPayment(contribution, reference, 3);
+  const copyAccountNumber = async () => {
+    try {
+      await navigator.clipboard.writeText(OPAY_ACCOUNT_NUMBER);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError(
+        "Could not copy the account number. Please copy it manually.",
+      );
     }
+  };
+
+  const confirmTransferAttempt = () => {
+    // This only advances the screen.
+    // It deliberately does NOT mark the contribution as successful.
+    setError(null);
+    setStep("note");
   };
 
   const submitNote = (e: React.FormEvent) => {
     e.preventDefault();
-    if (contribId) onNote(contribId, note.trim());
+
+    if (contribId && note.trim()) {
+      onNote(contribId, note.trim());
+    }
+
     setStep("done");
   };
 
@@ -255,6 +203,7 @@ export default function ContributionModal({
             className="absolute left-1/2 top-3 h-1 w-10 -translate-x-1/2 rounded-full bg-white/20 md:hidden"
             aria-hidden="true"
           />
+
           <button
             onClick={onClose}
             className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-cream/70 transition hover:border-white/40"
@@ -268,20 +217,25 @@ export default function ContributionModal({
               <p className="text-xs uppercase tracking-[0.2em] text-cream/40">
                 {isGift ? "Gifting" : "Contributing toward"}
               </p>
+
               <h3 className="mt-2 font-display text-2xl font-bold text-cream">
                 {item.name}
               </h3>
+
               {isFixed && lockedAmount !== null && (
                 <p className="mt-3 font-display text-3xl font-bold text-gold">
                   {formatNaira(lockedAmount)}
                 </p>
               )}
-              {isFixed && plan?.unitPrice !== undefined && plan.covers !== undefined && (
-                <p className="mt-1 text-xs text-cream/40">
-                  {formatNaira(plan.unitPrice)} × {plan.covers} — one payment, no
-                  need to work it out.
-                </p>
-              )}
+
+              {isFixed &&
+                plan?.unitPrice !== undefined &&
+                plan.covers !== undefined && (
+                  <p className="mt-1 text-xs text-cream/40">
+                    {formatNaira(plan.unitPrice)} × {plan.covers} — one
+                    payment, no need to work it out.
+                  </p>
+                )}
 
               <form onSubmit={submitAmount} className="mt-6 space-y-4">
                 <div>
@@ -296,6 +250,7 @@ export default function ContributionModal({
                     className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-gold focus:outline-none"
                   />
                 </div>
+
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
                     Your email <span className="text-gold">*</span>
@@ -309,6 +264,7 @@ export default function ContributionModal({
                     className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-gold focus:outline-none"
                   />
                 </div>
+
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
                     Phone <span className="text-cream/35">(recommended)</span>
@@ -323,11 +279,13 @@ export default function ContributionModal({
                     className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-gold focus:outline-none"
                   />
                 </div>
+
                 {isUnits && (
                   <div>
                     <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
                       How many seats? <span className="text-gold">*</span>
                     </label>
+
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
@@ -338,14 +296,17 @@ export default function ContributionModal({
                       >
                         <Minus size={16} weight="bold" />
                       </button>
+
                       <div className="flex-1 text-center">
                         <p className="font-display text-3xl font-bold text-gold">
                           {units}
                         </p>
                         <p className="mt-0.5 text-xs text-cream/40">
-                          {units === 1 ? "seat" : "seats"} × {formatNaira(unitPrice)}
+                          {units === 1 ? "seat" : "seats"} ×{" "}
+                          {formatNaira(unitPrice)}
                         </p>
                       </div>
+
                       <button
                         type="button"
                         onClick={() => setUnits((u) => u + 1)}
@@ -355,6 +316,7 @@ export default function ContributionModal({
                         <Plus size={16} weight="bold" />
                       </button>
                     </div>
+
                     <p className="mt-3 text-center font-display text-xl font-bold text-cream">
                       {formatNaira(units * unitPrice)}
                     </p>
@@ -364,7 +326,8 @@ export default function ContributionModal({
                 {!isFixed && !isUnits && (
                   <div>
                     <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-cream/50">
-                      How much would you like to send? <span className="text-gold">*</span>
+                      How much would you like to send?{" "}
+                      <span className="text-gold">*</span>
                     </label>
                     <input
                       value={amount}
@@ -405,7 +368,7 @@ export default function ContributionModal({
                   {processing ? (
                     <span className="flex items-center gap-2">
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink/30 border-t-ink" />
-                      Redirecting to Paystack checkout…
+                      Preparing transfer details…
                     </span>
                   ) : isFixed ? (
                     <>
@@ -416,67 +379,117 @@ export default function ContributionModal({
                       Sponsor {units} {units === 1 ? "seat" : "seats"} 🎁
                     </>
                   ) : (
-                    <>
-                      Send my gift 🎁
-                    </>
+                    <>Continue to bank transfer 🎁</>
                   )}
                 </button>
               </form>
             </>
           )}
 
-          {step === "pay" && (
-            <div className="py-2 text-center">
+          {step === "transfer" && (
+            <div className="py-2">
               <p className="text-xs uppercase tracking-[0.2em] text-cream/40">
-                Confirm payment
+                Manual bank transfer
               </p>
+
               <h3 className="mt-2 font-display text-2xl font-bold text-cream">
-                {item.name}
+                Complete your gift
               </h3>
-              <p className="mt-3 font-display text-3xl font-bold text-gold">
-                {formatNaira(parsed)}
+
+              <p className="mt-2 text-sm leading-relaxed text-cream/60">
+                Transfer the exact amount below to the account provided.
+                Your contribution will remain pending until the payment is
+                checked and confirmed.
               </p>
-              <p className="mt-1 text-xs text-cream/40">{email.trim()}</p>
-              {isGift && (
-                <p className="mt-3 text-sm text-cream/55">
-                  A once-off gift. You&apos;re giving {formatNaira(parsed)} for
-                  the birthday. 🎉
+
+              <div className="mt-5 rounded-2xl border border-gold/30 bg-gold/5 p-4">
+                <p className="text-xs uppercase tracking-[0.15em] text-cream/45">
+                  Amount to transfer
+                </p>
+                <p className="mt-1 font-display text-3xl font-bold text-gold">
+                  {formatNaira(parsed)}
+                </p>
+                <p className="mt-1 text-xs text-cream/45">
+                  For: {item.name}
+                </p>
+              </div>
+
+              <div className="mt-4 space-y-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.15em] text-cream/40">
+                    Bank
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-cream">
+                    {OPAY_BANK_NAME}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs uppercase tracking-[0.15em] text-cream/40">
+                    Account name
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-cream">
+                    {OPAY_ACCOUNT_NAME}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs uppercase tracking-[0.15em] text-cream/40">
+                    Account number
+                  </p>
+
+                  <div className="mt-1 flex items-center justify-between gap-3">
+                    <p className="font-display text-xl font-bold tracking-wider text-gold">
+                      {OPAY_ACCOUNT_NUMBER}
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={copyAccountNumber}
+                      className="flex shrink-0 items-center gap-2 rounded-full border border-white/20 px-3 py-2 text-xs text-cream transition hover:border-gold"
+                    >
+                      {copied ? (
+                        <>
+                          <CheckCircle size={16} weight="bold" />
+                          Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={16} />
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-4 text-xs leading-relaxed text-cream/50">
+                Please double-check the account name and amount before
+                sending. Do not transfer more than the amount displayed.
+              </p>
+
+              {error && (
+                <p className="mt-3 text-sm font-medium text-magenta" role="alert">
+                  {error}
                 </p>
               )}
 
               <button
-                onClick={submitPay}
-                disabled={processing}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-acid to-violet px-6 py-4 font-display text-sm font-bold uppercase tracking-widest text-ink transition-transform hover:scale-[1.01] disabled:opacity-60"
+                type="button"
+                onClick={confirmTransferAttempt}
+                className="mt-5 w-full rounded-full bg-gradient-to-r from-gold to-sunset px-6 py-4 font-display text-sm font-bold uppercase tracking-widest text-ink transition hover:scale-[1.01]"
               >
-                {processing ? (
-                  <span className="flex items-center gap-2">
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink/30 border-t-ink" />
-                    Redirecting to Paystack checkout…
-                  </span>
-                ) : (
-                  <>
-                    <LockKey size={15} weight="bold" /> Pay {formatNaira(parsed)}
-                  </>
-                )}
+                I've made the transfer
               </button>
 
-              {error && !processing && (
-                <div className="mt-3 rounded-xl border border-magenta/40 bg-magenta/10 px-4 py-3">
-                  <p className="text-sm font-medium text-magenta" role="alert">
-                    {error}
-                  </p>
-                  {contribution && (
-                    <button
-                      onClick={recheckPayment}
-                      className="mt-2 w-full rounded-full border border-magenta/60 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-magenta transition hover:border-magenta"
-                    >
-                      Check again
-                    </button>
-                  )}
-                </div>
-              )}
+              <p className="mt-3 text-center text-xs leading-relaxed text-cream/40">
+                This only notifies the website that you intend to have
+                transferred. It does not verify or confirm payment.
+              </p>
+
               <button
+                type="button"
                 onClick={() => setStep("amount")}
                 className="mt-3 w-full rounded-full border border-white/15 px-6 py-3 text-sm text-cream/60 transition hover:border-white/40"
               >
@@ -487,38 +500,16 @@ export default function ContributionModal({
 
           {step === "note" && (
             <form onSubmit={submitNote} className="py-2">
-              <p className="font-display text-xl font-bold text-acid">
-                Gift sent. 🎉
+              <p className="font-display text-xl font-bold text-gold">
+                Thank you for your kindness. 🤍
               </p>
-              <p className="mt-2 text-sm text-cream/60">
-                Thank you. Want to leave a note with it?
-              </p>
-              <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                rows={3}
-                placeholder="Optional: a short note for Tomide"
-                className="mt-4 w-full resize-none rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 focus:border-acid focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="mt-4 w-full rounded-full border border-white/20 px-6 py-3 text-sm text-cream transition hover:border-white/40"
-              >
-                Done
-              </button>
-            </form>
-          )}
 
-          {step === "done" && (
-            <div className="py-6 text-center">
-              <p className="font-display text-xl font-bold text-acid">
-                Gift sent. 🎁
+           <p className="mt-2 text-sm leading-relaxed text-cream/60">
+                Your contribution has been recorded as pending. It will only
+                be confirmed after the account owner verifies that the money
+                has arrived.
               </p>
-              <p className="mt-2 text-sm text-cream/60">
-                {isGift
-                  ? "This will show up quietly as “gifted” on the board. No amounts, no fuss."
-                  : "Your contribution is recorded. It’ll show up as contributed on the card."}
-              </p>
+
               <button
                 onClick={onClose}
                 className="mt-6 rounded-full border border-white/20 px-6 py-3 text-sm text-cream transition hover:border-white/40"
