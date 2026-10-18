@@ -89,7 +89,7 @@ function encodeBase64Url(input: string): string {
       {
         method: "POST",
         headers: {
-          Authorization: Bearer ${token},
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ raw }),
