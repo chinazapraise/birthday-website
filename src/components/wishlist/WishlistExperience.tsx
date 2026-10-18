@@ -295,24 +295,7 @@ const handleReserve = (data: {
         />
       )}
 
-      {successNotice && (
-        <div
-          className="fixed inset-0 z-[160] flex items-center justify-center bg-ink/90 p-4 backdrop-blur-md"
-          role="dialog"
-          aria-modal="true"
-        >
-          <motion.div
-            className="w-full max-w-md rounded-3xl border border-gold/30 bg-[#120f20] p-6 text-center shadow-2xl md:p-8"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-          >
-            <span className="text-5xl">🎉</span>
-            <h3 className="mt-4 font-display text-2xl font-black text-cream">
-              Gift Received!
-            </h3>
-            <p className="mt-2 text-sm text-cream/70">
-             
-      )}
+
     </>
   );
 }
