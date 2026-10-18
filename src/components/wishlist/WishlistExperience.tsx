@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   useSettings,
@@ -15,16 +15,16 @@ import ContributionModal from "@/components/wishlist/ContributionModal";
 import FloatingNav from "@/components/nav/FloatingNav";
 import MeshBackground from "@/components/ambient/MeshBackground";
 import CursorGlow from "@/components/ambient/CursorGlow";
-import ConfettiLayer, { fireConfetti } from "@/components/effects/ConfettiLayer";
+import ConfettiLayer from "@/components/effects/ConfettiLayer";
 import { EASE } from "@/lib/motion";
-import { preloadPaystack } from "@/lib/paystack";
+
 import type { WishlistItem } from "@/lib/types";
 import type { PrefillDetails } from "@/components/wishlist/ContributionModal";
 
 type ModalKind = "claim" | "contribute" | null;
 
 /**
- * The wishlist — 27 for 27, plus one open slot.
+ * The wishlist — 21 for 21, plus one open slot.
  *
  * Every card derives its state live:
  *   Reserve = intent, never blocks.
@@ -36,53 +36,18 @@ export default function WishlistExperience() {
   const { items } = useWishlist();
   const { claims, addClaim } = useClaims();
   const { reserves, addReserve } = useReserves();
-  const {
-    contributions,
-    addContribution,
-    markSuccessful,
-    markAttempted,
-    updateContribution,
-  } = useContributions();
+ const {
+  contributions,
+  addContribution,
+  markAttempted,
+  updateContribution,
+} = useContributions();
 
   const [modalItem, setModalItem] = useState<WishlistItem | null>(null);
   const [modalKind, setModalKind] = useState<ModalKind>(null);
   const [prefill, setPrefill] = useState<PrefillDetails | null>(null);
-  const [successNotice, setSuccessNotice] = useState<{
-    reference: string;
-    itemName?: string;
-  } | null>(null);
+ 
 
-  // Warm up the Paystack popup the moment the wishlist loads, so by the time
-  // someone taps "Pay" the checkout script is already cached and loads fast.
-  useEffect(() => {
-    preloadPaystack();
-  }, []);
-
-  // Handle return redirect from Paystack checkout
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get("reference") || urlParams.get("trxref");
-    if (!ref) return;
-
-    const itemName = urlParams.get("item") || undefined;
-    window.history.replaceState({}, "", window.location.pathname);
-
-    void fetch("/api/paystack/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reference: ref }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.ok) {
-          markSuccessful(ref, ref);
-          fireConfetti("burst", { count: 90, balloons: 5 });
-          setSuccessNotice({ reference: ref, itemName });
-        }
-      })
-      .catch((e) => console.warn("Verify check on return failed:", e));
-  }, [markSuccessful]);
 
   const visible = items
     .filter((i) => i.status !== "hidden")
@@ -324,7 +289,7 @@ const handleReserve = (data: {
           prefill={prefill}
           onContribute={handleContribute}
           onMarkAttempted={markAttempted}
-          onMarkSuccessful={markSuccessful}
+          
           onNote={handleContributionNote}
           onClose={closeModal}
         />
@@ -346,21 +311,7 @@ const handleReserve = (data: {
               Gift Received!
             </h3>
             <p className="mt-2 text-sm text-cream/70">
-              {successNotice.itemName
-                ? `Your gift for "${successNotice.itemName}" has been processed and received.`
-                : "Your birthday gift has been processed and received."}
-            </p>
-            <p className="mt-3 font-hand text-lg text-gold">
-              Thank you so much for celebrating 27 with me! 💛
-            </p>
-            <button
-              onClick={() => setSuccessNotice(null)}
-              className="mt-6 w-full rounded-full bg-gradient-to-r from-gold to-sunset px-6 py-3 font-display text-sm font-bold uppercase tracking-widest text-ink transition hover:scale-[1.02]"
-            >
-              Continue Celebrating
-            </button>
-          </motion.div>
-        </div>
+             
       )}
     </>
   );
