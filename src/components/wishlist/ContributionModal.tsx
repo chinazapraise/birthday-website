@@ -43,9 +43,7 @@ interface ContributionModalProps {
   }) => Contribution | null;
   onMarkAttempted: (id: string) => void;
 
-  // Kept for compatibility with the existing parent component.
-  // Manual transfer confirmation must never call this function.
-  onMarkSuccessful: (id: string, reference: string) => void;
+  
 
   onNote: (id: string, note: string) => void;
   onClose: () => void;
