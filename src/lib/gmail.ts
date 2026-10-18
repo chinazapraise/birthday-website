@@ -29,10 +29,15 @@ async function getAccessToken(c: GmailCredentials): Promise<string | null> {
     }),
     signal: AbortSignal.timeout(20000),
   });
-  if (!res.ok) {
-    console.error("gmail token refresh failed", res.status);
-    return null;
-  }
+ if (!res.ok) {
+  const errorBody = await res.text();
+  console.error(
+    "gmail token refresh failed",
+    res.status,
+    errorBody,
+  );
+  return null;
+}
   const data = (await res.json()) as { access_token?: string };
   return data.access_token ?? null;
 }
