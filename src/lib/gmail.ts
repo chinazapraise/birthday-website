@@ -50,13 +50,12 @@ function encodeBase64Url(input: string): string {
 /**
  * Send an HTML email to the owner for a gift action. Never throws — returns
  * a boolean so callers can fire-and-forget.
- */
-export async function sendGiftNotificationEmail(params: {
+ */export async function sendGiftNotificationEmail(params: {
   subject: string;
   html: string;
 }): Promise<boolean> {
   const c = creds();
- const c = creds();
+
   if (!c) {
     const missing = [
       ["GOOGLE_CLIENT_ID", process.env.GOOGLE_CLIENT_ID],
@@ -68,36 +67,44 @@ export async function sendGiftNotificationEmail(params: {
       .map(([name]) => name);
 
     console.warn("Gmail environment variables missing:", missing);
+    return false;
+  }
 
   const token = await getAccessToken(c);
   if (!token) return false;
 
   const raw = encodeBase64Url(
     [
-      `To: ${c.to}`,
+      To: ${c.to},
       "Content-Type: text/html; charset=UTF-8",
-      `Subject: ${params.subject}`,
+      Subject: ${params.subject},
       "",
       params.html,
     ].join("\r\n"),
   );
 
   try {
-    const res = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
+      {
+        method: "POST",
+        headers: {
+          Authorization: Bearer ${token},
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ raw }),
+        signal: AbortSignal.timeout(20000),
       },
-      body: JSON.stringify({ raw }),
-      signal: AbortSignal.timeout(20000),
-    });
+    );
+
     if (!res.ok) {
       console.error("gmail send failed", res.status, await res.text());
       return false;
     }
+
     return true;
-  } catch {
+  } catch (error) {
+    console.error("gmail send request failed", error);
     return false;
   }
 }
