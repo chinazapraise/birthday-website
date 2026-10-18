@@ -56,10 +56,18 @@ export async function sendGiftNotificationEmail(params: {
   html: string;
 }): Promise<boolean> {
   const c = creds();
+ const c = creds();
   if (!c) {
-    console.warn("gmail not configured — missing GOOGLE_* env vars");
-    return false;
-  }
+    const missing = [
+      ["GOOGLE_CLIENT_ID", process.env.GOOGLE_CLIENT_ID],
+      ["GOOGLE_CLIENT_SECRET", process.env.GOOGLE_CLIENT_SECRET],
+      ["GMAIL_REFRESH_TOKEN", process.env.GMAIL_REFRESH_TOKEN],
+      ["GMAIL_TO", process.env.GMAIL_TO],
+    ]
+      .filter(([, value]) => !value)
+      .map(([name]) => name);
+
+    console.warn("Gmail environment variables missing:", missing);
 
   const token = await getAccessToken(c);
   if (!token) return false;
