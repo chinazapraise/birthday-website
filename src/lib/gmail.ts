@@ -75,9 +75,9 @@ function encodeBase64Url(input: string): string {
 
   const raw = encodeBase64Url(
     [
-      To: ${c.to},
+      `To: ${c.to},`
       "Content-Type: text/html; charset=UTF-8",
-      Subject: ${params.subject},
+      `Subject: ${params.subject},`
       "",
       params.html,
     ].join("\r\n"),
