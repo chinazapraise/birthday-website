@@ -204,7 +204,10 @@ Little did I know that I would also begin learning more about myself.
 CLOSING QUOTE
 
 "Sometimes, a new environment introduces you to more than a different place or a different set of people. It introduces you to parts of yourself you have not yet had the opportunity to discover."`,
-    media: [],
+    media: [
+      M("y2024-photo-1", "PHOTO PLACEHOLDER"),
+      M("y2024-photo-2", "PHOTO PLACEHOLDER"),
+    ],
     layoutVariant: "editorial",
     theme: {
       accent: "#86efac",
