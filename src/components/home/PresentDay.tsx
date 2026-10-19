@@ -75,7 +75,7 @@ export default function PresentDayTransition() {
         >
           <Card href="/wishes" icon={<Envelope size={26} weight="fill" />} accent="#f43f9e" title="Leave me a wish" sub="A few words, a prayer, a joke, whatever you want me to carry into 21." cta="Write a wish" />
           <Card href="/stories" icon={<BookOpenText size={26} weight="fill" />} accent="#22d3ee" title="Tell a Chinaza story" sub="Everybody knows a different version of me. Tell me yours." cta="Add your chapter" />
-          <Card href="/wishlist" icon={<Gift size={26} weight="fill" />} accent="#f5c97b" title="Get me something" sub="21 things I’d love. No pressure. But since you asked…" cta="See the wishlist" />
+          <Card href="/wishlist" icon={<Gift size={26} weight="fill" />} accent="#f5c97b" title="Get me something" sub="A few things I would love as I step into 21. No pressure; every thoughtful gesture is appreciated." cta="See the wishlist" />
         </motion.div>
       </div>
     </section>
