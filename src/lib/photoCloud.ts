@@ -14,6 +14,12 @@ const BUCKET = "timeline-photos";
 const MANIFEST_PATH = "manifest.json";
 const PEOPLE_PATH = "people.json";
 
+function storageBaseUrl(): string | undefined {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL
+    ?.replace(new RegExp("/rest/v1/?$", "i"), "")
+    .replace(new RegExp("/+$"), "");
+}
+
 export type PhotoManifest = Record<string, YearPhoto[]>;
 
 function bucket() {
@@ -53,7 +59,7 @@ export async function readManifest(): Promise<PhotoManifest> {
  * and hand back a stale manifest — which silently loses admin writes.
  */
 async function readManifestText(): Promise<string | null> {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const base = storageBaseUrl();
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!base || !key) return null;
   try {
@@ -81,7 +87,7 @@ export async function writeManifest(manifest: PhotoManifest): Promise<boolean> {
 }
 
 export async function readPeople(): Promise<Person[] | null> {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const base = storageBaseUrl();
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!base || !key) return null;
   try {
