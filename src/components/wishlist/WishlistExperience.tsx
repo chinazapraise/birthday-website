@@ -199,7 +199,7 @@ const handleReserve = (data: {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            {settings.wishlistTitle}
+            21 things I’d love.
           </motion.p>
           <motion.h1
             className="mt-3 font-display text-4xl font-black text-cream md:text-6xl"
@@ -207,7 +207,7 @@ const handleReserve = (data: {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE }}
           >
-            {settings.wishlistCopy}
+            No pressure. A few things I would love as I step into 21. Every thoughtful gesture is appreciated. 🤍
           </motion.h1>
           <motion.p
             className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-cream/50"
