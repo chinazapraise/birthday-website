@@ -59,8 +59,8 @@ export default function PeopleMosaic() {
 
           <p>
             <strong className="font-semibold text-cream">
-              To Clement, Esther, Oluchi, Chisom, Kelechi, Ella, Perpetua, Emeka, Cheta, Josh, and
-              the Nnajis:
+              To Clement, Esther, Oluchi, Chisom, Kelechi, Ella, Perpetua, Emeka, Cheta, Josh, Akowe,
+              and the Nnajis:
             </strong>{" "}
             Thank you for being part of my journey. For the memories, the laughter, the kindness,
             and every little way our lives have touched one another. You may not always realise what
