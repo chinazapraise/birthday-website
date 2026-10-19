@@ -10,6 +10,7 @@ import Timeline from "@/components/home/Timeline";
 import PresentDay from "@/components/home/PresentDay";
 import PeopleMosaic from "@/components/home/PeopleMosaic";
 import EndingChapter from "@/components/home/EndingChapter";
+import NexoraSection from "@/components/home/NexoraSection";
 import FloatingNav from "@/components/nav/FloatingNav";
 import StoryProgress from "@/components/nav/StoryProgress";
 import MeshBackground from "@/components/ambient/MeshBackground";
@@ -75,6 +76,7 @@ export default function HomeExperience({ settings: initialSettings, years, memor
 
         <PresentDay />
         <PeopleMosaic photos={photos["people"] ?? []} />
+        <NexoraSection />
         <EndingChapter settings={settings} />
       </div>
     </>
