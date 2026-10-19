@@ -32,9 +32,18 @@ function badRequest(error: string) {
 }
 
 function notConfigured() {
+  // Temporary diagnostics: expose presence flags only, never secret values.
   return NextResponse.json(
-    { ok: false, error: "photo storage not configured" },
-    { status: 503 },
+    {
+      ok: false,
+      error: "photo storage not configured",
+      diagnostics: {
+        urlConfigured: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+        secretConfigured: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+        clientConfigured: storageConfigured(),
+      },
+    },
+    { status: 503, headers: noStore },
   );
 }
 
