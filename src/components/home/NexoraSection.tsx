@@ -33,7 +33,7 @@ export default function NexoraSection() {
         </div>
 
         <p className="mt-6 text-xs font-semibold uppercase tracking-[0.28em] text-gold/80">
-          A little something for what comes next
+          Your next step could start here
         </p>
 
         <h2
@@ -43,9 +43,28 @@ export default function NexoraSection() {
           Meet <span className="hero-27">Nexora.</span>
         </h2>
 
-        <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-cream/60 md:text-base">
-          Every new chapter begins with an idea. If you are curious about Nexora,
-          take a look around and discover the platform for yourself.
+        <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-cream/65 md:text-base">
+          Sometimes, the hardest part of moving forward is finding the right place
+          to begin. If you have been looking for your next opportunity to learn,
+          grow, or turn an idea into action, take a moment to discover Nexora and
+          see whether it fits the goals you are working towards.
+        </p>
+
+        <div className="mx-auto mt-7 inline-flex flex-col items-center rounded-2xl border border-gold/30 bg-gold/[0.08] px-6 py-4">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold/80">
+            Special student offer
+          </span>
+          <span className="mt-1 font-display text-3xl font-bold text-cream md:text-4xl">
+            ₦15,000
+          </span>
+          <span className="mt-1 text-sm text-cream/55">
+            A discounted price for students
+          </span>
+        </div>
+
+        <p className="mx-auto mt-5 max-w-lg text-xs leading-6 text-cream/45">
+          Student pricing has been agreed with Williams. Visit Nexora to explore
+          the platform and confirm how to access the student offer.
         </p>
 
         <a
@@ -54,7 +73,7 @@ export default function NexoraSection() {
           rel="noopener noreferrer"
           className="group mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-6 py-3 text-sm font-semibold text-cream transition duration-300 hover:border-gold/60 hover:bg-gold/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-[#100d18]"
         >
-          Explore Nexora
+          Explore Nexora & Student Offer
           <ArrowUpRight
             size={18}
             weight="bold"
