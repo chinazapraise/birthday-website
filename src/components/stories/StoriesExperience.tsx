@@ -36,7 +36,7 @@ export default function StoriesExperience() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE }}
           >
-            What’s your <span className="text-acid">Tomide</span> story?
+            What’s your <span className="text-acid">Chinaza</span> story?
           </motion.h1>
           <motion.p
             className="mt-4 text-cream/60 md:text-lg"
