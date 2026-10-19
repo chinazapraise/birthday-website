@@ -53,8 +53,8 @@ export default function WishlistExperience() {
     .filter((i) => i.status !== "hidden")
     .sort((a, b) => a.sortOrder - b.sortOrder);
 
-  const numbered = visible.slice(0, 27);
-  const outcast = visible.slice(27);
+  const numbered = visible.slice(0, 21);
+  const outcast = visible.slice(21);
 
   const openClaim = (item: WishlistItem) => {
     setModalItem(item);
