@@ -8,8 +8,8 @@ import { createClient } from "@supabase/supabase-js";
 // Supabase clients require the project root, not a URL ending in /rest/v1.
 const configuredUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const url = configuredUrl
-  ?.replace(/\\/rest\\/v1\\/?$/i, "")
-  .replace(/\\/+$/, "");
+  ?.replace(new RegExp("/rest/v1/?$", "i"), "")
+  .replace(new RegExp("/+$"), "");
 const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export const supabaseServer =
