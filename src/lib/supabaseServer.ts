@@ -4,7 +4,12 @@ import { createClient } from "@supabase/supabase-js";
  * Server-only Supabase client. Uses the service_role key — never import
  * this module from a client component.
  */
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+// Accept either the project root URL or a pasted REST endpoint URL.
+// Supabase clients require the project root, not a URL ending in /rest/v1.
+const configuredUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const url = configuredUrl
+  ?.replace(/\\/rest\\/v1\\/?$/i, "")
+  .replace(/\\/+$/, "");
 const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export const supabaseServer =
