@@ -102,9 +102,9 @@ const memoByYear = new Map<number, MicroMemory[]>();
           />
         </div>
 
-        {mergedYears.map((entry, i) => (
+        {mergedYears.map((entry) => (
           <div key={entry.id} className="relative">
-            <TimelineChapter entry={entry} index={i} />
+            <TimelineChapter entry={entry} />
             {/* micro-memories after most years */}
             {memoByYear.get(entry.year)?.map((m) => (
               <MicroMemoryCard key={m.id} memory={m} />
