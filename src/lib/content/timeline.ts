@@ -89,7 +89,10 @@ And so, one chapter ended, making room for another.
 CLOSING QUOTE
 
 "Not every season will make sense while you are living it. Sometimes, you have to grow a little older before you understand what an experience came to teach you."`,
-    media: [],
+    media: [
+      M("y2016-photo-1", "PHOTO PLACEHOLDER"),
+      M("y2016-photo-2", "PHOTO PLACEHOLDER"),
+    ],
     layoutVariant: "editorial",
     theme: {
       accent: "#f0abfc",
