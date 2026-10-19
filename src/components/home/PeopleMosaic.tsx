@@ -10,8 +10,15 @@ import PhotoPlaceholder from "@/components/ui/PhotoPlaceholder";
  * No names, titles or captions — just pure photos.
  */
 export default function PeopleMosaic({ photos = [] }: { photos?: YearPhoto[] }) {
-  // Show real people photos only; do not display empty placeholder frames.
-  const items = photos;
+  // Keep six uploadable photo placeholders in the gratitude section until photos are added.
+  const items =
+    photos.length > 0
+      ? photos
+      : Array.from({ length: 6 }).map((_, i) => ({
+          id: `placeholder-${i + 1}`,
+          url: "",
+          placeholderLabel: `PHOTO · 0${i + 1}`,
+        }));
 
   // Duplicate the array so it scrolls infinitely without gaps.
   const doubled = [...items, ...items];
@@ -38,7 +45,6 @@ export default function PeopleMosaic({ photos = [] }: { photos?: YearPhoto[] }) 
         </motion.h2>
       </div>
 
-      {items.length > 0 && (
       <div className="animate-marquee-x flex w-max gap-5 px-6 hover:[animation-play-state:paused]">
         {doubled.map((p, i) => (
           <motion.figure
@@ -66,7 +72,6 @@ export default function PeopleMosaic({ photos = [] }: { photos?: YearPhoto[] }) 
           </motion.figure>
         ))}
       </div>
-      )}
     </section>
   );
 }
