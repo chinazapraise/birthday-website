@@ -116,7 +116,7 @@ export default function WishlistExperience() {
 
   if (created === null) return false;
 
-  void fetch("/api/Notify", {
+  void fetch("/api/notify", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -149,7 +149,7 @@ const handleReserve = (data: {
     ...data,
   });
 
-  void fetch("/api/Notify", {
+  void fetch("/api/notify", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
