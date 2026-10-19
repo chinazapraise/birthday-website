@@ -10,7 +10,7 @@ import type { YearPhoto, Person } from "@/lib/types";
  * service_role key, which can create buckets and objects via the API.
  */
 
-const BUCKET = "timeline-photos";
+const BUCKET = "timeline.ts";
 const MANIFEST_PATH = "manifest.json";
 const PEOPLE_PATH = "people.json";
 
