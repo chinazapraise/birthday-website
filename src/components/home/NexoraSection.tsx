@@ -70,13 +70,23 @@ export default function NexoraSection() {
 
         <div className="mx-auto mt-7 max-w-xl rounded-2xl border border-gold/30 bg-gold/[0.08] px-6 py-6">
           <p className="text-sm leading-7 text-cream/70 md:text-base">
-            Nexora&apos;s launch price is <span className="font-semibold text-cream">₦25,000</span>,
-            but you can get access at a discounted price of{" "}
-            <span className="font-display text-2xl font-bold text-gold md:text-3xl">₦15,000</span>.
+            Nexora&apos;s launch price is{" "}
+            <span className="font-semibold text-cream">₦25,000</span>, but you
+            can get it at my discounted price of{" "}
+            <span className="font-display text-2xl font-bold text-gold md:text-3xl">
+              ₦15,000
+            </span>
+            .
           </p>
           <p className="mt-3 text-sm leading-7 text-cream/65 md:text-base">
-            Click the link below to explore Nexora and learn more about what it offers.
-            If you are interested, send me a DM and I will be happy to talk you through it.
+            When you click the link below, you may see the standard price of
+            ₦25,000 on the Nexora website. Don&apos;t be confused—that is the
+            listed launch price. If you are interested in getting access for
+            ₦15,000, please send me a DM first so I can guide you on the
+            discounted offer.
+          </p>
+          <p className="mt-3 text-sm font-semibold leading-7 text-cream md:text-base">
+            Click below to explore Nexora. If you are interested, send me a DM!
           </p>
         </div>
 
