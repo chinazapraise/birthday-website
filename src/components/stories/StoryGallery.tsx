@@ -144,13 +144,13 @@ export default function StoryGallery() {
 
                     <div className="mt-6 text-center">
                       <p className="font-display text-[5rem] font-black leading-none text-cream md:text-[7rem]">
-                        <span className="hero-27">27</span>
+                        <span className="hero-27">21</span>
                       </p>
                       <h2 className="mt-2 font-display text-2xl font-bold uppercase tracking-[0.2em] text-cream md:text-3xl">
                         Storybook
                       </h2>
                       <p className="mx-auto mt-4 max-w-xs font-hand text-xl leading-snug text-cream/65">
-                        A birthday magazine written by the people who know him.
+                        A birthday magazine written by the people who know her.
                       </p>
                     </div>
 
