@@ -89,10 +89,7 @@ And so, one chapter ended, making room for another.
 CLOSING QUOTE
 
 "Not every season will make sense while you are living it. Sometimes, you have to grow a little older before you understand what an experience came to teach you."`,
-    media: [
-      M("y2016-photo-1", "PHOTO PLACEHOLDER"),
-      M("y2016-photo-2", "PHOTO PLACEHOLDER"),
-    ],
+    media: [],
     layoutVariant: "editorial",
     theme: {
       accent: "#f0abfc",
@@ -204,10 +201,7 @@ Little did I know that I would also begin learning more about myself.
 CLOSING QUOTE
 
 "Sometimes, a new environment introduces you to more than a different place or a different set of people. It introduces you to parts of yourself you have not yet had the opportunity to discover."`,
-    media: [
-      M("y2024-photo-1", "PHOTO PLACEHOLDER"),
-      M("y2024-photo-2", "PHOTO PLACEHOLDER"),
-    ],
+    media: [],
     layoutVariant: "editorial",
     theme: {
       accent: "#86efac",
