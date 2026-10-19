@@ -33,7 +33,7 @@ export default function NexoraSection() {
         </div>
 
         <p className="mt-6 text-xs font-semibold uppercase tracking-[0.28em] text-gold/80">
-          Your next step could start here
+          Learn. Grow. Start where you are.
         </p>
 
         <h2
@@ -43,28 +43,47 @@ export default function NexoraSection() {
           Meet <span className="hero-27">Nexora.</span>
         </h2>
 
-        <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-cream/65 md:text-base">
-          Sometimes, the hardest part of moving forward is finding the right place
-          to begin. If you have been looking for your next opportunity to learn,
-          grow, or turn an idea into action, take a moment to discover Nexora and
-          see whether it fits the goals you are working towards.
+        <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-cream/65 md:text-base">
+          Nexora brings together bite-sized lessons and ideas around money,
+          careers, opportunities, AI, personal branding, finding clients or jobs,
+          relationships, and intentional living. It is about helping you learn
+          things you can put to use in the life you are building.
         </p>
+
+        <div className="mx-auto mt-7 max-w-2xl rounded-2xl border border-white/10 bg-black/10 px-6 py-6 text-left md:px-8">
+          <p className="font-display text-xl font-semibold text-cream md:text-2xl">
+            Why I wanted to share it with you
+          </p>
+          <p className="mt-3 text-sm leading-7 text-cream/65 md:text-base">
+            My own journey has been teaching me not to wait until I have
+            everything figured out before I begin. I am learning to keep
+            becoming, stretch myself, and take the first step—even when
+            something feels unfamiliar. Building this website is one example
+            of what can happen when I give myself permission to start.
+          </p>
+          <p className="mt-3 text-sm leading-7 text-cream/65 md:text-base">
+            That is why I want you to explore Nexora too. I found an opportunity
+            worth sharing, and I believe you deserve the chance to see what you
+            can learn from it and how it might fit into your own journey.
+          </p>
+        </div>
 
         <div className="mx-auto mt-7 inline-flex flex-col items-center rounded-2xl border border-gold/30 bg-gold/[0.08] px-6 py-4">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold/80">
-            Special student offer
+            Special student price
           </span>
           <span className="mt-1 font-display text-3xl font-bold text-cream md:text-4xl">
             ₦15,000
           </span>
           <span className="mt-1 text-sm text-cream/55">
-            A discounted price for students
+            This is the total amount students pay
           </span>
         </div>
 
-        <p className="mx-auto mt-5 max-w-lg text-xs leading-6 text-cream/45">
-          Student pricing has been agreed with Williams. Visit Nexora to explore
-          the platform and confirm how to access the student offer.
+        <p className="mx-auto mt-5 max-w-lg text-xs leading-6 text-cream/50">
+          If you choose to register through my referral, your successful
+          registration can also support me through a commission, at no extra
+          cost to you.
         </p>
 
         <a
@@ -73,7 +92,7 @@ export default function NexoraSection() {
           rel="noopener noreferrer"
           className="group mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-6 py-3 text-sm font-semibold text-cream transition duration-300 hover:border-gold/60 hover:bg-gold/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-[#100d18]"
         >
-          Explore Nexora & Student Offer
+          Explore Nexora — Start Your Next Chapter
           <ArrowUpRight
             size={18}
             weight="bold"
