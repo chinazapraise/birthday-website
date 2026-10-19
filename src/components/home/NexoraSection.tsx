@@ -68,23 +68,17 @@ export default function NexoraSection() {
           </p>
         </div>
 
-        <div className="mx-auto mt-7 inline-flex flex-col items-center rounded-2xl border border-gold/30 bg-gold/[0.08] px-6 py-4">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold/80">
-            Special student price
-          </span>
-          <span className="mt-1 font-display text-3xl font-bold text-cream md:text-4xl">
-            ₦15,000
-          </span>
-          <span className="mt-1 text-sm text-cream/55">
-            This is the total amount students pay
-          </span>
+        <div className="mx-auto mt-7 max-w-xl rounded-2xl border border-gold/30 bg-gold/[0.08] px-6 py-6">
+          <p className="text-sm leading-7 text-cream/70 md:text-base">
+            Nexora&apos;s launch price is <span className="font-semibold text-cream">₦25,000</span>,
+            but you can get access at a discounted price of{" "}
+            <span className="font-display text-2xl font-bold text-gold md:text-3xl">₦15,000</span>.
+          </p>
+          <p className="mt-3 text-sm leading-7 text-cream/65 md:text-base">
+            Click the link below to explore Nexora and learn more about what it offers.
+            If you are interested, send me a DM and I will be happy to talk you through it.
+          </p>
         </div>
-
-        <p className="mx-auto mt-5 max-w-lg text-xs leading-6 text-cream/50">
-          If you choose to register through my referral, your successful
-          registration can also support me through a commission, at no extra
-          cost to you.
-        </p>
 
         <a
           href="https://mynexora.site"
