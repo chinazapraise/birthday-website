@@ -133,7 +133,7 @@ export async function uploadPhoto(
   });
   if (error) {
     console.error("photo upload failed", error.message);
-    return null;
+    throw new Error(`Supabase Storage upload failed: ${error.message}`);
   }
   return b.getPublicUrl(path).data.publicUrl;
 }
