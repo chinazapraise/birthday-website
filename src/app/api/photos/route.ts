@@ -95,9 +95,18 @@ export async function POST(request: Request) {
   if (!yearId) return badRequest("yearId is required");
   if (!dataBase64) return badRequest("dataBase64 is required");
 
-  const url = await uploadPhoto(dataBase64, contentType);
+  let url: string | null;
+  try {
+    url = await uploadPhoto(dataBase64, contentType);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : "unknown storage error";
+    return NextResponse.json(
+      { ok: false, error: reason },
+      { status: 500, headers: noStore },
+    );
+  }
   if (!url) {
-    return NextResponse.json({ ok: false, error: "upload failed" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: "upload failed: no URL returned" }, { status: 500, headers: noStore });
   }
 
   const manifest = await readManifest();
