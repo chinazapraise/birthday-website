@@ -26,17 +26,13 @@ function getYearTint(year: number): string {
 
 export default function TimelineChapter({
   entry,
-  index,
 }: {
   entry: TimelineYear;
-  index: number;
 }) {
   const ref = useRef<HTMLElement>(null);
   const [storyOpen, setStoryOpen] = useState(false);
   const accent = getYearTint(entry.year);
 
-  // Alternate: even index → text left / media right; odd → text right / media left.
-  const textFirst = index % 2 === 0;
 
   const storyPreview = truncateStory(entry.story, 220);
   const hasMore = entry.story.length > 220;
