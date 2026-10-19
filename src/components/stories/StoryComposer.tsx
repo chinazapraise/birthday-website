@@ -20,7 +20,7 @@ export default function StoryComposer({
   const [year, setYear] = useState("");
   const [deny, setDeny] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
-  const [visibility, setVisibility] = useState<"public" | "only-tomide">(
+  const [visibility, setVisibility] = useState<"public" | "only-chinaza">(
     "public",
   );
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +57,7 @@ export default function StoryComposer({
       year: year ? Number(year) : undefined,
       funnyPromptAnswer: deny.trim() || undefined,
       photos,
-      anonymous_publicly: visibility === "only-tomide",
+      anonymous_publicly: visibility === "only-chinaza",
     } as StorySubmission);
     setDone(true);
     fireConfetti("rain", { balloons: 4 });
@@ -88,7 +88,7 @@ export default function StoryComposer({
               Your chapter has been added to the pile.
             </p>
             <p className="mt-2 text-sm text-cream/60">
-              {visibility === "only-tomide"
+              {visibility === "only-chinaza"
                 ? "Keeping this one between us."
                 : "It’s live on the story wall right now."}
             </p>
@@ -259,15 +259,15 @@ export default function StoryComposer({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setVisibility("only-tomide")}
+                    onClick={() => setVisibility("only-chinaza")}
                     className={cn(
                       "flex-1 rounded-xl border px-4 py-3 text-sm transition",
-                      visibility === "only-tomide"
+                      visibility === "only-chinaza"
                         ? "border-acid bg-acid/10 text-cream"
                         : "border-white/15 text-cream/50",
                     )}
                   >
-                    Only Tomide · Just for me
+                    Only Chinaza · Just for me
                   </button>
                 </div>
               </div>
