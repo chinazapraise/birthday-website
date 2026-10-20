@@ -96,11 +96,17 @@ const uid = () =>
 
 function loadWishes(): Wish[] {
   const stored = read<Wish[]>(K.wishes, []);
-  return stored.length ? stored : wishesSeed;
+  // Remove only the old template wishes; preserve real visitor submissions.
+  const visitorWishes = stored.filter((wish) => !wish.id.startsWith("w-seed-"));
+  if (visitorWishes.length !== stored.length) write(K.wishes, visitorWishes);
+  return visitorWishes.length ? visitorWishes : wishesSeed;
 }
 function loadStories(): CommunityStory[] {
   const stored = read<CommunityStory[]>(K.stories, []);
-  return stored.length ? stored : storiesSeed;
+  // Remove only the old template stories; preserve real visitor submissions.
+  const visitorStories = stored.filter((story) => !story.id.startsWith("s-seed-"));
+  if (visitorStories.length !== stored.length) write(K.stories, visitorStories);
+  return visitorStories.length ? visitorStories : storiesSeed;
 }
 function loadWishlist(): WishlistItem[] {
   const stored = read<WishlistItem[]>(K.wishlist, []);

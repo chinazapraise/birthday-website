@@ -53,8 +53,8 @@ export default function WishlistExperience() {
     .filter((i) => i.status !== "hidden")
     .sort((a, b) => a.sortOrder - b.sortOrder);
 
-  const numbered = visible.slice(0, 27);
-  const outcast = visible.slice(27);
+  const numbered = visible.slice(0, 21);
+  const outcast = visible.slice(21);
 
   const openClaim = (item: WishlistItem) => {
     setModalItem(item);
@@ -116,7 +116,7 @@ export default function WishlistExperience() {
 
   if (created === null) return false;
 
-  void fetch("/api/Notify", {
+  void fetch("/api/notify", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -149,7 +149,7 @@ const handleReserve = (data: {
     ...data,
   });
 
-  void fetch("/api/Notify", {
+  void fetch("/api/notify", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -199,7 +199,7 @@ const handleReserve = (data: {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            {settings.wishlistTitle}
+            21 things I’d love.
           </motion.p>
           <motion.h1
             className="mt-3 font-display text-4xl font-black text-cream md:text-6xl"
@@ -207,7 +207,7 @@ const handleReserve = (data: {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE }}
           >
-            {settings.wishlistCopy}
+            No pressure. A few things I would love as I step into 21. Every thoughtful gesture is appreciated. 🤍
           </motion.h1>
           <motion.p
             className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-cream/50"

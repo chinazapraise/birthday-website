@@ -50,7 +50,7 @@ export default function WishesExperience() {
             transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
           >
             A few words. A prayer. A joke. A memory. Whatever you want me to
-            carry into 27.
+            carry into 21.
           </motion.p>
         </header>
 

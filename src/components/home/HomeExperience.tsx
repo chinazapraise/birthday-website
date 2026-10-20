@@ -2,14 +2,14 @@
 
 import { useCallback, useRef, useState } from "react";
 import type { SiteSettings, TimelineYear, MicroMemory } from "@/lib/types";
-import { useSettings, useCloudYearPhotos } from "@/lib/hooks";
+import { useSettings } from "@/lib/hooks";
 import Preloader from "@/components/home/Preloader";
 import HeroExperience from "@/components/home/HeroExperience";
-import PhotoFan from "@/components/home/PhotoFan";
 import Timeline from "@/components/home/Timeline";
 import PresentDay from "@/components/home/PresentDay";
 import PeopleMosaic from "@/components/home/PeopleMosaic";
 import EndingChapter from "@/components/home/EndingChapter";
+import NexoraSection from "@/components/home/NexoraSection";
 import FloatingNav from "@/components/nav/FloatingNav";
 import StoryProgress from "@/components/nav/StoryProgress";
 import MeshBackground from "@/components/ambient/MeshBackground";
@@ -26,7 +26,6 @@ interface Props {
 export default function HomeExperience({ settings: initialSettings, years, memories }: Props) {
   const { settings: liveSettings } = useSettings();
   const settings = liveSettings ?? initialSettings;
-  const { photos } = useCloudYearPhotos();
   const [ready, setReady] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
   const clickCount = useRef(0);
@@ -67,14 +66,13 @@ export default function HomeExperience({ settings: initialSettings, years, memor
           timelineRef={timelineRef as React.RefObject<HTMLElement | null>}
         />
 
-        <PhotoFan photos={photos["fan"] ?? []} />
-
         <div ref={timelineRef} onClick={handle27Click}>
           <Timeline years={years} memories={memories} />
         </div>
 
         <PresentDay />
-        <PeopleMosaic photos={photos["people"] ?? []} />
+        <PeopleMosaic />
+        <NexoraSection />
         <EndingChapter settings={settings} />
       </div>
     </>

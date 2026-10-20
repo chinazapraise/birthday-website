@@ -160,7 +160,7 @@ export default function WishComposer({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={5}
-                placeholder="A few words. A prayer. A joke. A memory. Whatever you want me to carry into 27."
+                placeholder="A few words. A prayer. A joke. A memory. Whatever you want me to carry into 21."
                 className="w-full resize-none rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-cream placeholder:text-cream/30 transition focus:border-magenta focus:outline-none"
               />
               <div className="mt-1 flex justify-between text-xs text-cream/40">
